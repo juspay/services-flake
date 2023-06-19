@@ -4,6 +4,7 @@
     flake-parts.url = "github:hercules-ci/flake-parts";
     systems.url = "github:nix-systems/default";
     process-compose-flake.url = "github:Platonic-Systems/process-compose-flake";
+    services-flake.url = "github:juspay/services-flake";
   };
   outputs = inputs:
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
@@ -15,7 +16,7 @@
         process-compose = {
           postgres = {
             imports = [
-              inputs.process-compose-flake.processComposeModules.services
+              inputs.services-flake.processComposeModules.default
               ../nix/postgres_test.nix
             ];
           };

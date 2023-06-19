@@ -6,6 +6,8 @@ NixOS-like services for Nix flakes, as a [process-compose-flake](https://github.
 
 TODO
 
+(But see `./test/flake.nix`)
+
 ## Services available
 
 - [x] Hello World

@@ -54,11 +54,11 @@
     },
     "process-compose-flake": {
       "locked": {
-        "lastModified": 1687194805,
-        "narHash": "sha256-DAqMJFWXft+eWrPOLWrP4xdK1DQELWkkU47PM+ODG2U=",
+        "lastModified": 1687211949,
+        "narHash": "sha256-PKZhjtrLkN1+AuWiv+m+n0tL5xcrjwXRdAR6pS+UwxI=",
         "owner": "Platonic-Systems",
         "repo": "process-compose-flake",
-        "rev": "dd1dff00700deb2bc4afa44e7082c0176c095fd9",
+        "rev": "1483bd7fecd59254d8531b6c3202f3f765b22468",
         "type": "github"
       },
       "original": {
@@ -72,7 +72,23 @@
         "flake-parts": "flake-parts",
         "nixpkgs": "nixpkgs",
         "process-compose-flake": "process-compose-flake",
+        "services-flake": "services-flake",
         "systems": "systems"
+      }
+    },
+    "services-flake": {
+      "locked": {
+        "lastModified": 1687211778,
+        "narHash": "sha256-eBO71ucbGhNX7095CsFDm+sQ/HuTJSy03S3MevWVuZw=",
+        "owner": "juspay",
+        "repo": "services-flake",
+        "rev": "f171932d130c3ce5184b69144012a225b2e28868",
+        "type": "github"
+      },
+      "original": {
+        "owner": "juspay",
+        "repo": "services-flake",
+        "type": "github"
       }
     },
     "systems": {
