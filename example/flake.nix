@@ -21,7 +21,8 @@
         process-compose."default" = { config, ... }:
           let
             dbName = "sample";
-          in {
+          in
+          {
             imports = [
               inputs.services-flake.processComposeModules.default
             ];
@@ -40,7 +41,8 @@
             settings.processes.pgweb =
               let
                 pgcfg = config.services.postgres;
-              in {
+              in
+              {
                 environment.PGWEB_DATABASE_URL = "postgres://$USER@${pgcfg.listen_addresses}:${builtins.toString pgcfg.port}/${dbName}";
                 command = pkgs.pgweb;
                 depends_on."postgres".condition = "process_healthy";

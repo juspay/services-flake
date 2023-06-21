@@ -24,7 +24,9 @@
           };
           fmt = {
             description = "Format the top-level Nix files";
-            exec = "${lib.getExe pkgs.nixpkgs-fmt} ./*.nix";
+            exec = ''
+              ${lib.getExe pkgs.fd} -e nix | xargs ${lib.getExe pkgs.nixpkgs-fmt}
+            '';
           };
         };
         devShells.default = pkgs.mkShell {
