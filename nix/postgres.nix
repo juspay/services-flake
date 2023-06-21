@@ -145,6 +145,8 @@ in
           description = ''
             Initial SQL commands to run during database initialization. This can be multiple
             SQL expressions separated by a semi-colon.
+
+            NOTE: initialScript is run /before/ initialDatabases are created.
           '';
           example = lib.literalExpression ''
             CREATE USER postgres SUPERUSER;
@@ -245,9 +247,9 @@ in
                 set -x
                 initdb ${lib.concatStringsSep " " cfg.initdbArgs}
                 set +x
-                ${setupInitialDatabases}
 
                 ${runInitialScript}
+                ${setupInitialDatabases}
               else
                 echo "Postgres data directory already exists. Skipping initialization."
               fi
