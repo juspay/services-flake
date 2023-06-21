@@ -19,7 +19,9 @@
       perSystem = { self', pkgs, lib, ... }: {
         # This adds a `self.packages.default`
         process-compose."default" = { config, ... }:
-          {
+          let
+            dbName = "sample";
+          in {
             imports = [
               inputs.services-flake.processComposeModules.default
             ];
@@ -29,17 +31,20 @@
               listen_addresses = "127.0.0.1";
               initialDatabases = [
                 {
-                  name = "sample";
+                  name = dbName;
                   schema = "${inputs.northwind}/northwind.sql";
                 }
               ];
             };
 
-            settings.processes.pgweb = {
-              environment.PGWEB_DATABASE_URL = "postgres://srid@127.0.0.1:5432/sample";
-              command = pkgs.pgweb;
-              depends_on."postgres".condition = "process_healthy";
-            };
+            settings.processes.pgweb =
+              let
+                pgcfg = config.services.postgres;
+              in {
+                environment.PGWEB_DATABASE_URL = "postgres://$USER@${pgcfg.listen_addresses}:${builtins.toString pgcfg.port}/${dbName}";
+                command = pkgs.pgweb;
+                depends_on."postgres".condition = "process_healthy";
+              };
 
             # Set this attribute and get NixOS VM tests, as a flake check, for free.
             testScript = ''
@@ -47,7 +52,7 @@
               process_compose.wait_until(lambda procs:
                 procs["postgres"]["status"] == "Running"
               )
-              machine.succeed("echo 'SELECT version();' | ${config.services.postgres.package}/bin/psql -h 127.0.0.1 -U tester sample")
+              machine.succeed("echo 'SELECT version();' | ${config.services.postgres.package}/bin/psql -h 127.0.0.1 -U tester ${dbName}")
             '';
           };
       };
