@@ -28,25 +28,26 @@
               enable = true;
               listen_addresses = "127.0.0.1";
               initialDatabases = [
-                { 
-                  name = "sample"; 
+                {
+                  name = "sample";
                   schema = "${inputs.northwind}/northwind.sql";
-                } 
+                }
               ];
             };
 
             settings.processes.pgweb = {
               environment.PGWEB_DATABASE_URL = "postgres://srid@127.0.0.1:5432/sample";
               command = pkgs.pgweb;
-              depends_on."postgres".condition = "process_started";
+              depends_on."postgres".condition = "process_healthy";
             };
 
             # Set this attribute and get NixOS VM tests, as a flake check, for free.
             testScript = ''
+              # FIXME: pgweb is still pending, but only in VM tests for some reason.
               process_compose.wait_until(lambda procs:
                 procs["postgres"]["status"] == "Running"
               )
-              machine.succeed("echo 'SELECT version();' | ${config.services.postgres.package}/bin/psql -h 127.0.0.1 -U tester chinook")
+              machine.succeed("echo 'SELECT version();' | ${config.services.postgres.package}/bin/psql -h 127.0.0.1 -U tester sample")
             '';
           };
       };
