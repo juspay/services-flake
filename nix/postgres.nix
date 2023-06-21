@@ -270,8 +270,9 @@ in
               text = ''
                 set -x
                 export PATH="${postgresPkg}"/bin:$PATH
-                export LOCKDIR="/tmp"
-                postgres -k "$LOCKDIR" -D ${cfg.dataDir}
+                PGDATA=$(readlink -f "${cfg.dataDir}")
+                export PGDATA
+                postgres -k "$PGDATA"
               '';
             };
           in
@@ -280,6 +281,14 @@ in
             depends_on."${cfg.name}-init".condition = "process_completed_successfully";
             # SIGINT (= 2) for faster shutdown: https://www.postgresql.org/docs/current/server-shutdown.html
             shutdown.signal = 2;
+            readiness_probe = {
+              exec.command = "${postgresPkg}/bin/pg_isready -h $(readlink -f ${cfg.dataDir}) -d template1";
+              initial_delay_seconds = 2;
+              period_seconds = 10;
+              timeout_seconds = 4;
+              success_threshold = 1;
+              failure_threshold = 5;
+            };
             # https://github.com/F1bonacc1/process-compose#-auto-restart-if-not-healthy
             availability.restart = "on_failure";
           };
