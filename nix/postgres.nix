@@ -258,19 +258,26 @@ in
           '';
 
         # DB process
-        ${cfg.name} = {
-          command = ''
-            set -x
-            export PATH="${postgresPkg}"/bin:$PATH
-            export LOCKDIR="/tmp"
-            postgres -k $LOCKDIR -D ${cfg.dataDir}
-          '';
-          depends_on."${cfg.name}-init".condition = "process_completed_successfully";
-          # SIGINT (= 2) for faster shutdown: https://www.postgresql.org/docs/current/server-shutdown.html
-          shutdown.signal = 2;
-          # https://github.com/F1bonacc1/process-compose#-auto-restart-if-not-healthy
-          availability.restart = "on_failure";
-        };
+        ${cfg.name} =
+          let
+            startScript = pkgs.writeShellApplication {
+              name = "start-postgres";
+              text = ''
+                set -x
+                export PATH="${postgresPkg}"/bin:$PATH
+                export LOCKDIR="/tmp"
+                postgres -k "$LOCKDIR" -D ${cfg.dataDir}
+              '';
+            };
+          in
+          {
+            command = startScript;
+            depends_on."${cfg.name}-init".condition = "process_completed_successfully";
+            # SIGINT (= 2) for faster shutdown: https://www.postgresql.org/docs/current/server-shutdown.html
+            shutdown.signal = 2;
+            # https://github.com/F1bonacc1/process-compose#-auto-restart-if-not-healthy
+            availability.restart = "on_failure";
+          };
       };
   };
 }
