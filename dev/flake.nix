@@ -23,7 +23,7 @@
             exec = "./test.sh";
           };
           fmt = {
-            description = "Format the top-level Nix files";
+            description = "Format all Nix files";
             exec = ''
               ${lib.getExe pkgs.fd} -e nix | xargs ${lib.getExe pkgs.nixpkgs-fmt}
             '';
