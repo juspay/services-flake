@@ -242,13 +242,18 @@ in
               export PATH=${postgresPkg}/bin:${pkgs.coreutils}/bin
 
               if [[ ! -d "$PGDATA" ]]; then
+                set -x
                 initdb ${lib.concatStringsSep " " cfg.initdbArgs}
+                set +x
                 ${setupInitialDatabases}
 
                 ${runInitialScript}
+              else
+                echo "Postgres data directory already exists. Skipping initialization."
               fi
 
               # Setup config
+              set -x
               cp ${configFile} "$PGDATA/postgresql.conf"
             '';
           in
