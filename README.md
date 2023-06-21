@@ -11,7 +11,7 @@ TODO
 ## Services available
 
 - [x] Hello World
-- [-] PostgreSQL
+- [x] PostgreSQL
 - [ ] MySQL
 - [ ] Redis
 - [ ] ...
@@ -19,7 +19,7 @@ TODO
 ## Contributing
 
 - If you are adding a *new* service, see https://github.com/cachix/devenv/tree/main/src/modules/services for inspiration.
-- When openning a PR, note that we do not have CI yet, so please run `./test.sh` locally on your **NixOS** machine.
+- When opening a PR, note that we do not have CI yet, so please run `./test.sh` locally on your **NixOS** machine.
 
 ## Credits
 
