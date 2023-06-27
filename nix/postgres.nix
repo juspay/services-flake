@@ -140,17 +140,39 @@ in
         };
 
         initialScript = lib.mkOption {
-          type = types.nullOr types.str;
+          type = types.nullOr (types.submodule {
+            options = {
+              before = lib.mkOption {
+                type = types.nullOr types.str;
+                default = null;
+                description = ''
+                  SQL commands to run before the database initialization.
+                '';
+                example = lib.literalExpression ''
+                  CREATE USER postgres SUPERUSER;
+                  CREATE USER bar;
+                '';
+              };
+              after = lib.mkOption {
+                type = types.nullOr types.str;
+                default = null;
+                description = ''
+                  SQL commands to run after the database initialization.
+                '';
+                example = lib.literalExpression ''
+                  CREATE TABLE users (
+                    id SERIAL PRIMARY KEY,
+                    name VARCHAR(50) NOT NULL,
+                    email VARCHAR(50) NOT NULL UNIQUE
+                  );
+                '';
+              };
+            };
+          });
           default = null;
           description = ''
             Initial SQL commands to run during database initialization. This can be multiple
             SQL expressions separated by a semi-colon.
-
-            NOTE: initialScript is run /before/ initialDatabases are created.
-          '';
-          example = lib.literalExpression ''
-            CREATE USER postgres SUPERUSER;
-            CREATE USER bar;
           '';
         };
       };
@@ -219,12 +241,15 @@ in
                   echo "CREATE DATABASE ''${USER:-$(id -nu)};" | postgres --single -E postgres '';
 
             runInitialScript =
-              if cfg.initialScript != null then
-                ''
-                  echo "${cfg.initialScript}" | postgres --single -E postgres
-                ''
-              else
-                "";
+              let
+                bashScript = sqlScript: ''
+                  echo "${sqlScript}" | postgres --single -E postgres
+                '';
+              in
+              {
+                before = lib.optionalString (bashScript cfg.initialScript.before) "";
+                after = lib.optionalString (bashScript cfg.initialScript.after) "";
+              };
 
             toStr = value:
               if true == value then
@@ -248,8 +273,9 @@ in
                 initdb ${lib.concatStringsSep " " cfg.initdbArgs}
                 set +x
 
-                ${runInitialScript}
+                ${runInitialScript.before}
                 ${setupInitialDatabases}
+                ${runInitialScript.after}
               else
                 echo "Postgres data directory already exists. Skipping initialization."
               fi
