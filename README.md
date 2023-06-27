@@ -24,3 +24,9 @@ TODO
 ## Credits
 
 Thanks to [the devenv project](https://github.com/cachix/devenv/tree/main/src/modules/services) on which much of our services implementation is based on.
+
+## FAQ
+
+### Why not re-use devenv service modules?
+
+This is currently not possible (nor prioritized by the devenv project), which is why we must create our own services. See https://github.com/cachix/devenv/issues/75
