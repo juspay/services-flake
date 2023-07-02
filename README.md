@@ -17,7 +17,7 @@ TODO
 - [x] Hello World
 - [x] PostgreSQL
 - [ ] MySQL
-- [ ] Redis
+- [x] Redis
 - [ ] ...
 
 ## Contributing
