@@ -4,7 +4,7 @@
 with lib;
 
 {
-  options.services.redis = {
+  options.services.redis = lib.mkOption {
     description = ''
       Enable redis server
     '';
@@ -58,7 +58,7 @@ with lib;
 
   config = let cfg = config.services.redis; in lib.mkIf cfg.enable {
 
-    settings.processes.redis = 
+    settings.processes.${cfg.name} = 
     let
       redisConfig = pkgs.writeText "redis.conf" ''
         port ${toString cfg.port}
@@ -80,21 +80,19 @@ with lib;
       '';
     in
     {
-      exec = "${startScript}/bin/start-redis";
+      command = "${startScript}/bin/start-redis";
 
-      process-compose = {
-        readiness_probe = {
-          exec.command = "${cfg.package}/bin/redis-cli -p ${toString cfg.port} ping";
-          initial_delay_seconds = 2;
-          period_seconds = 10;
-          timeout_seconds = 4;
-          success_threshold = 1;
-          failure_threshold = 5;
-        };
-
-        # https://github.com/F1bonacc1/process-compose#-auto-restart-if-not-healthy
-        availability.restart = "on_failure";
+      readiness_probe = {
+        exec.command = "${cfg.package}/bin/redis-cli -p ${toString cfg.port} ping";
+        initial_delay_seconds = 2;
+        period_seconds = 10;
+        timeout_seconds = 4;
+        success_threshold = 1;
+        failure_threshold = 5;
       };
+
+      # https://github.com/F1bonacc1/process-compose#-auto-restart-if-not-healthy
+      availability.restart = "on_failure";
     };
   };
 }
