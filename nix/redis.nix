@@ -58,41 +58,41 @@ with lib;
 
   config = let cfg = config.services.redis; in lib.mkIf cfg.enable {
 
-    settings.processes.${cfg.name} = 
-    let
-      redisConfig = pkgs.writeText "redis.conf" ''
-        port ${toString cfg.port}
-        ${optionalString (cfg.bind != null) "bind ${cfg.bind}"}
-        ${cfg.extraConfig}
-      '';
+    settings.processes.${cfg.name} =
+      let
+        redisConfig = pkgs.writeText "redis.conf" ''
+          port ${toString cfg.port}
+          ${optionalString (cfg.bind != null) "bind ${cfg.bind}"}
+          ${cfg.extraConfig}
+        '';
 
-      startScript = pkgs.writeShellScriptBin "start-redis" ''
-        set -euo pipefail
+        startScript = pkgs.writeShellScriptBin "start-redis" ''
+          set -euo pipefail
 
-        export REDISDATA=${cfg.dataDir}
+          export REDISDATA=${cfg.dataDir}
 
 
-        if [[ ! -d "$REDISDATA" ]]; then
-          mkdir -p "$REDISDATA"
-        fi
+          if [[ ! -d "$REDISDATA" ]]; then
+            mkdir -p "$REDISDATA"
+          fi
 
-        exec ${cfg.package}/bin/redis-server ${redisConfig} --dir "$REDISDATA"
-      '';
-    in
-    {
-      command = "${startScript}/bin/start-redis";
+          exec ${cfg.package}/bin/redis-server ${redisConfig} --dir "$REDISDATA"
+        '';
+      in
+      {
+        command = "${startScript}/bin/start-redis";
 
-      readiness_probe = {
-        exec.command = "${cfg.package}/bin/redis-cli -p ${toString cfg.port} ping";
-        initial_delay_seconds = 2;
-        period_seconds = 10;
-        timeout_seconds = 4;
-        success_threshold = 1;
-        failure_threshold = 5;
+        readiness_probe = {
+          exec.command = "${cfg.package}/bin/redis-cli -p ${toString cfg.port} ping";
+          initial_delay_seconds = 2;
+          period_seconds = 10;
+          timeout_seconds = 4;
+          success_threshold = 1;
+          failure_threshold = 5;
+        };
+
+        # https://github.com/F1bonacc1/process-compose#-auto-restart-if-not-healthy
+        availability.restart = "on_failure";
       };
-
-      # https://github.com/F1bonacc1/process-compose#-auto-restart-if-not-healthy
-      availability.restart = "on_failure";
-    };
   };
 }
