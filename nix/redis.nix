@@ -42,7 +42,8 @@ with lib;
           default = 6379;
           description = ''
             The TCP port to accept connections.
-            If port 0 is specified Redis, will not listen on a TCP socket.
+
+            If port is set to `0`, redis will not listen on a TCP socket.
           '';
         };
 
