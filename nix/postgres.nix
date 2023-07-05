@@ -100,9 +100,7 @@ in
             internal = true;
             readOnly = true;
             description = "The `pg_hba.conf` file.";
-            default = pkgs.runCommand "pg_hba.conf" { } ''
-              echo "${hbaConfString}" | ${pkgs.util-linux}/bin/column -t -s $'\t' > $out
-            '';
+            default = pkgs.writeText "pg_hba.conf" hbaConfString;
           };
 
         listen_addresses = lib.mkOption {
