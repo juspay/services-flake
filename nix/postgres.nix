@@ -96,7 +96,7 @@ in
             '';
           in
           lib.mkOption {
-            type = lib.types.raw;
+            type = lib.types.package;
             internal = true;
             readOnly = true;
             description = "The `pg_hba.conf` file.";
