@@ -27,7 +27,7 @@
               inputs.services-flake.processComposeModules.default
             ];
 
-            services.postgres = {
+            services.postgres."pg1" = {
               enable = true;
               listen_addresses = "127.0.0.1";
               initialDatabases = [
@@ -38,14 +38,20 @@
               ];
             };
 
+            services.postgres."pg2" = {
+              enable = true;
+              listen_addresses = "127.0.0.1";
+              port = 5433;
+            };
+
             settings.processes.pgweb =
               let
-                pgcfg = config.services.postgres;
+                pgcfg = config.services.postgres.pg1;
               in
               {
                 environment.PGWEB_DATABASE_URL = "postgres://$USER@${pgcfg.listen_addresses}:${builtins.toString pgcfg.port}/${dbName}";
                 command = pkgs.pgweb;
-                depends_on."postgres".condition = "process_healthy";
+                depends_on."pg1".condition = "process_healthy";
               };
 
             # Set this attribute and get NixOS VM tests, as a flake check, for free.
