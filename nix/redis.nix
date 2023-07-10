@@ -72,7 +72,6 @@ with lib;
 
           export REDISDATA=${cfg.dataDir}
 
-
           if [[ ! -d "$REDISDATA" ]]; then
             mkdir -p "$REDISDATA"
           fi
