@@ -140,7 +140,7 @@ in
         };
 
         initialScript = lib.mkOption {
-          type = types.nullOr (types.submodule {
+          type = types.submodule ({ config, ... }:{
             options = {
               before = lib.mkOption {
                 type = types.nullOr types.str;
@@ -169,7 +169,7 @@ in
               };
             };
           });
-          default = null;
+          default = {before = null; after = null;};
           description = ''
             Initial SQL commands to run during database initialization. This can be multiple
             SQL expressions separated by a semi-colon.
@@ -242,13 +242,15 @@ in
 
             runInitialScript =
               let
-                bashScript = sqlScript: ''
+                scriptCmd = sqlScript: ''
                   echo "${sqlScript}" | postgres --single -E postgres
                 '';
               in
               {
-                before = lib.optionalString (bashScript cfg.initialScript.before) "";
-                after = lib.optionalString (bashScript cfg.initialScript.after) "";
+                before = let bfr = cfg.initialScript.before; in
+                  lib.optionalString (bfr != null) (scriptCmd bfr);
+                after = let aftr = cfg.initialScript.before; in
+                  lib.optionalString (aftr != null) (scriptCmd aftr);
               };
 
             toStr = value:
