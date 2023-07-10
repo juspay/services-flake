@@ -9,6 +9,10 @@
 
     nixci = {
       flakeDir = "./dev";
+      overrideInputs = {
+        "services-flake" = ".";
+        "example" = "./example";
+      };
     };
   };
 }
