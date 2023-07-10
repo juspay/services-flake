@@ -10,7 +10,8 @@ NixOS-like services for Nix flakes, as a [process-compose-flake](https://github.
 
 TODO
 
-(But see `./test/flake.nix`)
+- Use direnv to enter the devShell
+- Add tests to `./dev/flake.nix`
 
 ## Services available
 
