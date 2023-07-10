@@ -9,9 +9,10 @@
 
     nixci = {
       flakeDir = "./dev";
-      overrideInputs = {
+      overrideInputs = rec {
         "services-flake" = ".";
         "example" = "./example";
+        "example/services-flake" = services-flake;
       };
     };
   };
