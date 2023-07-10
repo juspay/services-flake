@@ -8,12 +8,17 @@
     };
 
     # Config for https://github.com/srid/nixci
-    nixci = {
-      flakeDir = "./dev";
-      overrideInputs = rec {
-        "services-flake" = ".";
-        "example" = "./example";
-        "example/services-flake" = services-flake;
+    nixci = let overrideInputs = { "services-flake" = "."; }; in {
+      example = {
+        inherit overrideInputs;
+        dir = "./example";
+      };
+      test = {
+        inherit overrideInputs;
+        dir = "./test";
+      };
+      dev = {
+        dir = "./dev";
       };
     };
   };
