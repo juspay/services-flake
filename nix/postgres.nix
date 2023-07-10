@@ -140,7 +140,7 @@ in
         };
 
         initialScript = lib.mkOption {
-          type = types.submodule ({ config, ... }:{
+          type = types.submodule ({ config, ... }: {
             options = {
               before = lib.mkOption {
                 type = types.nullOr types.str;
@@ -169,7 +169,7 @@ in
               };
             };
           });
-          default = {before = null; after = null;};
+          default = { before = null; after = null; };
           description = ''
             Initial SQL commands to run during database initialization. This can be multiple
             SQL expressions separated by a semi-colon.
