@@ -308,10 +308,10 @@ in
                 '';
               in
               {
-                before = let bfr = cfg.initialScript.before; in
-                  lib.optionalString (bfr != null) (scriptCmd bfr);
-                after = let aftr = cfg.initialScript.after; in
-                  lib.optionalString (aftr != null) (scriptCmd aftr);
+                before = with cfg.initialScript;
+                  lib.optionalString (before != null) (scriptCmd before);
+                after = with cfg.initialScript;
+                  lib.optionalString (after != null) (scriptCmd after);
               };
 
             toStr = value:
