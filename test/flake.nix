@@ -18,8 +18,13 @@
             imports = [
               inputs.services-flake.processComposeModules.default
               ../nix/postgres_test.nix
-              ../nix/redis_test.nix
             ];
+          };
+          redis = {
+              imports = [
+                inputs.services-flake.processComposeModules.default
+                ../nix/redis_test.nix
+              ];
           };
         };
       };
