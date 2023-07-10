@@ -7,6 +7,7 @@
       path = builtins.path { path = ./example; filter = path: _: baseNameOf path == "flake.nix"; };
     };
 
+    # Config for https://github.com/srid/nixci
     nixci = {
       flakeDir = "./dev";
       overrideInputs = rec {
