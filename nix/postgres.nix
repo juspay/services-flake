@@ -249,7 +249,7 @@ in
               {
                 before = let bfr = cfg.initialScript.before; in
                   lib.optionalString (bfr != null) (scriptCmd bfr);
-                after = let aftr = cfg.initialScript.before; in
+                after = let aftr = cfg.initialScript.after; in
                   lib.optionalString (aftr != null) (scriptCmd aftr);
               };
 

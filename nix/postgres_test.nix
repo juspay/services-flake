@@ -13,8 +13,8 @@
     )
     machine.succeed("echo 'SELECT version();' | ${pg}/bin/psql -h 127.0.0.1 -U tester")
     # initialScript.before test
-    machine.succeed("echo 'SELECT 1 FROM pg_roles WHERE rolname = \'bar\';' | ${pg}/bin/psql -h 127.0.0.1 -U tester | grep -q 1")
+    machine.succeed("echo \"SELECT 1 FROM pg_roles WHERE rolname = 'bar';\" | ${pg}/bin/psql -h 127.0.0.1 -U tester | grep -q 1")
     # initialScript.after test
-    machine.succeed("echo 'SELECT 1 FROM pg_database WHERE datname = \'foo\';' | ${pg}/bin/psql -h 127.0.0.1 -U tester | grep -q 1")
+    machine.succeed("echo \"SELECT 1 FROM pg_database WHERE datname = 'foo';\" | ${pg}/bin/psql -h 127.0.0.1 -U tester | grep -q 1")
   '';
 }
