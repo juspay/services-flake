@@ -21,10 +21,10 @@
             ];
           };
           redis = {
-              imports = [
-                inputs.services-flake.processComposeModules.default
-                ../nix/redis_test.nix
-              ];
+            imports = [
+              inputs.services-flake.processComposeModules.default
+              ../nix/redis_test.nix
+            ];
           };
         };
       };
