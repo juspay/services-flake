@@ -2,6 +2,8 @@ set -euxo pipefail
 
 cd "$(dirname "$0")"
 
+# TODO: Replace this with `nix run github:srid/nixci`
+
 # On NixOS, run the VM tests to test runtime behaviour
 if command -v nixos-rebuild &> /dev/null; then
   # example test

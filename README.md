@@ -6,6 +6,8 @@
 
 NixOS-like services for Nix flakes, as a [process-compose-flake](https://github.com/Platonic-Systems/process-compose-flake) module (based on flake-parts).
 
+![](./example/demo.gif)
+
 ## Getting Started
 
 TODO
@@ -17,7 +19,7 @@ TODO
 - [x] Hello World
 - [x] PostgreSQL
 - [ ] MySQL
-- [ ] Redis
+- [x] Redis
 - [ ] ...
 
 ## Contributing
