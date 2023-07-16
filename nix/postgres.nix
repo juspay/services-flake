@@ -232,7 +232,7 @@ in
               SQL expressions separated by a semi-colon.
             '';
           };
-          outputs = lib.mkOption {
+          output = lib.mkOption {
             type = (options.settings.type.getSubOptions [ ]).processes.type;
             internal = true;
             readOnly = true;
@@ -385,6 +385,6 @@ in
       }));
   };
   config = {
-    settings.processes = lib.mkMerge (lib.mapAttrsToList (_: cfg: lib.mkIf cfg.enable cfg.outputs) config.services.postgres);
+    settings.processes = lib.mkMerge (lib.mapAttrsToList (_: cfg: lib.mkIf cfg.enable cfg.output) config.services.postgres);
   };
 }
