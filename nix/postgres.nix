@@ -10,9 +10,9 @@ in
       Enable postgresql server
     '';
     default = { };
-    type = with types; attrsOf (submodule ({ name, config, ... }: {
+    type = with types; attrsOf (submodule ({ name, config, ... }: let serviceName = "postgres-${name}"; in {
       options = {
-        enable = lib.mkEnableOption "postgres";
+        enable = lib.mkEnableOption serviceName;
 
         package = lib.mkPackageOption pkgs "postgresql" { };
         extensions = lib.mkOption {
@@ -36,7 +36,7 @@ in
 
         dataDir = lib.mkOption {
           type = lib.types.str;
-          default = "./data/${name}";
+          default = "./data/${serviceName}";
           description = "The DB data directory";
         };
 
@@ -250,7 +250,7 @@ in
             in
             {
               # DB initialization
-              "${name}-init".command =
+              "${serviceName}-init".command =
                 let
                   setupInitialDatabases =
                     if config.initialDatabases != [ ] then
@@ -349,7 +349,7 @@ in
                 '';
 
               # DB process
-              ${name} =
+              ${serviceName} =
                 let
                   startScript = pkgs.writeShellApplication {
                     name = "start-postgres";
@@ -364,7 +364,7 @@ in
                 in
                 {
                   command = startScript;
-                  depends_on."${name}-init".condition = "process_completed_successfully";
+                  depends_on."${serviceName}-init".condition = "process_completed_successfully";
                   # SIGINT (= 2) for faster shutdown: https://www.postgresql.org/docs/current/server-shutdown.html
                   shutdown.signal = 2;
                   readiness_probe = {
