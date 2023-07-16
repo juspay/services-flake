@@ -93,5 +93,5 @@ with lib;
         };
       }));
   };
-  config.settings.processes = lib.mkMerge (lib.mapAttrsToList (_: cfg: cfg.output) config.services.redis);
+  config.settings.processes = lib.mkMerge (lib.mapAttrsToList (_: cfg: lib.mkIf cfg.enable cfg.output) config.services.redis);
 }
