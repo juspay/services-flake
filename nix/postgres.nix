@@ -383,7 +383,7 @@ in
       };
     }));
   };
-  config = let mergeMapAttrs = f: attrs: lib.mkMerge (lib.mapAttrsToList f attrs); in {
-    settings.processes = mergeMapAttrs (name: cfg: lib.mkIf cfg.enable cfg.outputs) config.services.postgres;
+  config = {
+    settings.processes = lib.mkMerge (lib.mapAttrsToList (_: cfg: lib.mkIf cfg.enable cfg.outputs) config.services.postgres);
   };
 }
