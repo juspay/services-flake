@@ -368,7 +368,7 @@ in
                   # SIGINT (= 2) for faster shutdown: https://www.postgresql.org/docs/current/server-shutdown.html
                   shutdown.signal = 2;
                   readiness_probe = {
-                    exec.command = "${postgresPkg}/bin/pg_isready -h $(readlink -f ${config.dataDir}) -d template1";
+                    exec.command = "${postgresPkg}/bin/pg_isready -h $(readlink -f ${config.dataDir}) -p ${toString config.port} -d template1";
                     initial_delay_seconds = 2;
                     period_seconds = 10;
                     timeout_seconds = 4;
