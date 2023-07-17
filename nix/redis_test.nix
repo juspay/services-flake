@@ -1,5 +1,5 @@
 { config, ... }: {
-  services.redis.enable = true;
+  services.redis."redis1".enable = true;
   testScript = ''
     process_compose.wait_until(lambda procs:
       # TODO: Check for 'is_ready' instead of 'status'
