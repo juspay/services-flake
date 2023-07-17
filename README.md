@@ -16,7 +16,6 @@ TODO
 
 ## Services available
 
-- [x] Hello World
 - [x] PostgreSQL
 - [ ] MySQL
 - [x] Redis
