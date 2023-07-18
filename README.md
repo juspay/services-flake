@@ -24,7 +24,7 @@ TODO
 ## Contributing
 
 - If you are adding a *new* service, see https://github.com/cachix/devenv/tree/main/src/modules/services for inspiration.
-- When opening a PR, note that we do not have CI yet, so please run `./test.sh` locally on your **NixOS** machine.
+- When opening a PR, note that we do not have CI yet, so please run `nix run github:srid/nixci`[^cache] locally on your **NixOS** machine.
 
 ## Credits
 
@@ -35,3 +35,6 @@ Thanks to [the devenv project](https://github.com/cachix/devenv/tree/main/src/mo
 ### Why not re-use devenv service modules?
 
 This is currently not possible (nor prioritized by the devenv project), which is why we must create our own services. See https://github.com/cachix/devenv/issues/75
+
+
+[^cache]: Run `nix run nixpkgs#cachix use srid` to make use of Nix cache for nixci.
