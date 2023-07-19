@@ -1,0 +1,2 @@
+default:
+    nix run
