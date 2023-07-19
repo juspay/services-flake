@@ -27,10 +27,16 @@ in
       '';
     };
 
+    baseDataDir = lib.mkOption {
+      type = types.str;
+      default = "./data";
+      description = "Base data dir. By default, each instance will store it's data in $baseDataDir/$name";
+    };
+
     dataDir = lib.mkOption {
-      type = lib.types.str;
-      default = "./data/${name}";
-      description = "The DB data directory";
+      type = types.str;
+      default = "${config.baseDataDir}/${name}";
+      description = "Instance data directory.";
     };
 
     hbaConf =
