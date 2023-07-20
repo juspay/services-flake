@@ -106,6 +106,15 @@ in
       '';
     };
 
+    superuser = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = ''
+        Name of superuser.
+        null defaults to $USER
+      '';
+    };
+
     createDatabase = lib.mkOption {
       type = types.bool;
       default = true;
@@ -316,13 +325,17 @@ in
                 configFile = pkgs.writeText "postgresql.conf" (lib.concatStringsSep "\n"
                   (lib.mapAttrsToList (n: v: "${n} = ${toStr v}") config.settings));
 
+                initdbArgs =
+                  config.initdbArgs
+                  ++ (lib.optionals (config.superuser != null) ["-U" config.superuser]);
+
                 setupScript = pkgs.writeShellScriptBin "setup-postgres" ''
                   set -euo pipefail
                   export PATH=${postgresPkg}/bin:${pkgs.coreutils}/bin
 
                   if [[ ! -d "$PGDATA" ]]; then
                     set -x
-                    initdb ${lib.concatStringsSep " " config.initdbArgs}
+                    initdb ${lib.concatStringsSep " " initdbArgs}
                     set +x
 
                     ${runInitialScript.before}
@@ -348,13 +361,18 @@ in
                 startScript = pkgs.writeShellApplication {
                   name = "start-postgres";
                   text = ''
-                    set -x
                     export PATH="${postgresPkg}"/bin:$PATH
+                    set -x
                     PGDATA=$(readlink -f "${config.dataDir}")
                     export PGDATA
                     postgres -k "$PGDATA"
                   '';
                 };
+                pg_isreadyArgs = [
+                  "-h $(readlink -f ${config.dataDir})"
+                  "-p ${toString config.port}"
+                  "-d template1"
+                ] ++ (lib.optional (config.superuser != null) "-U ${config.superuser}");
               in
               {
                 command = startScript;
@@ -362,7 +380,7 @@ in
                 # SIGINT (= 2) for faster shutdown: https://www.postgresql.org/docs/current/server-shutdown.html
                 shutdown.signal = 2;
                 readiness_probe = {
-                  exec.command = "${postgresPkg}/bin/pg_isready -h $(readlink -f ${config.dataDir}) -p ${toString config.port} -d template1";
+                  exec.command = "${postgresPkg}/bin/pg_isready ${lib.concatStringsSep " " pg_isreadyArgs}";
                   initial_delay_seconds = 2;
                   period_seconds = 10;
                   timeout_seconds = 4;
