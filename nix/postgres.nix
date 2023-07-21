@@ -126,7 +126,7 @@ in
 
     defaultSettings =
       lib.mkOption {
-        type = lib.types.raw;
+        type = with lib.types; attrsOf (oneOf [ bool float int str ]);
         internal = true;
         readOnly = true;
         description = ''
@@ -135,7 +135,7 @@ in
         default = {
           listen_addresses = config.listen_addresses;
           port = config.port;
-          unix_socket_directories = lib.mkDefault config.dataDir;
+          unix_socket_directories = config.dataDir;
           hba_file = "${config.hbaConfFile}";
         };
       };
