@@ -124,6 +124,22 @@ in
       '';
     };
 
+    defaultSettings =
+      lib.mkOption {
+        type = with lib.types; attrsOf (oneOf [ bool float int str ]);
+        internal = true;
+        readOnly = true;
+        description = ''
+          Default configuration for `postgresql.conf`. `settings` can override these values.
+        '';
+        default = {
+          listen_addresses = config.listen_addresses;
+          port = config.port;
+          unix_socket_directories = config.dataDir;
+          hba_file = "${config.hbaConfFile}";
+        };
+      };
+
     settings =
       lib.mkOption {
         type = with lib.types; attrsOf (oneOf [ bool float int str ]);
@@ -314,7 +330,7 @@ in
                     toString value;
 
                 configFile = pkgs.writeText "postgresql.conf" (lib.concatStringsSep "\n"
-                  (lib.mapAttrsToList (n: v: "${n} = ${toStr v}") config.settings));
+                  (lib.mapAttrsToList (n: v: "${n} = ${toStr v}") (config.defaultSettings // config.settings)));
 
                 setupScript = pkgs.writeShellScriptBin "setup-postgres" ''
                   set -euo pipefail
