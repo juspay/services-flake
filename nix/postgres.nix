@@ -128,7 +128,7 @@ in
       lib.mkOption {
         type = lib.types.raw;
         internal = true;
-        readonly = true;
+        readOnly = true;
         description = ''
           Default configuration for `postgresql.conf`. `settings` can override these values.
         '';
