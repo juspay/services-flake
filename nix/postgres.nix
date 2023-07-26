@@ -343,7 +343,7 @@ in
 
                 initdbArgs =
                   config.initdbArgs
-                  ++ (lib.optionals (config.superuser != null) ["-U" config.superuser]);
+                  ++ (lib.optionals (config.superuser != null) [ "-U" config.superuser ]);
 
                 setupScript = pkgs.writeShellScriptBin "setup-postgres" ''
                   set -euo pipefail
