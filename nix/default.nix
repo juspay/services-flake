@@ -36,5 +36,6 @@ in
   imports = builtins.map multiService [
     ./postgres.nix
     ./redis.nix
+    ./redis-cluster.nix
   ];
 }
