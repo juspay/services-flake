@@ -29,6 +29,7 @@ The `dataDir` of these services tend to take *relative* paths, which are usually
 
 - If you are adding a *new* service, see https://github.com/cachix/devenv/tree/main/src/modules/services for inspiration.
 - When opening a PR, note that we do not have CI yet, so please run `nix run github:srid/nixci`[^cache] locally on your **NixOS** machine.
+- For contributing to docs, see https://zero-to-flakes.com/about#contributing
 
 ## Credits
 
