@@ -14,16 +14,28 @@ in
       description = "The redis-cluster data directory (common for all nodes).";
     };
 
-    port = lib.mkOption {
-      type = types.port;
-      default = 30001;
-      description = ''
-        The TCP port to accept connections.
-
-        Next node will use the next port and so on.
-
-        If port is set to `0`, redis will not listen on a TCP socket.
-      '';
+    nodes = lib.mkOption {
+      type = types.listOf (types.submodule {
+        options = {
+          port = lib.mkOption {
+            type = types.int;
+            description = "The TCP port to accept connections. If port is set to `0`, redis will not listen on a TCP socket.";
+          };
+          extraConfig = lib.mkOption {
+            type = types.lines;
+            description = "Extra configuration for this node. To be appended to `redis.conf`.";
+            default = "";
+          };
+        };
+      });
+      default = [
+        { port = 30001; }
+        { port = 30002; }
+        { port = 30003; }
+        { port = 30004; }
+        { port = 30005; }
+        { port = 30006; }
+      ];
     };
 
     bind = lib.mkOption {
@@ -48,32 +60,11 @@ in
       '';
     };
 
-    nodes = lib.mkOption {
-      type = types.int;
-      default = 6;
-      description = ''
-        Number of nodes in the cluster.
-      '';
-    };
-
     replicas = lib.mkOption {
       type = types.int;
       default = 1;
       description = ''
         Number of replicas per Master node.
-      '';
-    };
-
-    extraConfigs = lib.mkOption {
-      type = types.attrsOf types.lines;
-      default = { };
-      description = "Attrset map of node (identified by port number) to the respective `redis.conf`.";
-      example = ''
-        {
-          {
-            30001 = "port 30001";
-          };
-        }
       '';
     };
 
@@ -83,11 +74,9 @@ in
       readOnly = true;
       default =
         let
-          hosts = lib.genList (x: "${config.bind}:${builtins.toString(config.port + x)}") config.nodes;
-          ports = lib.genList (x: "${builtins.toString(config.port + x)}") config.nodes;
-          healthyNodes = lib.genAttrs ports (port: { condition = "process_healthy"; });
-          node = port:
+          mkNodeProcess = nodeConfig:
             let
+              port = builtins.toString nodeConfig.port;
               redisConfig = pkgs.writeText "redis.conf" ''
                 port ${port}
                 cluster-enabled yes
@@ -98,7 +87,7 @@ in
                 dbfilename "dump-${port}.rdb"
 
                 ${lib.optionalString (config.bind != null) "bind ${config.bind}"}
-                ${lib.optionalString (builtins.hasAttr port config.extraConfigs) "${config.extraConfigs.${port}}"}
+                ${nodeConfig.extraConfig}
               '';
 
               startScript = pkgs.writeShellScriptBin "start-redis" ''
@@ -114,31 +103,35 @@ in
               '';
             in
             {
-              command = "${startScript}/bin/start-redis";
-              shutdown.command = "${config.package}/bin/redis-cli -p ${port} shutdown nosave";
+              "${name}-node-${port}" = {
+                command = "${startScript}/bin/start-redis";
+                shutdown.command = "${config.package}/bin/redis-cli -p ${port} shutdown nosave";
 
-              readiness_probe = {
-                exec.command = "${config.package}/bin/redis-cli -p ${port} ping";
-                initial_delay_seconds = 2;
-                period_seconds = 10;
-                timeout_seconds = 4;
-                success_threshold = 1;
-                failure_threshold = 5;
+                readiness_probe = {
+                  exec.command = "${config.package}/bin/redis-cli -p ${port} ping";
+                  initial_delay_seconds = 2;
+                  period_seconds = 10;
+                  timeout_seconds = 4;
+                  success_threshold = 1;
+                  failure_threshold = 5;
+                };
+
+                # https://github.com/F1bonacc1/process-compose#-auto-restart-if-not-healthy
+                availability.restart = "on_failure";
               };
-
-              # https://github.com/F1bonacc1/process-compose#-auto-restart-if-not-healthy
-              availability.restart = "on_failure";
             };
+          hosts = builtins.map (node: "${config.bind}:${builtins.toString node.port}") config.nodes;
+          healthyNodes = builtins.map (node: { "${name}-node-${builtins.toString node.port}".condition = "process_healthy"; }) config.nodes;
+          createClusterProcess = {
+            "${name}-cluster-create" = {
+              depends_on = lib.mkMerge healthyNodes;
+              command = "${config.package}/bin/redis-cli --cluster create ${lib.concatStringsSep " " hosts} --cluster-replicas ${builtins.toString config.replicas} --cluster-yes";
+            };
+          };
+          processesList = (builtins.map mkNodeProcess config.nodes) ++ [ createClusterProcess ];
         in
         {
-          processes = lib.genAttrs ports (port: node port) //
-            {
-              "cluster-create" = {
-
-                depends_on = healthyNodes;
-                command = "${config.package}/bin/redis-cli --cluster create ${lib.concatStringsSep " " hosts} --cluster-replicas ${builtins.toString config.replicas} --cluster-yes";
-              };
-            };
+          processes = lib.mkMerge processesList;
         };
     };
   };
