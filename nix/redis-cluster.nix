@@ -119,12 +119,11 @@ in
               availability.restart = "on_failure";
             };
           hosts = lib.mapAttrsToList (_: cfg: "${config.bind}:${builtins.toString cfg.port}") config.nodes;
-          healthyNodes = lib.mapAttrs' (nodeName: cfg: lib.nameValuePair "${name}-${nodeName}" { condition = "process_healthy"; }) config.nodes;
         in
         {
           processes = (lib.mapAttrs' mkNodeProcess config.nodes) // {
             "${name}-cluster-create" = {
-              depends_on = healthyNodes;
+              depends_on = lib.mapAttrs' (nodeName: cfg: lib.nameValuePair "${name}-${nodeName}" { condition = "process_healthy"; }) config.nodes;
               command = "${config.package}/bin/redis-cli --cluster create ${lib.concatStringsSep " " hosts} --cluster-replicas ${builtins.toString config.replicas} --cluster-yes";
             };
           };
