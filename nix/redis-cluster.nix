@@ -15,7 +15,7 @@ in
     };
 
     nodes = lib.mkOption {
-      type = types.listOf (types.submodule {
+      type = types.attrsOf (types.submodule {
         options = {
           port = lib.mkOption {
             type = types.int;
@@ -28,14 +28,14 @@ in
           };
         };
       });
-      default = [
-        { port = 30001; }
-        { port = 30002; }
-        { port = 30003; }
-        { port = 30004; }
-        { port = 30005; }
-        { port = 30006; }
-      ];
+      default = {
+        "n1" = { port = 30001; };
+        "n2" = { port = 30002; };
+        "n3" = { port = 30003; };
+        "n4" = { port = 30004; };
+        "n5" = { port = 30005; };
+        "n6" = { port = 30006; };
+      };
     };
 
     bind = lib.mkOption {
@@ -74,9 +74,9 @@ in
       readOnly = true;
       default =
         let
-          mkNodeProcess = nodeConfig:
+          mkNodeProcess = nodeName: cfg:
             let
-              port = builtins.toString nodeConfig.port;
+              port = builtins.toString cfg.port;
               redisConfig = pkgs.writeText "redis.conf" ''
                 port ${port}
                 cluster-enabled yes
@@ -87,7 +87,7 @@ in
                 dbfilename "dump-${port}.rdb"
 
                 ${lib.optionalString (config.bind != null) "bind ${config.bind}"}
-                ${nodeConfig.extraConfig}
+                ${cfg.extraConfig}
               '';
 
               startScript = pkgs.writeShellScriptBin "start-redis" ''
@@ -102,36 +102,32 @@ in
                 exec ${config.package}/bin/redis-server ${redisConfig} --dir "$REDISDATA"
               '';
             in
-            {
-              "${name}-node-${port}" = {
-                command = "${startScript}/bin/start-redis";
-                shutdown.command = "${config.package}/bin/redis-cli -p ${port} shutdown nosave";
+            lib.nameValuePair "${name}-${nodeName}" {
+              command = "${startScript}/bin/start-redis";
+              shutdown.command = "${config.package}/bin/redis-cli -p ${port} shutdown nosave";
 
-                readiness_probe = {
-                  exec.command = "${config.package}/bin/redis-cli -p ${port} ping";
-                  initial_delay_seconds = 2;
-                  period_seconds = 10;
-                  timeout_seconds = 4;
-                  success_threshold = 1;
-                  failure_threshold = 5;
-                };
-
-                # https://github.com/F1bonacc1/process-compose#-auto-restart-if-not-healthy
-                availability.restart = "on_failure";
+              readiness_probe = {
+                exec.command = "${config.package}/bin/redis-cli -p ${port} ping";
+                initial_delay_seconds = 2;
+                period_seconds = 10;
+                timeout_seconds = 4;
+                success_threshold = 1;
+                failure_threshold = 5;
               };
+
+              # https://github.com/F1bonacc1/process-compose#-auto-restart-if-not-healthy
+              availability.restart = "on_failure";
             };
-          hosts = builtins.map (node: "${config.bind}:${builtins.toString node.port}") config.nodes;
-          healthyNodes = builtins.map (node: { "${name}-node-${builtins.toString node.port}".condition = "process_healthy"; }) config.nodes;
-          createClusterProcess = {
+          hosts = lib.mapAttrsToList (_: cfg: "${config.bind}:${builtins.toString cfg.port}") config.nodes;
+          healthyNodes = lib.mapAttrs' (nodeName: cfg: lib.nameValuePair "${name}-${nodeName}" { condition = "process_healthy"; }) config.nodes;
+        in
+        {
+          processes = (lib.mapAttrs' mkNodeProcess config.nodes) // {
             "${name}-cluster-create" = {
-              depends_on = lib.mkMerge healthyNodes;
+              depends_on = healthyNodes;
               command = "${config.package}/bin/redis-cli --cluster create ${lib.concatStringsSep " " hosts} --cluster-replicas ${builtins.toString config.replicas} --cluster-yes";
             };
           };
-          processesList = (builtins.map mkNodeProcess config.nodes) ++ [ createClusterProcess ];
-        in
-        {
-          processes = lib.mkMerge processesList;
         };
     };
   };
