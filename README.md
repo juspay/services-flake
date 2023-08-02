@@ -19,6 +19,7 @@ TODO
 - [x] PostgreSQL
 - [ ] MySQL
 - [x] Redis
+- [x] Redis Cluster
 - [ ] ...
 
 ## A note on process working directory

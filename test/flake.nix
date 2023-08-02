@@ -26,6 +26,12 @@
               ../nix/redis_test.nix
             ];
           };
+          redis-cluster = {
+            imports = [
+              inputs.services-flake.processComposeModules.default
+              ../nix/redis-cluster_test.nix
+            ];
+          };
         };
       };
     };
