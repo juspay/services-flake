@@ -37,5 +37,6 @@ in
     ./postgres.nix
     ./redis.nix
     ./redis-cluster.nix
+    ./elasticsearch.nix
   ];
 }
