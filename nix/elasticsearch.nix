@@ -1,13 +1,4 @@
 # Based on https://github.com/cachix/devenv/blob/main/src/modules/services/elasticsearch.nix
-# Note: 
-#   To use elastic search you will need the following inside your `perSystem`, if not already configured:
-#   { 
-#     _module.args.pkgs = import inputs.nixpkgs {
-#        inherit system;
-#        # Required for elastic search
-#        config.allowUnfree = true;
-#      };
-#   }
 { pkgs, lib, name, config, ... }:
 let
   inherit (lib) types;
