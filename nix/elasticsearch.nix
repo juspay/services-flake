@@ -20,8 +20,7 @@ in
 
     dataDir = lib.mkOption {
       type = types.str;
-      # TODO: elasticsearch requires absolute path, is there a way to avoid this?
-      default = "$PWD/data/${name}";
+      default = "./data/${name}";
       description = "Directory where elasticsearch stores its data.";
     };
 
@@ -142,7 +141,7 @@ in
             startScript = pkgs.writeShellScript "es-startup" ''
               set -e
 
-              export ES_HOME="${config.dataDir}"
+              export ES_HOME=$(${pkgs.coreutils}/bin/realpath ${config.dataDir})
               export ES_JAVA_OPTS="${toString config.extraJavaOptions}"
               export ES_PATH_CONF="${config.dataDir}/config"
               mkdir -m 0700 -p "${config.dataDir}"
