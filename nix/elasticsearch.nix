@@ -14,6 +14,18 @@ let
 in
 {
   options = {
+    description = ''
+      Configure elasticsearch. This will start a single-node cluster by default.
+      Note: 
+      To use elastic search you will need the following inside your `perSystem`, if not already configured:
+      { 
+        _module.args.pkgs = import inputs.nixpkgs {
+            inherit system;
+            # Required for elastic search
+            config.allowUnfree = true;
+          };
+      } 
+    '';
     enable = lib.mkEnableOption name;
 
     package = lib.mkPackageOption pkgs "elasticsearch7" { };
