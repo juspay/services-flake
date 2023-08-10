@@ -8,3 +8,7 @@ ex:
 # Auto-format the project tree
 fmt:
     treefmt
+
+# Run native tests
+test:
+    nix flake check test/ --override-input services-flake . -L
