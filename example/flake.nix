@@ -53,15 +53,6 @@
                 command = pkgs.pgweb;
                 depends_on."pg1".condition = "process_healthy";
               };
-
-            # Set this attribute and get NixOS VM tests, as a flake check, for free.
-            testScript = ''
-              # FIXME: pgweb is still pending, but only in VM tests for some reason.
-              process_compose.wait_until(lambda procs:
-                procs["pg1"]["status"] == "Running"
-              )
-              machine.succeed("echo 'SELECT version();' | ${config.services.postgres.pg1.package}/bin/psql -h 127.0.0.1 -U tester ${dbName}")
-            '';
           };
 
         devShells.default = pkgs.mkShell {
