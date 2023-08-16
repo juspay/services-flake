@@ -10,7 +10,7 @@
         text = ''
           ${cfg.package}/bin/redis-cli ping | ${pkgs.gnugrep}/bin/grep -q "PONG"
         '';
-        name = "postgres-test";
+        name = "redis-test";
       };
       depends_on."redis1".condition = "process_healthy";
     };

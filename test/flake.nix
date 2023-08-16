@@ -15,18 +15,21 @@
       perSystem = { self', pkgs, lib, ... }: {
         process-compose = {
           postgres = {
+            port = 8080;
             imports = [
               inputs.services-flake.processComposeModules.default
               ../nix/postgres_test.nix
             ];
           };
           redis = {
+            port = 8081;
             imports = [
               inputs.services-flake.processComposeModules.default
               ../nix/redis_test.nix
             ];
           };
           redis-cluster = {
+            port = 8082;
             imports = [
               inputs.services-flake.processComposeModules.default
               ../nix/redis-cluster_test.nix
