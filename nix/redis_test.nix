@@ -7,8 +7,9 @@
     in
     {
       command = pkgs.writeShellApplication {
+        runtimeInputs = [ cfg.package pkgs.gnugrep ];
         text = ''
-          ${cfg.package}/bin/redis-cli ping | ${pkgs.gnugrep}/bin/grep -q "PONG"
+          redis-cli ping | grep -q "PONG"
         '';
         name = "redis-test";
       };

@@ -7,13 +7,14 @@
     in
     {
       command = pkgs.writeShellApplication {
+        runtimeInputs = [ cfg.package pkgs.gnugrep ];
         text = ''
-          ${cfg.package}/bin/redis-cli -p 30001 ping | ${pkgs.gnugrep}/bin/grep -q "PONG"
-          ${cfg.package}/bin/redis-cli -p 30002 ping | ${pkgs.gnugrep}/bin/grep -q "PONG"
-          ${cfg.package}/bin/redis-cli -p 30003 ping | ${pkgs.gnugrep}/bin/grep -q "PONG"
-          ${cfg.package}/bin/redis-cli -p 30004 ping | ${pkgs.gnugrep}/bin/grep -q "PONG"
-          ${cfg.package}/bin/redis-cli -p 30005 ping | ${pkgs.gnugrep}/bin/grep -q "PONG"
-          ${cfg.package}/bin/redis-cli -p 30006 ping | ${pkgs.gnugrep}/bin/grep -q "PONG"
+          redis-cli -p 30001 ping | grep -q "PONG"
+          redis-cli -p 30002 ping | grep -q "PONG"
+          redis-cli -p 30003 ping | grep -q "PONG"
+          redis-cli -p 30004 ping | grep -q "PONG"
+          redis-cli -p 30005 ping | grep -q "PONG"
+          redis-cli -p 30006 ping | grep -q "PONG"
         '';
         name = "redis-cluster-test";
       };
