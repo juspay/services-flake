@@ -1,5 +1,5 @@
 {
-  description = "A demo of sqlite-web";
+  description = "A demo of sqlite-web and multiple postgres services";
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
