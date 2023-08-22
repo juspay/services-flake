@@ -10,6 +10,7 @@
       cfg = config.services.postgres."pg1";
     in
     {
+      disabled = true;
       command = pkgs.writeShellApplication {
         runtimeInputs = [ cfg.package pkgs.gnugrep ];
         text = ''

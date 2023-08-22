@@ -6,6 +6,7 @@
       cfg = config.services.redis."redis1";
     in
     {
+      disabled = true;
       command = pkgs.writeShellApplication {
         runtimeInputs = [ cfg.package pkgs.gnugrep ];
         text = ''
