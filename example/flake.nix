@@ -53,6 +53,17 @@
                 command = pkgs.pgweb;
                 depends_on."pg1".condition = "process_healthy";
               };
+            settings.processes.test = {
+              disabled = true;
+              command = pkgs.writeShellApplication {
+                name = "pg1-test";
+                runtimeInputs = [ config.services.postgres.pg1.package ];
+                text = ''
+                  echo 'SELECT version();' | psql -h 127.0.0.1 ${dbName}
+                '';
+              };
+              depends_on."pg1".condition = "process_healthy";
+            };
           };
 
         devShells.default = pkgs.mkShell {
