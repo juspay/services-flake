@@ -6,7 +6,6 @@
       cfg = config.services.redis-cluster."c1";
     in
     {
-      disabled = true;
       command = pkgs.writeShellApplication {
         runtimeInputs = [ cfg.package pkgs.gnugrep ];
         text = ''

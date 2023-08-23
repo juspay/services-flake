@@ -4,7 +4,7 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
     systems.url = "github:nix-systems/default";
-    process-compose-flake.url = "github:Platonic-Systems/process-compose-flake";
+    process-compose-flake.url = "github:shivaraj-bh/process-compose-flake/merge-yaml-in-nix";
     services-flake.url = "github:juspay/services-flake";
 
     northwind.url = "github:pthom/northwind_psql";
@@ -54,7 +54,6 @@
                 depends_on."pg1".condition = "process_healthy";
               };
             settings.processes.test = {
-              disabled = true;
               command = pkgs.writeShellApplication {
                 name = "pg1-test";
                 runtimeInputs = [ config.services.postgres.pg1.package ];
