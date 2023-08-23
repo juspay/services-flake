@@ -70,11 +70,11 @@
     },
     "process-compose-flake": {
       "locked": {
-        "lastModified": 1692776051,
-        "narHash": "sha256-/Nouo4SLkYZAiLIscCrVqFS49EVLcRcgAdRX7UbJJKg=",
+        "lastModified": 1692810325,
+        "narHash": "sha256-Zc8nDSVkTUskB5mp9fh1mmOIUvx2pJ5V/Uq/0kxQ6B0=",
         "owner": "shivaraj-bh",
         "repo": "process-compose-flake",
-        "rev": "33fa775af7c643bbb3255683370c88ed9cf6a2f2",
+        "rev": "4196bc2c3557815ffe53e02c67a6cd919e6dd174",
         "type": "github"
       },
       "original": {
