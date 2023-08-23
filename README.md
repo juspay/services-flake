@@ -20,6 +20,7 @@ TODO
 - [ ] MySQL
 - [x] Redis
 - [x] Redis Cluster
+- [x] Elasticsearch
 - [ ] ...
 
 ## A note on process working directory

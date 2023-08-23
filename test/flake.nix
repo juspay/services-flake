@@ -12,7 +12,12 @@
       imports = [
         inputs.process-compose-flake.flakeModule
       ];
-      perSystem = { self', pkgs, lib, ... }: {
+      perSystem = { self', pkgs, system, lib, ... }: {
+        _module.args.pkgs = import inputs.nixpkgs {
+          inherit system;
+          # Required for elastic search
+          config.allowUnfree = true;
+        };
         process-compose = {
           postgres = {
             imports = [
@@ -30,6 +35,12 @@
             imports = [
               inputs.services-flake.processComposeModules.default
               ../nix/redis-cluster_test.nix
+            ];
+          };
+          elasticsearch = {
+            imports = [
+              inputs.services-flake.processComposeModules.default
+              ../nix/elasticsearch_test.nix
             ];
           };
         };
