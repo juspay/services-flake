@@ -43,6 +43,18 @@
               ../nix/elasticsearch_test.nix
             ];
           };
+          apache-kafka = {
+            imports = [
+              inputs.services-flake.processComposeModules.default
+              ../nix/apache-kafka_test.nix
+            ];
+          };
+          zookeeper = {
+            imports = [
+              inputs.services-flake.processComposeModules.default
+              ../nix/zookeeper_test.nix
+            ];
+          };
         };
       };
     };
