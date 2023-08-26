@@ -18,44 +18,32 @@
           # Required for elastic search
           config.allowUnfree = true;
         };
-        process-compose = {
-          postgres = {
-            imports = [
-              inputs.services-flake.processComposeModules.default
-              ../nix/postgres_test.nix
-            ];
-          };
-          redis = {
-            imports = [
-              inputs.services-flake.processComposeModules.default
-              ../nix/redis_test.nix
-            ];
-          };
-          redis-cluster = {
-            imports = [
-              inputs.services-flake.processComposeModules.default
-              ../nix/redis-cluster_test.nix
-            ];
-          };
-          elasticsearch = {
-            imports = [
-              inputs.services-flake.processComposeModules.default
-              ../nix/elasticsearch_test.nix
-            ];
-          };
-          apache-kafka = {
-            imports = [
-              inputs.services-flake.processComposeModules.default
-              ../nix/apache-kafka_test.nix
-            ];
-          };
-          zookeeper = {
-            imports = [
-              inputs.services-flake.processComposeModules.default
-              ../nix/zookeeper_test.nix
-            ];
-          };
-        };
+        process-compose =
+          let
+            mkPackageFor = mod:
+              let
+                # Derive name from filename
+                name = lib.pipe mod [
+                  builtins.baseNameOf
+                  (builtins.match "(.*)_test.nix")
+                  builtins.head
+                ];
+              in
+              lib.nameValuePair name {
+                imports = [
+                  inputs.services-flake.processComposeModules.default
+                  mod
+                ];
+              };
+          in
+          builtins.listToAttrs (builtins.map mkPackageFor [
+            ../nix/apache-kafka_test.nix
+            ../nix/elasticsearch_test.nix
+            ../nix/postgres_test.nix
+            ../nix/redis_test.nix
+            ../nix/redis-cluster_test.nix
+            ../nix/zookeeper_test.nix
+          ]);
       };
     };
 }
