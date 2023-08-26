@@ -111,7 +111,6 @@ with lib;
                 ${config.extraConf}
                 ${config.servers}
                 admin.enableServer=false
-                4lw.commands.whitelist=stat
               '';
 
               configDir = pkgs.buildEnv {
