@@ -1,3 +1,4 @@
+# Based on: https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/misc/zookeeper.nix
 { config, lib, pkgs, name, ... }:
 
 with lib;
