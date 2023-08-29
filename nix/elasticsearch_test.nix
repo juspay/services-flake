@@ -5,7 +5,7 @@
       command = pkgs.writeShellApplication {
         runtimeInputs = [ pkgs.curl ];
         text = ''
-         curl 127.0.0.1:9200/_cat/health 
+          curl 127.0.0.1:9200/_cat/health 
         '';
         name = "elasticsearch-test";
       };

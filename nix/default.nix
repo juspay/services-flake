@@ -34,9 +34,11 @@ let
 in
 {
   imports = builtins.map multiService [
+    ./apache-kafka.nix
     ./postgres.nix
     ./redis.nix
     ./redis-cluster.nix
     ./elasticsearch.nix
+    ./zookeeper.nix
   ];
 }
