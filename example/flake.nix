@@ -26,43 +26,8 @@
             imports = [
               inputs.services-flake.processComposeModules.default
             ];
+            services.mysql.m1.enable = true;
 
-            services.postgres."pg1" = {
-              enable = true;
-              listen_addresses = "127.0.0.1";
-              initialDatabases = [
-                {
-                  name = dbName;
-                  schema = "${inputs.northwind}/northwind.sql";
-                }
-              ];
-            };
-
-            services.postgres."pg2" = {
-              enable = true;
-              listen_addresses = "127.0.0.1";
-              port = 5433;
-            };
-
-            settings.processes.pgweb =
-              let
-                pgcfg = config.services.postgres.pg1;
-              in
-              {
-                environment.PGWEB_DATABASE_URL = "postgres://$USER@${pgcfg.listen_addresses}:${builtins.toString pgcfg.port}/${dbName}";
-                command = pkgs.pgweb;
-                depends_on."pg1".condition = "process_healthy";
-              };
-            settings.processes.test = {
-              command = pkgs.writeShellApplication {
-                name = "pg1-test";
-                runtimeInputs = [ config.services.postgres.pg1.package ];
-                text = ''
-                  echo 'SELECT version();' | psql -h 127.0.0.1 ${dbName}
-                '';
-              };
-              depends_on."pg1".condition = "process_healthy";
-            };
           };
 
         devShells.default = pkgs.mkShell {

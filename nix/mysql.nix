@@ -203,10 +203,6 @@ in
             PATH="${lib.makeBinPath [config.package pkgs.coreutils]}:$PATH"
             set -euo pipefail
 
-            while ! MYSQL_PWD="" ${config.package}/bin/mysqladmin ping -u root --silent; do
-              sleep 1
-            done
-
             ${lib.concatMapStrings (database: ''
                 # Create initial databases
                 exists="$(
@@ -246,9 +242,6 @@ in
                 ) | MYSQL_PWD="" ${config.package}/bin/mysql -u root -N
               '')
               config.ensureUsers}
-
-            # We need to sleep until infinity otherwise all processes stop
-            sleep infinity
           '';
         in
         {
