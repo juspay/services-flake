@@ -22,5 +22,11 @@
         dir = "./dev";
       };
     };
+    nixci.ex =  let overrideInputs = { "services-flake" = ./.; }; in {
+      example = {
+        inherit overrideInputs;
+        dir = "./example";
+      };
+    };
   };
 }
