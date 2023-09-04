@@ -9,7 +9,7 @@
 
     # Config for https://github.com/srid/nixci
     # To run this, `nix run github:srid/nixci`
-    nixci = let overrideInputs = { "services-flake" = ./.; }; in {
+    nixci.default = let overrideInputs = { "services-flake" = ./.; }; in {
       example = {
         inherit overrideInputs;
         dir = "./example";
