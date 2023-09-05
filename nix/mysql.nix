@@ -17,19 +17,13 @@ in
 
     dataDir = lib.mkOption {
       type = types.str;
-      default = "/Users/shivaraj/juspay/services-flake/example/data/${name}";
+      default = "./data/${name}";
       description = "The mysql data directory";
     };
 
     settings = lib.mkOption {
       type = format.type;
-      default = { 
-        mysqld = {
-          port = 3306;
-          socket = "${config.dataDir}/mysql.sock";
-          datadir = config.dataDir;
-        };
-      };
+      default = {  };
       description = ''
         MySQL configuration.
       '';
@@ -160,7 +154,13 @@ in
           isMariaDB = lib.getName config.package == lib.getName pkgs.mariadb;
           configFile = format.generate "my.cnf" config.settings;
           mysqlOptions = "--defaults-file=${configFile}";
-          mysqldOptions = "${mysqlOptions} --datadir=${config.dataDir} --basedir=${config.package}";
+          mysqldOptions = "${mysqlOptions} --datadir=$MYSQL_HOME --basedir=${config.package}";
+          envs = ''
+            export MYSQL_HOME=$(${pkgs.coreutils}/bin/realpath ${config.dataDir})
+            export MYSQL_UNIX_PORT=$(${pkgs.coreutils}/bin/realpath ${config.dataDir + "/mysql.sock"})
+            export MYSQLX_UNIX_PORT=$(${pkgs.coreutils}/bin/realpath ${config.dataDir + "/mysqlx.sock"})
+            ${lib.optionalString (lib.hasAttrByPath [ "mysqld" "port" ] config.settings) "export MYSQL_TCP_PORT=${toString config.settings.mysqld.port}"}
+          '';
 
           initDatabaseCmd =
             if isMariaDB
@@ -175,23 +175,23 @@ in
           configureTimezones = ''
             # Start a temp database with the default-time-zone to import tz data
             # and hide the temp database from the configureScript by setting a custom socket
-            nohup ${config.package}/bin/mysqld ${mysqldOptions} --socket="${config.dataDir}/config.sock" --skip-networking --default-time-zone=SYSTEM &
+            nohup ${config.package}/bin/mysqld ${mysqldOptions} --socket="$MYSQL_HOME/config.sock" --skip-networking --default-time-zone=SYSTEM &
 
-            while ! MYSQL_PWD="" ${config.package}/bin/mysqladmin --socket="${config.dataDir}/config.sock" ping -u root --silent; do
+            while ! MYSQL_PWD="" ${config.package}/bin/mysqladmin --socket="$MYSQL_HOME/config.sock" ping -u root --silent; do
               sleep 1
             done
 
-            ${config.package}/bin/mysql_tzinfo_to_sql ${pkgs.tzdata}/share/zoneinfo/ | MYSQL_PWD="" ${cfg.package}/bin/mysql --socket="${config.dataDir}/config.sock" -u root mysql
+            ${config.package}/bin/mysql_tzinfo_to_sql ${pkgs.tzdata}/share/zoneinfo/ | MYSQL_PWD="" ${config.package}/bin/mysql --socket="$MYSQL_HOME/config.sock" -u root mysql
 
             # Shutdown the temp database
-            MYSQL_PWD="" ${config.package}/bin/mysqladmin --socket="${config.dataDir}/config.sock" shutdown -u root
+            MYSQL_PWD="" ${config.package}/bin/mysqladmin --socket="$MYSQL_HOME/config.sock" shutdown -u root
           '';
 
           startScript = pkgs.writeShellScriptBin "start-mysql" ''
             set -euo pipefail
-
-            if [[ ! -d "${config.dataDir}" || ! -f "${config.dataDir}/ibdata1" ]]; then
-              mkdir -p "${config.dataDir}"
+            ${envs}
+            if [[ ! -d "$MYSQL_HOME" || ! -f "$MYSQL_HOME/ibdata1" ]]; then
+              mkdir -p "$MYSQL_HOME"
               ${initDatabaseCmd}
               ${lib.optionalString importTimeZones configureTimezones}
             fi
@@ -202,7 +202,7 @@ in
           configureScript = pkgs.writeShellScriptBin "configure-mysql" ''
             PATH="${lib.makeBinPath [config.package pkgs.coreutils]}:$PATH"
             set -euo pipefail
-
+            ${envs} 
             ${lib.concatMapStrings (database: ''
                 # Create initial databases
                 exists="$(
@@ -212,7 +212,7 @@ in
                 if [[ "$exists" -eq 0 ]]; then
                   echo "Creating initial database: ${database.name}"
                   ( echo 'create database `${database.name}`;'
-                    ${optionalString (database.schema != null) ''
+                    ${lib.optionalString (database.schema != null) ''
                   echo 'use `${database.name}`;'
                   # TODO: this silently falls through if database.schema does not exist,
                   # we should catch this somehow and exit, but can't do it here because we're in a subshell.
@@ -233,9 +233,9 @@ in
 
             ${lib.concatMapStrings (user: ''
                 echo "Adding user: ${user.name}"
-                ${optionalString (user.password != null) "password='${user.password}'"}
-                ( echo "CREATE USER IF NOT EXISTS '${user.name}'@'localhost' ${optionalString (user.password != null) "IDENTIFIED BY '$password'"};"
-                  ${concatStringsSep "\n" (mapAttrsToList (database: permission: ''
+                ${lib.optionalString (user.password != null) "password='${user.password}'"}
+                ( echo "CREATE USER IF NOT EXISTS '${user.name}'@'localhost' ${lib.optionalString (user.password != null) "IDENTIFIED BY '$password'"};"
+                  ${lib.concatStringsSep "\n" (lib.mapAttrsToList (database: permission: ''
                     echo 'GRANT ${permission} ON ${database} TO `${user.name}`@`localhost`;'
                   '')
                   user.ensurePermissions)}
@@ -243,6 +243,7 @@ in
               '')
               config.ensureUsers}
           '';
+
         in
         {
           "${name}" = 
@@ -250,6 +251,8 @@ in
             command = "${startScript}/bin/start-mysql";
 
             readiness_probe = {
+              # Turns out using `--defaults-file` alone doesn't make the readiness_probe work unless `MYSQL_UNIX_PORT` is set.
+              # Hence the use of `--socket`.
               exec.command = "${config.package}/bin/mysqladmin --socket=${config.dataDir}/mysql.sock ping -h localhost";
               initial_delay_seconds = 2;
               period_seconds = 10;
