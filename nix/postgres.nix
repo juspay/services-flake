@@ -343,7 +343,8 @@ in
 
                 initdbArgs =
                   config.initdbArgs
-                  ++ (lib.optionals (config.superuser != null) [ "-U" config.superuser ]);
+                  ++ (lib.optionals (config.superuser != null) [ "-U" config.superuser ])
+                  ++ ["-D" config.dataDir ];
 
                 setupScript = pkgs.writeShellScriptBin "setup-postgres" ''
                   set -euo pipefail
@@ -351,6 +352,7 @@ in
 
                   if [[ ! -d "$PGDATA" ]]; then
                     set -x
+                    mkdir -p ${config.dataDir}
                     initdb ${lib.concatStringsSep " " initdbArgs}
                     set +x
 
