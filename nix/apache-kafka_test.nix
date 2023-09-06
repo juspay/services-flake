@@ -4,7 +4,7 @@
   settings.processes.test =
     {
       command = pkgs.writeShellApplication {
-        runtimeInputs = [ pkgs.bash config.package ];
+        runtimeInputs = [ pkgs.bash config.services.apache-kafka.k1.package ];
         text = ''
           bash kafka-topics.sh --list --bootstrap-server localhost:9092 
         '';

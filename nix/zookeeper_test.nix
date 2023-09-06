@@ -3,7 +3,7 @@
   settings.processes.test =
     {
       command = pkgs.writeShellApplication {
-        runtimeInputs = [ pkgs.bash config.package ];
+        runtimeInputs = [ pkgs.bash config.services.zookeeper.z1.package ];
         text = ''
           bash zkCli.sh -server localhost:2181 get /
         '';
