@@ -3,9 +3,9 @@
   settings.processes.test =
     {
       command = pkgs.writeShellApplication {
-        runtimeInputs = [ pkgs.bash config.services.zookeeper.z1.package ];
+        runtimeInputs = [ config.services.zookeeper.z1.package pkgs.netcat.nc ];
         text = ''
-          bash zkCli.sh -server localhost:2181 get /
+          echo stat | nc localhost 2181
         '';
         name = "zookeeper-test";
       };
