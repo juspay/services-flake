@@ -17,7 +17,7 @@ TODO
 ## Services available
 
 - [x] PostgreSQL
-- [ ] MySQL
+- [x] MySQL
 - [x] Redis
 - [x] Redis Cluster
 - [x] Elasticsearch
