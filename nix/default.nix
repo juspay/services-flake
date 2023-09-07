@@ -1,14 +1,15 @@
 { pkgs, lib, ... }:
 let
   inherit (import ./lib.nix) multiService;
-in {
+in
+{
   imports = builtins.map multiService [
     ./apache-kafka.nix
+    ./elasticsearch.nix
     ./mysql.nix
     ./postgres.nix
-    ./redis.nix
     ./redis-cluster.nix
-    ./elasticsearch.nix
+    ./redis.nix
     ./zookeeper.nix
   ];
 }

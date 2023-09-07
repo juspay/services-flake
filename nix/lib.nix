@@ -5,14 +5,16 @@
   # 'name' parameter, and is expected to set the final process-compose config in
   # its `outputs.settings` option.
   multiService = mod:
-    { config, pkgs, lib, ... }: let
+    { config, pkgs, lib, ... }:
+    let
       # Derive name from filename
       name = lib.pipe mod [
         builtins.baseNameOf
         (lib.strings.splitString ".")
         builtins.head
       ];
-    in {
+    in
+    {
       options.services.${name} = lib.mkOption {
         description = ''
           ${name} service

@@ -16,11 +16,13 @@ TODO
 
 ## Services available
 
-- [x] PostgreSQL
+- [x] Apache Kafka
+- [x] Elasticsearch
 - [x] MySQL
+- [x] PostgreSQL
 - [x] Redis
 - [x] Redis Cluster
-- [x] Elasticsearch
+- [x] Zookeeper
 - [ ] ...
 
 ## A note on process working directory
