@@ -26,6 +26,7 @@
         name = "mysql-test";
       };
       depends_on = {
+        m1.condition = "process_healthy";
         m2.condition = "process_healthy";
       };
     };
