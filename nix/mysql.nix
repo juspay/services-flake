@@ -23,7 +23,7 @@ in
 
     settings = lib.mkOption {
       type = format.type;
-      default = {  };
+      default = { };
       description = ''
         MySQL configuration.
       '';
@@ -149,126 +149,126 @@ in
       internal = true;
       readOnly = true;
       default = {
-        processes = 
-        let
-          isMariaDB = lib.getName config.package == lib.getName pkgs.mariadb;
-          configFile = format.generate "my.cnf" config.settings;
-          mysqlOptions = "--defaults-file=${configFile}";
-          mysqldOptions = "${mysqlOptions} --datadir=$MYSQL_HOME --basedir=${config.package}";
-          envs = ''
-            export MYSQL_HOME=$(${pkgs.coreutils}/bin/realpath ${config.dataDir})
-            export MYSQL_UNIX_PORT=$(${pkgs.coreutils}/bin/realpath ${config.dataDir + "/mysql.sock"})
-            export MYSQLX_UNIX_PORT=$(${pkgs.coreutils}/bin/realpath ${config.dataDir + "/mysqlx.sock"})
-            ${lib.optionalString (lib.hasAttrByPath [ "mysqld" "port" ] config.settings) "export MYSQL_TCP_PORT=${toString config.settings.mysqld.port}"}
-          '';
+        processes =
+          let
+            isMariaDB = lib.getName config.package == lib.getName pkgs.mariadb;
+            configFile = format.generate "my.cnf" config.settings;
+            mysqlOptions = "--defaults-file=${configFile}";
+            mysqldOptions = "${mysqlOptions} --datadir=${config.dataDir} --basedir=${config.package}";
+            envs = ''
+              export MYSQL_HOME=$(${pkgs.coreutils}/bin/realpath ${config.dataDir})
+              export MYSQL_UNIX_PORT=$(${pkgs.coreutils}/bin/realpath ${config.dataDir + "/mysql.sock"})
+              export MYSQLX_UNIX_PORT=$(${pkgs.coreutils}/bin/realpath ${config.dataDir + "/mysqlx.sock"})
+              ${lib.optionalString (lib.hasAttrByPath [ "mysqld" "port" ] config.settings) "export MYSQL_TCP_PORT=${toString config.settings.mysqld.port}"}
+            '';
 
-          initDatabaseCmd =
-            if isMariaDB
-            then "${config.package}/bin/mysql_install_db ${mysqldOptions} --auth-root-authentication-method=normal"
-            else "${config.package}/bin/mysqld ${mysqldOptions} --default-time-zone=SYSTEM --initialize-insecure";
+            initDatabaseCmd =
+              if isMariaDB
+              then "${config.package}/bin/mysql_install_db ${mysqldOptions} --auth-root-authentication-method=normal"
+              else "${config.package}/bin/mysqld ${mysqldOptions} --default-time-zone=SYSTEM --initialize-insecure";
 
-          importTimeZones =
-            if (config.importTimeZones != null)
-            then config.importTimeZones
-            else lib.hasAttrByPath [ "settings" "mysqld" "default-time-zone" ] config;
+            importTimeZones =
+              if (config.importTimeZones != null)
+              then config.importTimeZones
+              else lib.hasAttrByPath [ "settings" "mysqld" "default-time-zone" ] config;
 
-          configureTimezones = ''
-            # Start a temp database with the default-time-zone to import tz data
-            # and hide the temp database from the configureScript by setting a custom socket
-            nohup ${config.package}/bin/mysqld ${mysqldOptions} --socket="$MYSQL_HOME/config.sock" --skip-networking --default-time-zone=SYSTEM &
+            configureTimezones = ''
+              # Start a temp database with the default-time-zone to import tz data
+              # and hide the temp database from the configureScript by setting a custom socket
+              nohup ${config.package}/bin/mysqld ${mysqldOptions} --socket="${config.dataDir}/config.sock" --skip-networking --default-time-zone=SYSTEM &
 
-            while ! MYSQL_PWD="" ${config.package}/bin/mysqladmin --socket="$MYSQL_HOME/config.sock" ping -u root --silent; do
-              sleep 1
-            done
+              while ! MYSQL_PWD="" ${config.package}/bin/mysqladmin --socket="${config.dataDir}/config.sock" ping -u root --silent; do
+                sleep 1
+              done
 
-            ${config.package}/bin/mysql_tzinfo_to_sql ${pkgs.tzdata}/share/zoneinfo/ | MYSQL_PWD="" ${config.package}/bin/mysql --socket="$MYSQL_HOME/config.sock" -u root mysql
+              ${config.package}/bin/mysql_tzinfo_to_sql ${pkgs.tzdata}/share/zoneinfo/ | MYSQL_PWD="" ${config.package}/bin/mysql --socket="${config.dataDir}/config.sock" -u root mysql
 
-            # Shutdown the temp database
-            MYSQL_PWD="" ${config.package}/bin/mysqladmin --socket="$MYSQL_HOME/config.sock" shutdown -u root
-          '';
+              # Shutdown the temp database
+              MYSQL_PWD="" ${config.package}/bin/mysqladmin --socket="${config.dataDir}/config.sock" shutdown -u root
+            '';
 
-          startScript = pkgs.writeShellScriptBin "start-mysql" ''
-            set -euo pipefail
-            ${envs}
-            if [[ ! -d "$MYSQL_HOME" || ! -f "$MYSQL_HOME/ibdata1" ]]; then
-              mkdir -p "$MYSQL_HOME"
-              ${initDatabaseCmd}
-              ${lib.optionalString importTimeZones configureTimezones}
-            fi
+            startScript = pkgs.writeShellScriptBin "start-mysql" ''
+              set -euo pipefail
 
-            exec ${config.package}/bin/mysqld ${mysqldOptions}
-          '';
+              if [[ ! -d ${config.dataDir} || ! -f ${config.dataDir}/ibdata1 ]]; then
+                mkdir -p ${config.dataDir}
+                ${initDatabaseCmd}
+                ${lib.optionalString importTimeZones configureTimezones}
+              fi
+              ${envs}
+              exec ${config.package}/bin/mysqld ${mysqldOptions}
+            '';
 
-          configureScript = pkgs.writeShellScriptBin "configure-mysql" ''
-            PATH="${lib.makeBinPath [config.package pkgs.coreutils]}:$PATH"
-            set -euo pipefail
-            ${envs} 
-            ${lib.concatMapStrings (database: ''
-                # Create initial databases
-                exists="$(
-                  MYSQL_PWD="" ${config.package}/bin/mysql -u root -sB information_schema \
-                    <<< 'select count(*) from schemata where schema_name = "${database.name}"'
-                )"
-                if [[ "$exists" -eq 0 ]]; then
-                  echo "Creating initial database: ${database.name}"
-                  ( echo 'create database `${database.name}`;'
-                    ${lib.optionalString (database.schema != null) ''
-                  echo 'use `${database.name}`;'
-                  # TODO: this silently falls through if database.schema does not exist,
-                  # we should catch this somehow and exit, but can't do it here because we're in a subshell.
-                  if [ -f "${database.schema}" ]
-                  then
-                      cat ${database.schema}
-                  elif [ -d "${database.schema}" ]
-                  then
-                      cat ${database.schema}/mysql-databases/*.sql
+            configureScript = pkgs.writeShellScriptBin "configure-mysql" ''
+              PATH="${lib.makeBinPath [config.package pkgs.coreutils]}:$PATH"
+              set -euo pipefail
+              ${envs} 
+              ${lib.concatMapStrings (database: ''
+                  # Create initial databases
+                  exists="$(
+                    MYSQL_PWD="" ${config.package}/bin/mysql -u root -sB information_schema \
+                      <<< 'select count(*) from schemata where schema_name = "${database.name}"'
+                  )"
+                  if [[ "$exists" -eq 0 ]]; then
+                    echo "Creating initial database: ${database.name}"
+                    ( echo 'create database `${database.name}`;'
+                      ${lib.optionalString (database.schema != null) ''
+                    echo 'use `${database.name}`;'
+                    # TODO: this silently falls through if database.schema does not exist,
+                    # we should catch this somehow and exit, but can't do it here because we're in a subshell.
+                    if [ -f "${database.schema}" ]
+                    then
+                        cat ${database.schema}
+                    elif [ -d "${database.schema}" ]
+                    then
+                        cat ${database.schema}/mysql-databases/*.sql
+                    fi
+                  ''}
+                    ) | MYSQL_PWD="" ${config.package}/bin/mysql -u root -N
+                  else
+                    echo "Database ${database.name} exists, skipping creation."
                   fi
-                ''}
+                '')
+                config.initialDatabases}
+
+              ${lib.concatMapStrings (user: ''
+                  echo "Adding user: ${user.name}"
+                  ${lib.optionalString (user.password != null) "password='${user.password}'"}
+                  ( echo "CREATE USER IF NOT EXISTS '${user.name}'@'localhost' ${lib.optionalString (user.password != null) "IDENTIFIED BY '$password'"};"
+                    ${lib.concatStringsSep "\n" (lib.mapAttrsToList (database: permission: ''
+                      echo 'GRANT ${permission} ON ${database} TO `${user.name}`@`localhost`;'
+                    '')
+                    user.ensurePermissions)}
                   ) | MYSQL_PWD="" ${config.package}/bin/mysql -u root -N
-                else
-                  echo "Database ${database.name} exists, skipping creation."
-                fi
-              '')
-              config.initialDatabases}
+                '')
+                config.ensureUsers}
+            '';
 
-            ${lib.concatMapStrings (user: ''
-                echo "Adding user: ${user.name}"
-                ${lib.optionalString (user.password != null) "password='${user.password}'"}
-                ( echo "CREATE USER IF NOT EXISTS '${user.name}'@'localhost' ${lib.optionalString (user.password != null) "IDENTIFIED BY '$password'"};"
-                  ${lib.concatStringsSep "\n" (lib.mapAttrsToList (database: permission: ''
-                    echo 'GRANT ${permission} ON ${database} TO `${user.name}`@`localhost`;'
-                  '')
-                  user.ensurePermissions)}
-                ) | MYSQL_PWD="" ${config.package}/bin/mysql -u root -N
-              '')
-              config.ensureUsers}
-          '';
-
-        in
-        {
-          "${name}" = 
+          in
           {
-            command = "${startScript}/bin/start-mysql";
+            "${name}" =
+              {
+                command = "${startScript}/bin/start-mysql";
 
-            readiness_probe = {
-              # Turns out using `--defaults-file` alone doesn't make the readiness_probe work unless `MYSQL_UNIX_PORT` is set.
-              # Hence the use of `--socket`.
-              exec.command = "${config.package}/bin/mysqladmin --socket=${config.dataDir}/mysql.sock ping -h localhost";
-              initial_delay_seconds = 2;
-              period_seconds = 10;
-              timeout_seconds = 4;
-              success_threshold = 1;
-              failure_threshold = 5;
+                readiness_probe = {
+                  # Turns out using `--defaults-file` alone doesn't make the readiness_probe work unless `MYSQL_UNIX_PORT` is set.
+                  # Hence the use of `--socket`.
+                  exec.command = "${config.package}/bin/mysqladmin --socket=${config.dataDir}/mysql.sock ping -h localhost";
+                  initial_delay_seconds = 2;
+                  period_seconds = 10;
+                  timeout_seconds = 4;
+                  success_threshold = 1;
+                  failure_threshold = 5;
+                };
+
+                # https://github.com/F1bonacc1/process-compose#-auto-restart-if-not-healthy
+                availability.restart = "on_failure";
+              };
+            "${name}-configure" = {
+              command = "${configureScript}/bin/configure-mysql";
+              depends_on."${name}".condition = "process_healthy";
             };
-
-            # https://github.com/F1bonacc1/process-compose#-auto-restart-if-not-healthy
-            availability.restart = "on_failure";
           };
-          "${name}-configure" = {
-            command = "${configureScript}/bin/configure-mysql";
-            depends_on."${name}".condition = "process_healthy";
-          };
-        };
       };
     };
   };
