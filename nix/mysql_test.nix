@@ -26,8 +26,8 @@
         name = "mysql-test";
       };
       depends_on = {
-        m1.condition = "process_healthy";
-        m2.condition = "process_healthy";
+        m1-configure.condition = "process_completed";
+        m2-configure.condition = "process_completed";
       };
     };
 }
