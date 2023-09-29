@@ -114,6 +114,7 @@ in
                 success_threshold = 1;
                 failure_threshold = 5;
               };
+              namespace = name;
 
               # https://github.com/F1bonacc1/process-compose#-auto-restart-if-not-healthy
               availability.restart = "on_failure";
@@ -125,6 +126,7 @@ in
             "${name}-cluster-create" = {
               depends_on = lib.mapAttrs' (nodeName: cfg: lib.nameValuePair "${name}-${nodeName}" { condition = "process_healthy"; }) config.nodes;
               command = "${config.package}/bin/redis-cli --cluster create ${lib.concatStringsSep " " hosts} --cluster-replicas ${builtins.toString config.replicas} --cluster-yes";
+              namespace = name;
             };
           };
         };
