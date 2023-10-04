@@ -269,7 +269,7 @@ in
         {
           processes = {
             # DB initialization
-            "${name}-init".command =
+            "${name}-init" =
               let
                 setupInitialDatabases =
                   if config.initialDatabases != [ ] then
@@ -368,10 +368,13 @@ in
                   cp ${configFile} "$PGDATA/postgresql.conf"
                 '';
               in
-              ''
-                export PGDATA="${config.dataDir}"
-                ${lib.getExe setupScript}
-              '';
+              {
+                command = ''
+                  export PGDATA="${config.dataDir}"
+                  ${lib.getExe setupScript}
+                '';
+                namespace = name;
+              };
 
             # DB process
             ${name} =
@@ -405,6 +408,7 @@ in
                   success_threshold = 1;
                   failure_threshold = 5;
                 };
+                namespace = name;
                 # https://github.com/F1bonacc1/process-compose#-auto-restart-if-not-healthy
                 availability.restart = "on_failure";
               };
