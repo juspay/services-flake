@@ -16,5 +16,6 @@ jobs:
       - uses: DeterminateSystems/magic-nix-cache-action@main
       - uses: yaxitech/nix-install-pkgs-action@v3
         with:
+          inputs-from: ./dev
           packages: "nixpkgs#nixci"
       - run: nixci
