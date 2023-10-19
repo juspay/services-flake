@@ -78,6 +78,7 @@ in
                 success_threshold = 1;
                 failure_threshold = 5;
               };
+              namespace = name;
 
               # https://github.com/F1bonacc1/process-compose#-auto-restart-if-not-healthy
               availability.restart = "on_failure";

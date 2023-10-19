@@ -269,7 +269,7 @@ in
         {
           processes = {
             # DB initialization
-            "${name}-init".command =
+            "${name}-init" =
               let
                 setupInitialDatabases =
                   if config.initialDatabases != [ ] then
@@ -343,7 +343,8 @@ in
 
                 initdbArgs =
                   config.initdbArgs
-                  ++ (lib.optionals (config.superuser != null) [ "-U" config.superuser ]);
+                  ++ (lib.optionals (config.superuser != null) [ "-U" config.superuser ])
+                  ++ [ "-D" config.dataDir ];
 
                 setupScript = pkgs.writeShellScriptBin "setup-postgres" ''
                   set -euo pipefail
@@ -351,6 +352,7 @@ in
 
                   if [[ ! -d "$PGDATA" ]]; then
                     set -x
+                    mkdir -p ${config.dataDir}
                     initdb ${lib.concatStringsSep " " initdbArgs}
                     set +x
 
@@ -366,10 +368,13 @@ in
                   cp ${configFile} "$PGDATA/postgresql.conf"
                 '';
               in
-              ''
-                export PGDATA="${config.dataDir}"
-                ${lib.getExe setupScript}
-              '';
+              {
+                command = ''
+                  export PGDATA="${config.dataDir}"
+                  ${lib.getExe setupScript}
+                '';
+                namespace = name;
+              };
 
             # DB process
             ${name} =
@@ -403,6 +408,7 @@ in
                   success_threshold = 1;
                   failure_threshold = 5;
                 };
+                namespace = name;
                 # https://github.com/F1bonacc1/process-compose#-auto-restart-if-not-healthy
                 availability.restart = "on_failure";
               };

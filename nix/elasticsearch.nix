@@ -144,10 +144,10 @@ in
             startScript = pkgs.writeShellScript "es-startup" ''
               set -e
 
+              mkdir -m 0700 -p "${config.dataDir}"
               export ES_HOME=$(${pkgs.coreutils}/bin/realpath ${config.dataDir})
               export ES_JAVA_OPTS="${toString config.extraJavaOptions}"
               export ES_PATH_CONF="${config.dataDir}/config"
-              mkdir -m 0700 -p "${config.dataDir}"
               # Install plugins
               rm -f "${config.dataDir}/plugins"
               ln -sf ${esPlugins}/plugins "${config.dataDir}/plugins"
@@ -188,6 +188,7 @@ in
               success_threshold = 1;
               failure_threshold = 5;
             };
+            namespace = name;
 
             # https://github.com/F1bonacc1/process-compose#-auto-restart-if-not-healthy
             availability.restart = "on_failure";

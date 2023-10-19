@@ -112,6 +112,7 @@ with lib;
                 ${config.extraConf}
                 ${config.servers}
                 admin.enableServer=false
+                4lw.commands.whitelist=stat
               '';
 
               configDir = pkgs.buildEnv {
@@ -136,14 +137,14 @@ with lib;
               command = "${startScript}/bin/start-zookeeper";
 
               readiness_probe = {
-                # TODO: need to find a better way to check if zookeeper is ready, maybe `zkCli.sh`?
-                exec.command = "${pkgs.netcat.nc}/bin/nc -z localhost ${toString config.port}";
+                exec.command = "echo stat | ${pkgs.netcat.nc}/bin/nc localhost ${toString config.port}";
                 initial_delay_seconds = 2;
                 period_seconds = 10;
                 timeout_seconds = 4;
                 success_threshold = 1;
                 failure_threshold = 5;
               };
+              namespace = name;
 
               availability.restart = "on_failure";
             };
