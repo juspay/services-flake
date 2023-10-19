@@ -16,5 +16,5 @@ jobs:
       - uses: DeterminateSystems/magic-nix-cache-action@main
       - uses: yaxitech/nix-install-pkgs-action@v3
         with:
-          packages: "github:srid/nixpkgs/nixci2#nixci"
+          packages: "nixpkgs#nixci"
       - run: nixci
