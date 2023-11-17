@@ -27,12 +27,12 @@ TODO
 
 ## A note on process working directory
 
-The `dataDir` of these services tend to take *relative* paths, which are usually relative to the project root. As such, when you run these services using `nix run`, their data files are created relative to whichever directory you are in. If you want these data files to always reside relative to the project directory, instead of using `nix run` consider wrapping the process-compose packages in script, via either [mission-control](https://zero-to-flakes.com/mission-control/) module or a [justfile](https://just.systems/). The example uses the latter.
+The `dataDir` of these services tend to take *relative* paths, which are usually relative to the project root. As such, when you run these services using `nix run`, their data files are created relative to whichever directory you are in. If you want these data files to always reside relative to the project directory, instead of using `nix run` consider wrapping the process-compose packages in script, via either [mission-control](https://flakular.in/mission-control/) module or a [justfile](https://just.systems/). The example uses the latter.
 
 ## Contributing
 
 - If you are adding a *new* service, see https://github.com/cachix/devenv/tree/main/src/modules/services for inspiration.
-- For contributing to docs, see https://zero-to-flakes.com/about#contributing
+- For contributing to docs, see https://flakular.in/about#contributing
 
 ## Credits
 

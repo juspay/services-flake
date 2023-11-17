@@ -23,7 +23,7 @@
           nativeBuildInputs = [
             pkgs.just
           ];
-          # cf. https://zero-to-flakes.com/haskell-flake/devshell#composing-devshells
+          # cf. https://flakular.in/haskell-flake/devshell#composing-devshells
           inputsFrom = [
             config.treefmt.build.devShell
           ];
