@@ -10,9 +10,13 @@ NixOS-like services for Nix flakes, as a [process-compose-flake](https://github.
 
 ## Getting Started
 
-TODO
+```sh
+$ nix flake new --template github:juspay/services-flake ./my-project
+$ cd my-project
+$ nix run
+```
 
-(But see `./test/flake.nix`)
+Or see `./test/flake.nix`
 
 ## Services available
 
