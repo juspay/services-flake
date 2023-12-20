@@ -277,15 +277,15 @@ in
                       (database: ''
                         echo "Checking presence of database: ${database.name}"
                         # Create initial databases
-                        dbAlreadyExists="$(
+                        dbAlreadyExists=$(
                           echo "SELECT 1 as exists FROM pg_database WHERE datname = '${database.name}';" | \
-                          postgres --single -E postgres | \
+                          psql -d postgres | \
                           ${pkgs.gnugrep}/bin/grep -c 'exists = "1"' || true
-                        )"
+                        )
                         echo $dbAlreadyExists
                         if [ 1 -ne "$dbAlreadyExists" ]; then
                           echo "Creating database: ${database.name}"
-                          echo 'create database "${database.name}";' | postgres --single -E postgres
+                          echo 'create database "${database.name}";' | psql -d postgres
 
 
                           ${lib.optionalString (database.schema != null) ''
@@ -293,7 +293,7 @@ in
                           if [ -f "${database.schema}" ]
                           then
                             echo "Running file ${database.schema}"
-                            ${pkgs.gawk}/bin/awk 'NF' "${database.schema}" | postgres --single -j -E ${database.name}
+                            ${pkgs.gawk}/bin/awk 'NF' "${database.schema}" | psql -d ${database.name}
                           elif [ -d "${database.schema}" ]
                           then
                             # Read sql files in version order. Apply one file
@@ -301,7 +301,7 @@ in
                             # doesn't end in a ;.
                             ls -1v "${database.schema}"/*.sql | while read f ; do
                               echo "Applying sql file: $f"
-                              ${pkgs.gawk}/bin/awk 'NF' "$f" | postgres --single -j -E ${database.name}
+                              ${pkgs.gawk}/bin/awk 'NF' "$f" | psql -d ${database.name}
                             done
                           else
                             echo "ERROR: Could not determine how to apply schema with ${database.schema}"
@@ -313,12 +313,12 @@ in
                       config.initialDatabases)
                   else
                     lib.optionalString config.createDatabase ''
-                      echo "CREATE DATABASE ''${USER:-$(id -nu)};" | postgres --single -E postgres '';
+                     echo "CREATE DATABASE ''${USER:-$(id -nu)};" | psql -d postgres '';
 
                 runInitialScript =
                   let
                     scriptCmd = sqlScript: ''
-                      echo "${sqlScript}" | postgres --single -E postgres
+                      echo "${sqlScript}" | psql -d postgres
                     '';
                   in
                   {
@@ -338,47 +338,50 @@ in
                   else
                     toString value;
 
-                configFile = pkgs.writeText "postgresql.conf" (lib.concatStringsSep "\n"
-                  (lib.mapAttrsToList (n: v: "${n} = ${toStr v}") (config.defaultSettings // config.settings)));
-
-                initdbArgs =
-                  config.initdbArgs
-                  ++ (lib.optionals (config.superuser != null) [ "-U" config.superuser ])
-                  ++ [ "-D" config.dataDir ];
 
                 setupScript = pkgs.writeShellScriptBin "setup-postgres" ''
                   set -euo pipefail
                   export PATH=${postgresPkg}/bin:${pkgs.coreutils}/bin
+                    
 
-                  if [[ ! -d "$PGDATA" ]]; then
-                    set -x
-                    mkdir -p ${config.dataDir}
-                    initdb ${lib.concatStringsSep " " initdbArgs}
-                    set +x
+                  ${runInitialScript.before}
+                  ${setupInitialDatabases}
+                  ${runInitialScript.after}
 
-                    ${runInitialScript.before}
-                    ${setupInitialDatabases}
-                    ${runInitialScript.after}
-                  else
-                    echo "Postgres data directory already exists. Skipping initialization."
-                  fi
-
-                  # Setup config
-                  set -x
-                  cp ${configFile} "$PGDATA/postgresql.conf"
                 '';
               in
-              {
+              { 
                 command = ''
                   export PGDATA="${config.dataDir}"
+                  export PGHOST=$(readlink -f "${config.dataDir}")
+                  export PGPORT="${toString config.port}"
                   ${lib.getExe setupScript}
                 '';
                 namespace = name;
+                depends_on."${name}".condition = "process_healthy";
               };
 
             # DB process
             ${name} =
               let
+                initdbArgs =
+                  config.initdbArgs
+                  ++ (lib.optionals (config.superuser != null) [ "-U" config.superuser ])
+                  ++ [ "-D" config.dataDir ];
+
+                configFile = pkgs.writeText "postgresql.conf" (lib.concatStringsSep "\n"
+                  (lib.mapAttrsToList (n: v: "${n} = ${toStr v}") (config.defaultSettings // config.settings)));
+                
+                toStr = value:
+                  if true == value then
+                    "yes"
+                  else if false == value then
+                    "no"
+                  else if lib.isString value then
+                    "'${lib.replaceStrings [ "'" ] [ "''" ] value}'"
+                  else
+                    toString value;
+
                 startScript = pkgs.writeShellApplication {
                   name = "start-postgres";
                   text = ''
@@ -386,6 +389,14 @@ in
                     set -x
                     PGDATA=$(readlink -f "${config.dataDir}")
                     export PGDATA
+                    if [[ ! -d "$PGDATA" ]]; then
+                      mkdir -p ${config.dataDir}
+                      initdb ${lib.concatStringsSep " " initdbArgs}
+                     # Setup config
+                     cp ${configFile} "$PGDATA/postgresql.conf"
+                    else 
+                      echo "Postgres data directory already exists. Skipping initialization."
+                    fi
                     postgres -k "$PGDATA"
                   '';
                 };
@@ -397,7 +408,6 @@ in
               in
               {
                 command = startScript;
-                depends_on."${name}-init".condition = "process_completed_successfully";
                 # SIGINT (= 2) for faster shutdown: https://www.postgresql.org/docs/current/server-shutdown.html
                 shutdown.signal = 2;
                 readiness_probe = {
