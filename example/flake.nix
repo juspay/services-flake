@@ -51,7 +51,7 @@
               {
                 environment.PGWEB_DATABASE_URL = "postgres://$USER@${pgcfg.listen_addresses}:${builtins.toString pgcfg.port}/${dbName}";
                 command = pkgs.pgweb;
-                depends_on."pg1".condition = "process_healthy";
+                depends_on."pg1-init".condition = "process_completed_successfully";
               };
             settings.processes.test = {
               command = pkgs.writeShellApplication {
@@ -61,7 +61,7 @@
                   echo 'SELECT version();' | psql -h 127.0.0.1 ${dbName}
                 '';
               };
-              depends_on."pg1".condition = "process_healthy";
+              depends_on."pg1-init".condition = "process_completed_successfully";
             };
           };
 
