@@ -385,18 +385,22 @@ in
                 startScript = pkgs.writeShellApplication {
                   name = "start-postgres";
                   text = ''
-                    export PATH="${postgresPkg}"/bin:$PATH
-                    set -x
-                    PGDATA=$(readlink -f "${config.dataDir}")
-                    export PGDATA
+                    export PATH=${postgresPkg}/bin:${pkgs.coreutils}/bin
+                    export PGDATA="${config.dataDir}"
                     if [[ ! -d "$PGDATA" ]]; then
+                      echo "creating directory"
                       mkdir -p ${config.dataDir}
                       initdb ${lib.concatStringsSep " " initdbArgs}
-                     # Setup config
-                     cp ${configFile} "$PGDATA/postgresql.conf"
+                      # Setup config
+                      cp ${configFile} "$PGDATA/postgresql.conf"
                     else 
                       echo "Postgres data directory already exists. Skipping initialization."
                     fi
+                    export PATH="${postgresPkg}"/bin:$PATH
+                    set -x
+                    echo "before readlink"
+                    PGDATA=$(readlink -f "${config.dataDir}")
+                    export PGDATA
                     postgres -k "$PGDATA"
                   '';
                 };
