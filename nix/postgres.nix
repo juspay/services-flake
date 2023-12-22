@@ -212,6 +212,15 @@ in
         ]
       '';
     };
+    
+    initialDumps = lib.mkOption {
+      type = types.listOf types.path;
+      default = [ ];
+      description = "List of SQL dumps to run during the database initialization.";
+      example = lib.literalExpression ''
+        [ ./foo.sql ./bar.sql ]
+      '';  
+    };
 
     initialScript = lib.mkOption {
       type = types.submodule ({ config, ... }: {
@@ -315,6 +324,14 @@ in
                     lib.optionalString config.createDatabase ''
                       echo "CREATE DATABASE ''${USER:-$(id -nu)};" | postgres --single -E postgres '';
 
+                runInitialDumps =
+                  let 
+                    scriptCmd = dump: ''
+                      psql -d postgres < ${dump}
+                    '';
+                  in
+                    builtins.concatStringsSep "\n" (map scriptCmd config.initialDumps);
+
                 runInitialScript =
                   let
                     scriptCmd = sqlScript: ''
@@ -359,6 +376,8 @@ in
                     ${runInitialScript.before}
                     ${setupInitialDatabases}
                     ${runInitialScript.after}
+                    ${runInitialDumps}
+
                   else
                     echo "Postgres data directory already exists. Skipping initialization."
                   fi
