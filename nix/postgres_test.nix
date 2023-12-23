@@ -24,6 +24,6 @@
         '';
         name = "postgres-test";
       };
-      depends_on."pg1-init".condition = "process_completed_successfully";
+      depends_on."pg1".condition = "process_healthy";
     };
 }
