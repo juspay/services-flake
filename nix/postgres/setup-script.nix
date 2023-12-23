@@ -1,4 +1,4 @@
-{ config, pkgs, lib, postgresPkg }:
+{ config, pkgs, lib }:
 let
   setupInitialDatabases =
     if config.initialDatabases != [ ] then
@@ -74,7 +74,7 @@ let
 in
 (pkgs.writeShellApplication {
   name = "setup-postgres";
-  runtimeInputs = with pkgs; [ postgresPkg coreutils gnugrep gawk ];
+  runtimeInputs = with pkgs; [ config.package coreutils gnugrep gawk ];
   text = ''
     set -euo pipefail
     # Setup postgres ENVs

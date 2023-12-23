@@ -7,7 +7,24 @@ in
   options = {
     enable = lib.mkEnableOption name;
 
-    package = lib.mkPackageOption pkgs "postgresql" { };
+    package = lib.mkOption {
+      type = types.package;
+      description = "Which package of postgresql to use";
+      default = pkgs.postgresql;
+      defaultText = lib.literalExpression "pkgs.postgresql";
+      apply = postgresPkg:
+        if config.extensions != null then
+          if builtins.hasAttr "withPackages" postgresPkg
+          then postgresPkg.withPackages config.extensions
+          else
+            builtins.throw ''
+              Cannot add extensions to the PostgreSQL package.
+              `services.postgres.package` is missing the `withPackages` attribute. Did you already add extensions to the package?
+            ''
+        else postgresPkg;
+
+    };
+
     extensions = lib.mkOption {
       type = with types; nullOr (functionTo (listOf package));
       default = null;
@@ -254,24 +271,12 @@ in
       internal = true;
       readOnly = true;
       default =
-        let
-          postgresPkg =
-            if config.extensions != null then
-              if builtins.hasAttr "withPackages" config.package
-              then config.package.withPackages config.extensions
-              else
-                builtins.throw ''
-                  Cannot add extensions to the PostgreSQL package.
-                  `services.postgres.package` is missing the `withPackages` attribute. Did you already add extensions to the package?
-                ''
-            else config.package;
-        in
         {
           processes = {
             # DB initialization
             "${name}-init" =
               let
-                setupScript = import ./postgres/setup-script.nix { inherit config pkgs lib postgresPkg; };
+                setupScript = import ./postgres/setup-script.nix { inherit config pkgs lib; };
               in
               {
                 command = setupScript;
@@ -283,7 +288,7 @@ in
               let
                 startScript = pkgs.writeShellApplication {
                   name = "start-postgres";
-                  runtimeInputs = [ postgresPkg pkgs.coreutils ];
+                  runtimeInputs = [ config.package pkgs.coreutils ];
                   text = ''
                     set -euo pipefail
                     PGDATA=$(readlink -f "${config.dataDir}")
@@ -302,7 +307,7 @@ in
                 # SIGINT (= 2) for faster shutdown: https://www.postgresql.org/docs/current/server-shutdown.html
                 shutdown.signal = 2;
                 readiness_probe = {
-                  exec.command = "${postgresPkg}/bin/pg_isready ${lib.concatStringsSep " " pg_isreadyArgs}";
+                  exec.command = "${config.package}/bin/pg_isready ${lib.concatStringsSep " " pg_isreadyArgs}";
                   initial_delay_seconds = 2;
                   period_seconds = 10;
                   timeout_seconds = 4;
