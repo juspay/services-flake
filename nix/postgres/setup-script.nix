@@ -11,7 +11,7 @@ let
             psql -d postgres | \
             ${pkgs.gnugrep}/bin/grep -c 'exists = "1"' || true
           )
-          echo $dbAlreadyExists
+          echo "$dbAlreadyExists"
           if [ 1 -ne "$dbAlreadyExists" ]; then
             echo "Creating database: ${database.name}"
             echo 'create database "${database.name}";' | psql -d postgres
@@ -80,7 +80,6 @@ in
 
       # Setup postgres ENVs
       export PGDATA="${config.dataDir}"
-      # PGHOST and PGPORT required by psql
       export PGPORT="${toString config.port}"
       POSTGRES_RUN_INITIAL_SCRIPT="false"
 
@@ -116,7 +115,6 @@ in
         ${runInitialScript.after}
         pg_ctl -D "$PGDATA" -m fast -w stop
         remove_tmp_pg_init_sock_dir "$PGHOST"
-        unset PGHOST
       else
         echo
         echo "PostgreSQL database directory appears to contain a database; Skipping initialization"
