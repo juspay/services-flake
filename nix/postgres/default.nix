@@ -276,7 +276,7 @@ in
             # DB initialization
             "${name}-init" =
               let
-                setupScript = import ./postgres/setup-script.nix { inherit config pkgs lib; };
+                setupScript = import ./setup-script.nix { inherit config pkgs lib; };
               in
               {
                 command = setupScript;
