@@ -108,7 +108,7 @@ in
             rm -rf "$1"
           fi
         }
-        trap "remove_tmp_pg_init_sock_dir '$PGHOST'" EXIT
+        trap 'remove_tmp_pg_init_sock_dir "$PGHOST"' EXIT
 
         pg_ctl -D "$PGDATA" -w start -o "-c unix_socket_directories=$PGHOST -c listen_addresses= -p ${toString config.port}"
         ${runInitialScript.before}
