@@ -1,4 +1,4 @@
-{ config, pkgs, lib }:
+{ config, pkgs, lib, postgresPkg }:
 let
   setupInitialDatabases =
     if config.initialDatabases != [ ] then
@@ -43,5 +43,26 @@ let
     else
       lib.optionalString config.createDatabase ''
         echo "CREATE DATABASE ''${USER:-$(id -nu)};" | psql -d postgres '';
+  runInitialScript =
+    let
+      scriptCmd = sqlScript: ''
+        echo "${sqlScript}" | psql -d postgres
+      '';
+    in
+    {
+      before = with config.initialScript;
+        lib.optionalString (before != null) (scriptCmd before);
+      after = with config.initialScript;
+        lib.optionalString (after != null) (scriptCmd after);
+    };
+  setupScript = pkgs.writeShellScriptBin "setup-postgres" ''
+    set -euo pipefail
+    export PATH=${postgresPkg}/bin:${pkgs.coreutils}/bin
+
+    ${runInitialScript.before}
+    ${setupInitialDatabases}
+    ${runInitialScript.after}
+
+  '';
 in
-setupInitialDatabases
+setupScript

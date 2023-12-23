@@ -271,40 +271,7 @@ in
             # DB initialization
             "${name}-init" =
               let
-                runInitialScript =
-                  let
-                    scriptCmd = sqlScript: ''
-                      echo "${sqlScript}" | psql -d postgres
-                    '';
-                  in
-                  {
-                    before = with config.initialScript;
-                      lib.optionalString (before != null) (scriptCmd before);
-                    after = with config.initialScript;
-                      lib.optionalString (after != null) (scriptCmd after);
-                  };
-
-                toStr = value:
-                  if true == value then
-                    "yes"
-                  else if false == value then
-                    "no"
-                  else if lib.isString value then
-                    "'${lib.replaceStrings [ "'" ] [ "''" ] value}'"
-                  else
-                    toString value;
-
-                setupInitialDatabases = import ./postgres/setup-script.nix { inherit config pkgs lib; };
-                setupScript = pkgs.writeShellScriptBin "setup-postgres" ''
-                  set -euo pipefail
-                  export PATH=${postgresPkg}/bin:${pkgs.coreutils}/bin
-                    
-
-                  ${runInitialScript.before}
-                  ${setupInitialDatabases}
-                  ${runInitialScript.after}
-
-                '';
+                setupScript = import ./postgres/setup-script.nix { inherit config pkgs lib postgresPkg; };
               in
               {
                 command = ''
