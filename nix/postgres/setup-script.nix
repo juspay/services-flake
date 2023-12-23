@@ -28,7 +28,7 @@ let
               # Read sql files in version order. Apply one file
               # at a time to handle files where the last statement
               # doesn't end in a ;.
-              ls -1v "${database.schema}"/*.sql | while read f ; do
+              find "${database.schema}"/*.sql | while read f ; do
                 echo "Applying sql file: $f"
                 ${pkgs.gawk}/bin/awk 'NF' "$f" | psql -d ${database.name}
               done
