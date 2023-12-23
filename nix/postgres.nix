@@ -274,7 +274,7 @@ in
                 setupScript = import ./postgres/setup-script.nix { inherit config pkgs lib postgresPkg; };
               in
               {
-                command = "${lib.getExe setupScript}";
+                command = setupScript;
                 namespace = name;
               };
 

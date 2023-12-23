@@ -72,52 +72,55 @@ let
     ++ (lib.optionals (config.superuser != null) [ "-U" config.superuser ])
     ++ [ "-D" config.dataDir ];
 in
-(pkgs.writeShellScriptBin "setup-postgres" ''
-  set -euo pipefail
-  export PATH=${postgresPkg}/bin:${pkgs.coreutils}/bin
+  (pkgs.writeShellApplication {
+    name = "setup-postgres";
+    text = ''
+      set -euo pipefail
+      export PATH=${postgresPkg}/bin:${pkgs.coreutils}/bin
 
-  # Setup postgres ENVs
-  export PGDATA="${config.dataDir}"
-  # PGHOST and PGPORT required by psql
-  export PGPORT="${toString config.port}"
-  POSTGRES_RUN_INITIAL_SCRIPT="false"
+      # Setup postgres ENVs
+      export PGDATA="${config.dataDir}"
+      # PGHOST and PGPORT required by psql
+      export PGPORT="${toString config.port}"
+      POSTGRES_RUN_INITIAL_SCRIPT="false"
 
 
-  if [[ ! -d "$PGDATA" ]]; then
-    initdb ${lib.concatStringsSep " " initdbArgs}
-    POSTGRES_RUN_INITIAL_SCRIPT="true"
-    echo
-    echo "PostgreSQL initdb process complete."
-    echo
-  fi
-
-  # Setup config
-  cp ${configFile} "$PGDATA/postgresql.conf"
-
-  if [[ "$POSTGRES_RUN_INITIAL_SCRIPT" = "true" ]]; then
-    echo
-    echo "PostgreSQL is setting up the initial database."
-    echo
-    export PGHOST=$(mktemp -d "$(readlink -f ${config.dataDir})/pg-init-XXXXXX")
-
-    function remove_tmp_pg_init_sock_dir() {
-      if [[ -d "$1" ]]; then
-        rm -rf "$1"
+      if [[ ! -d "$PGDATA" ]]; then
+        initdb ${lib.concatStringsSep " " initdbArgs}
+        POSTGRES_RUN_INITIAL_SCRIPT="true"
+        echo
+        echo "PostgreSQL initdb process complete."
+        echo
       fi
-    }
-    trap "remove_tmp_pg_init_sock_dir '$PGHOST'" EXIT
 
-    pg_ctl -D "$PGDATA" -w start -o "-c unix_socket_directories=$PGHOST -c listen_addresses= -p ${toString config.port}"
-    ${runInitialScript.before}
-    ${setupInitialDatabases}
-    ${runInitialScript.after}
-    pg_ctl -D "$PGDATA" -m fast -w stop
-    remove_tmp_pg_init_sock_dir "$PGHOST"
-    unset PGHOST
-  else
-    echo
-    echo "PostgreSQL database directory appears to contain a database; Skipping initialization"
-    echo
-  fi
-  unset POSTGRES_RUN_INITIAL_SCRIPT
-'')
+      # Setup config
+      cp ${configFile} "$PGDATA/postgresql.conf"
+
+      if [[ "$POSTGRES_RUN_INITIAL_SCRIPT" = "true" ]]; then
+        echo
+        echo "PostgreSQL is setting up the initial database."
+        echo
+        export PGHOST=$(mktemp -d "$(readlink -f ${config.dataDir})/pg-init-XXXXXX")
+
+        function remove_tmp_pg_init_sock_dir() {
+          if [[ -d "$1" ]]; then
+            rm -rf "$1"
+          fi
+        }
+        trap "remove_tmp_pg_init_sock_dir '$PGHOST'" EXIT
+
+        pg_ctl -D "$PGDATA" -w start -o "-c unix_socket_directories=$PGHOST -c listen_addresses= -p ${toString config.port}"
+        ${runInitialScript.before}
+        ${setupInitialDatabases}
+        ${runInitialScript.after}
+        pg_ctl -D "$PGDATA" -m fast -w stop
+        remove_tmp_pg_init_sock_dir "$PGHOST"
+        unset PGHOST
+      else
+        echo
+        echo "PostgreSQL database directory appears to contain a database; Skipping initialization"
+        echo
+      fi
+      unset POSTGRES_RUN_INITIAL_SCRIPT
+    '';
+  })
