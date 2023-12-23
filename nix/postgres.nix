@@ -274,54 +274,18 @@ in
                 setupScript = import ./postgres/setup-script.nix { inherit config pkgs lib postgresPkg; };
               in
               {
-                command = ''
-                  export PGDATA="${config.dataDir}"
-                  export PGHOST=$(readlink -f "${config.dataDir}")
-                  export PGPORT="${toString config.port}"
-                  ${lib.getExe setupScript}
-                '';
+                command = "${lib.getExe setupScript}";
                 namespace = name;
-                depends_on."${name}".condition = "process_healthy";
               };
 
             # DB process
             ${name} =
               let
-                initdbArgs =
-                  config.initdbArgs
-                  ++ (lib.optionals (config.superuser != null) [ "-U" config.superuser ])
-                  ++ [ "-D" config.dataDir ];
-
-                configFile = pkgs.writeText "postgresql.conf" (lib.concatStringsSep "\n"
-                  (lib.mapAttrsToList (n: v: "${n} = ${toStr v}") (config.defaultSettings // config.settings)));
-
-                toStr = value:
-                  if true == value then
-                    "yes"
-                  else if false == value then
-                    "no"
-                  else if lib.isString value then
-                    "'${lib.replaceStrings [ "'" ] [ "''" ] value}'"
-                  else
-                    toString value;
-
                 startScript = pkgs.writeShellApplication {
                   name = "start-postgres";
                   text = ''
+                    set -euo pipefail
                     export PATH=${postgresPkg}/bin:${pkgs.coreutils}/bin
-                    export PGDATA="${config.dataDir}"
-                    if [[ ! -d "$PGDATA" ]]; then
-                      echo "creating directory"
-                      mkdir -p ${config.dataDir}
-                      initdb ${lib.concatStringsSep " " initdbArgs}
-                      # Setup config
-                      cp ${configFile} "$PGDATA/postgresql.conf"
-                    else 
-                      echo "Postgres data directory already exists. Skipping initialization."
-                    fi
-                    export PATH="${postgresPkg}"/bin:$PATH
-                    set -x
-                    echo "before readlink"
                     PGDATA=$(readlink -f "${config.dataDir}")
                     export PGDATA
                     postgres -k "$PGDATA"
@@ -346,6 +310,7 @@ in
                   failure_threshold = 5;
                 };
                 namespace = name;
+                depends_on."${name}-init".condition = "process_completed_successfully";
                 # https://github.com/F1bonacc1/process-compose#-auto-restart-if-not-healthy
                 availability.restart = "on_failure";
               };
