@@ -100,7 +100,8 @@ in
         echo
         echo "PostgreSQL is setting up the initial database."
         echo
-        export PGHOST=$(mktemp -d "$(readlink -f ${config.dataDir})/pg-init-XXXXXX")
+        PGHOST=$(mktemp -d "$(readlink -f ${config.dataDir})/pg-init-XXXXXX")
+        export PGHOST
 
         function remove_tmp_pg_init_sock_dir() {
           if [[ -d "$1" ]]; then
