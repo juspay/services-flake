@@ -283,9 +283,9 @@ in
               let
                 startScript = pkgs.writeShellApplication {
                   name = "start-postgres";
+                  runtimeInputs = [ postgresPkg pkgs.coreutils ];
                   text = ''
                     set -euo pipefail
-                    export PATH=${postgresPkg}/bin:${pkgs.coreutils}/bin
                     PGDATA=$(readlink -f "${config.dataDir}")
                     export PGDATA
                     postgres -k "$PGDATA"

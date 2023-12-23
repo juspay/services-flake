@@ -9,7 +9,7 @@ let
           dbAlreadyExists=$(
             echo "SELECT 1 as exists FROM pg_database WHERE datname = '${database.name}';" | \
             psql -d postgres | \
-            ${pkgs.gnugrep}/bin/grep -c 'exists = "1"' || true
+            grep -c 'exists = "1"' || true
           )
           echo "$dbAlreadyExists"
           if [ 1 -ne "$dbAlreadyExists" ]; then
@@ -22,7 +22,7 @@ let
             if [ -f "${database.schema}" ]
             then
               echo "Running file ${database.schema}"
-              ${pkgs.gawk}/bin/awk 'NF' "${database.schema}" | psql -d ${database.name}
+              awk 'NF' "${database.schema}" | psql -d ${database.name}
             elif [ -d "${database.schema}" ]
             then
               # Read sql files in version order. Apply one file
@@ -30,7 +30,7 @@ let
               # doesn't end in a ;.
               find "${database.schema}"/*.sql | while read -r f ; do
                 echo "Applying sql file: $f"
-                ${pkgs.gawk}/bin/awk 'NF' "$f" | psql -d ${database.name}
+                awk 'NF' "$f" | psql -d ${database.name}
               done
             else
               echo "ERROR: Could not determine how to apply schema with ${database.schema}"
@@ -74,10 +74,9 @@ let
 in
   (pkgs.writeShellApplication {
     name = "setup-postgres";
+    runtimeInputs = with pkgs; [ postgresPkg coreutils gnugrep gawk ];
     text = ''
       set -euo pipefail
-      export PATH=${postgresPkg}/bin:${pkgs.coreutils}/bin
-
       # Setup postgres ENVs
       export PGDATA="${config.dataDir}"
       export PGPORT="${toString config.port}"
