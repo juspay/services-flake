@@ -7,7 +7,24 @@ in
   options = {
     enable = lib.mkEnableOption name;
 
-    package = lib.mkPackageOption pkgs "postgresql" { };
+    package = lib.mkOption {
+      type = types.package;
+      description = "Which package of postgresql to use";
+      default = pkgs.postgresql;
+      defaultText = lib.literalExpression "pkgs.postgresql";
+      apply = postgresPkg:
+        if config.extensions != null then
+          if builtins.hasAttr "withPackages" postgresPkg
+          then postgresPkg.withPackages config.extensions
+          else
+            builtins.throw ''
+              Cannot add extensions to the PostgreSQL package.
+              `services.postgres.package` is missing the `withPackages` attribute. Did you already add extensions to the package?
+            ''
+        else postgresPkg;
+
+    };
+
     extensions = lib.mkOption {
       type = with types; nullOr (functionTo (listOf package));
       default = null;
@@ -254,125 +271,15 @@ in
       internal = true;
       readOnly = true;
       default =
-        let
-          postgresPkg =
-            if config.extensions != null then
-              if builtins.hasAttr "withPackages" config.package
-              then config.package.withPackages config.extensions
-              else
-                builtins.throw ''
-                  Cannot add extensions to the PostgreSQL package.
-                  `services.postgres.package` is missing the `withPackages` attribute. Did you already add extensions to the package?
-                ''
-            else config.package;
-        in
         {
           processes = {
             # DB initialization
             "${name}-init" =
               let
-                setupInitialDatabases =
-                  if config.initialDatabases != [ ] then
-                    (lib.concatMapStrings
-                      (database: ''
-                        echo "Checking presence of database: ${database.name}"
-                        # Create initial databases
-                        dbAlreadyExists="$(
-                          echo "SELECT 1 as exists FROM pg_database WHERE datname = '${database.name}';" | \
-                          postgres --single -E postgres | \
-                          ${pkgs.gnugrep}/bin/grep -c 'exists = "1"' || true
-                        )"
-                        echo $dbAlreadyExists
-                        if [ 1 -ne "$dbAlreadyExists" ]; then
-                          echo "Creating database: ${database.name}"
-                          echo 'create database "${database.name}";' | postgres --single -E postgres
-
-
-                          ${lib.optionalString (database.schema != null) ''
-                          echo "Applying database schema on ${database.name}"
-                          if [ -f "${database.schema}" ]
-                          then
-                            echo "Running file ${database.schema}"
-                            ${pkgs.gawk}/bin/awk 'NF' "${database.schema}" | postgres --single -j -E ${database.name}
-                          elif [ -d "${database.schema}" ]
-                          then
-                            # Read sql files in version order. Apply one file
-                            # at a time to handle files where the last statement
-                            # doesn't end in a ;.
-                            ls -1v "${database.schema}"/*.sql | while read f ; do
-                              echo "Applying sql file: $f"
-                              ${pkgs.gawk}/bin/awk 'NF' "$f" | postgres --single -j -E ${database.name}
-                            done
-                          else
-                            echo "ERROR: Could not determine how to apply schema with ${database.schema}"
-                            exit 1
-                          fi
-                          ''}
-                        fi
-                      '')
-                      config.initialDatabases)
-                  else
-                    lib.optionalString config.createDatabase ''
-                      echo "CREATE DATABASE ''${USER:-$(id -nu)};" | postgres --single -E postgres '';
-
-                runInitialScript =
-                  let
-                    scriptCmd = sqlScript: ''
-                      echo "${sqlScript}" | postgres --single -E postgres
-                    '';
-                  in
-                  {
-                    before = with config.initialScript;
-                      lib.optionalString (before != null) (scriptCmd before);
-                    after = with config.initialScript;
-                      lib.optionalString (after != null) (scriptCmd after);
-                  };
-
-                toStr = value:
-                  if true == value then
-                    "yes"
-                  else if false == value then
-                    "no"
-                  else if lib.isString value then
-                    "'${lib.replaceStrings [ "'" ] [ "''" ] value}'"
-                  else
-                    toString value;
-
-                configFile = pkgs.writeText "postgresql.conf" (lib.concatStringsSep "\n"
-                  (lib.mapAttrsToList (n: v: "${n} = ${toStr v}") (config.defaultSettings // config.settings)));
-
-                initdbArgs =
-                  config.initdbArgs
-                  ++ (lib.optionals (config.superuser != null) [ "-U" config.superuser ])
-                  ++ [ "-D" config.dataDir ];
-
-                setupScript = pkgs.writeShellScriptBin "setup-postgres" ''
-                  set -euo pipefail
-                  export PATH=${postgresPkg}/bin:${pkgs.coreutils}/bin
-
-                  if [[ ! -d "$PGDATA" ]]; then
-                    set -x
-                    mkdir -p ${config.dataDir}
-                    initdb ${lib.concatStringsSep " " initdbArgs}
-                    set +x
-
-                    ${runInitialScript.before}
-                    ${setupInitialDatabases}
-                    ${runInitialScript.after}
-                  else
-                    echo "Postgres data directory already exists. Skipping initialization."
-                  fi
-
-                  # Setup config
-                  set -x
-                  cp ${configFile} "$PGDATA/postgresql.conf"
-                '';
+                setupScript = import ./setup-script.nix { inherit config pkgs lib; };
               in
               {
-                command = ''
-                  export PGDATA="${config.dataDir}"
-                  ${lib.getExe setupScript}
-                '';
+                command = setupScript;
                 namespace = name;
               };
 
@@ -381,9 +288,9 @@ in
               let
                 startScript = pkgs.writeShellApplication {
                   name = "start-postgres";
+                  runtimeInputs = [ config.package pkgs.coreutils ];
                   text = ''
-                    export PATH="${postgresPkg}"/bin:$PATH
-                    set -x
+                    set -euo pipefail
                     PGDATA=$(readlink -f "${config.dataDir}")
                     export PGDATA
                     postgres -k "$PGDATA"
@@ -397,11 +304,10 @@ in
               in
               {
                 command = startScript;
-                depends_on."${name}-init".condition = "process_completed_successfully";
                 # SIGINT (= 2) for faster shutdown: https://www.postgresql.org/docs/current/server-shutdown.html
                 shutdown.signal = 2;
                 readiness_probe = {
-                  exec.command = "${postgresPkg}/bin/pg_isready ${lib.concatStringsSep " " pg_isreadyArgs}";
+                  exec.command = "${config.package}/bin/pg_isready ${lib.concatStringsSep " " pg_isreadyArgs}";
                   initial_delay_seconds = 2;
                   period_seconds = 10;
                   timeout_seconds = 4;
@@ -409,6 +315,7 @@ in
                   failure_threshold = 5;
                 };
                 namespace = name;
+                depends_on."${name}-init".condition = "process_completed_successfully";
                 # https://github.com/F1bonacc1/process-compose#-auto-restart-if-not-healthy
                 availability.restart = "on_failure";
               };

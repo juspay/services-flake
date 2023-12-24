@@ -8,7 +8,7 @@ in
     ./elasticsearch.nix
     ./mysql.nix
     ./nginx.nix
-    ./postgres.nix
+    ./postgres
     ./redis-cluster.nix
     ./redis.nix
     ./zookeeper.nix
