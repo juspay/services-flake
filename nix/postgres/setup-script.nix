@@ -43,6 +43,15 @@ let
     else
       lib.optionalString config.createDatabase ''
         echo "CREATE DATABASE ''${USER:-$(id -nu)};" | psql -d postgres '';
+  
+  runInitialDumps = 
+    let
+      scriptCmd = dump: ''
+        psql -d postgres < ${dump}
+      '';
+    in 
+      builtins.concatStringsSep "\n" (map scriptCmd config.initialDumps);
+
   runInitialScript =
     let
       scriptCmd = sqlScript: ''
@@ -112,6 +121,7 @@ in
       ${runInitialScript.before}
       ${setupInitialDatabases}
       ${runInitialScript.after}
+      ${runInitialDumps}
       pg_ctl -D "$PGDATA" -m fast -w stop
       remove_tmp_pg_init_sock_dir "$PGHOST"
     else
