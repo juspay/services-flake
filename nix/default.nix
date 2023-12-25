@@ -7,7 +7,8 @@ in
     ./apache-kafka.nix
     ./elasticsearch.nix
     ./mysql.nix
-    ./postgres.nix
+    ./nginx.nix
+    ./postgres
     ./redis-cluster.nix
     ./redis.nix
     ./zookeeper.nix

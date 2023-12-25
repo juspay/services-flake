@@ -40,7 +40,8 @@
             ../nix/apache-kafka_test.nix
             ../nix/elasticsearch_test.nix
             ../nix/mysql_test.nix
-            ../nix/postgres_test.nix
+            ../nix/nginx_test.nix
+            ../nix/postgres/postgres_test.nix
             ../nix/redis_test.nix
             ../nix/redis-cluster_test.nix
             ../nix/zookeeper_test.nix
