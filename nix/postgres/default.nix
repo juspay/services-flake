@@ -230,6 +230,16 @@ in
       '';
     };
 
+    initialDumps = lib.mkOption {
+      type = types.listOf types.path;
+      default = [ ];
+      description = ''List of SQL dumps to run during the database initialization.
+      These dumps are loaded after `initalScript` and `initialDatabases`.'';
+      example = lib.literalExpression ''
+        [ ./foo.sql ./bar.sql ]
+      '';
+    };
+
     initialScript = lib.mkOption {
       type = types.submodule ({ config, ... }: {
         options = {
