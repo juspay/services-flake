@@ -43,14 +43,14 @@ let
     else
       lib.optionalString config.createDatabase ''
         echo "CREATE DATABASE ''${USER:-$(id -nu)};" | psql -d postgres '';
-  
-  runInitialDumps = 
+
+  runInitialDumps =
     let
       scriptCmd = dump: ''
         psql -d postgres < ${dump}
       '';
-    in 
-      builtins.concatStringsSep "\n" (map scriptCmd config.initialDumps);
+    in
+    builtins.concatStringsSep "\n" (map scriptCmd config.initialDumps);
 
   runInitialScript =
     let

@@ -229,7 +229,7 @@ in
         ]
       '';
     };
-    
+
     initialDumps = lib.mkOption {
       type = types.listOf types.path;
       default = [ ];
@@ -237,7 +237,7 @@ in
       These dumps are loaded after `initalScript` and `initialDatabases`.'';
       example = lib.literalExpression ''
         [ ./foo.sql ./bar.sql ]
-      '';  
+      '';
     };
 
     initialScript = lib.mkOption {
