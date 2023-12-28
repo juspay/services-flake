@@ -231,7 +231,7 @@ in
     };
 
     depends_on = lib.mkOption {
-      description = "Extra process dependency relationships";
+      description = "Extra process dependency relationships for `${name}-init` process.";
       type = types.nullOr (types.attrsOf (types.submodule {
         options = {
           condition = lib.mkOption {
