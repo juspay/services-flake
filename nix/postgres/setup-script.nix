@@ -1,5 +1,27 @@
 { config, pkgs, lib }:
 let
+  setupInitialSchema = dbName: schema: ''
+    ${lib.optionalString (schema != null) ''
+    echo "Applying database schema on ${dbName}"
+    if [ -f "${schema}" ]
+    then
+      echo "Running file ${schema}"
+      awk 'NF' "${schema}" | psql -d ${dbName}
+    elif [ -d "${schema}" ]
+    then
+      # Read sql files in version order. Apply one file
+      # at a time to handle files where the last statement
+      # doesn't end in a ;.
+      find "${schema}"/*.sql | while read -r f ; do
+        echo "Applying sql file: $f"
+        awk 'NF' "$f" | psql -d ${dbName}
+      done
+    else
+      echo "ERROR: Could not determine how to apply schema with ${schema}"
+      exit 1
+    fi
+    ''}
+  '';
   setupInitialDatabases =
     if config.initialDatabases != [ ] then
       (lib.concatMapStrings
@@ -15,28 +37,7 @@ let
           if [ 1 -ne "$dbAlreadyExists" ]; then
             echo "Creating database: ${database.name}"
             echo 'create database "${database.name}";' | psql -d postgres
-
-
-            ${lib.optionalString (database.schema != null) ''
-            echo "Applying database schema on ${database.name}"
-            if [ -f "${database.schema}" ]
-            then
-              echo "Running file ${database.schema}"
-              awk 'NF' "${database.schema}" | psql -d ${database.name}
-            elif [ -d "${database.schema}" ]
-            then
-              # Read sql files in version order. Apply one file
-              # at a time to handle files where the last statement
-              # doesn't end in a ;.
-              find "${database.schema}"/*.sql | while read -r f ; do
-                echo "Applying sql file: $f"
-                awk 'NF' "$f" | psql -d ${database.name}
-              done
-            else
-              echo "ERROR: Could not determine how to apply schema with ${database.schema}"
-              exit 1
-            fi
-            ''}
+            ${lib.concatMapStrings (schema: setupInitialSchema (database.name) schema) database.schemas}
           fi
         '')
         config.initialDatabases)
@@ -44,13 +45,6 @@ let
       lib.optionalString config.createDatabase ''
         echo "CREATE DATABASE ''${USER:-$(id -nu)};" | psql -d postgres '';
 
-  runInitialDumps =
-    let
-      scriptCmd = dump: ''
-        psql -d postgres < ${dump}
-      '';
-    in
-    builtins.concatStringsSep "\n" (map scriptCmd config.initialDumps);
 
   runInitialScript =
     let
@@ -121,7 +115,6 @@ in
       ${runInitialScript.before}
       ${setupInitialDatabases}
       ${runInitialScript.after}
-      ${runInitialDumps}
       pg_ctl -D "$PGDATA" -m fast -w stop
       remove_tmp_pg_init_sock_dir "$PGHOST"
     else
