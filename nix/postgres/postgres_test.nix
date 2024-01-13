@@ -4,7 +4,18 @@
     listen_addresses = "127.0.0.1";
     initialScript.before = "CREATE USER bar;";
     initialScript.after = "CREATE DATABASE foo OWNER bar;";
-    initialDumps = [ ./test.sql ];
+  };
+  services.postgres."pg2" = {
+    enable = true;
+    port = 5433;
+    listen_addresses = "127.0.0.1";
+    # INFO: pg1 creates $USER database while pg2 doesn't because `initialDatabases` is present
+    initialDatabases = [
+      {
+        name = "sample-db";
+        schemas = [ ./test.sql ];
+      }
+    ];
   };
   settings.processes.test =
     let
@@ -23,8 +34,8 @@
           # initialScript.after test
           echo "SELECT 1 FROM pg_database WHERE datname = 'foo';" | psql -h 127.0.0.1 | grep -q 1
 
-          #intialDumps test
-          echo "SELECT * from users where user_name = 'test_user';" | psql -h 127.0.0.1 -d postgres | grep -q test_user
+          # schemas test
+          echo "SELECT * from users where user_name = 'test_user';" | psql -h 127.0.0.1 -p 5433 -d sample-db | grep -q test_user
         '';
         name = "postgres-test";
       };

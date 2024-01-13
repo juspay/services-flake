@@ -33,7 +33,7 @@
               initialDatabases = [
                 {
                   name = dbName;
-                  schema = "${inputs.northwind}/northwind.sql";
+                  schemas = [ "${inputs.northwind}/northwind.sql" ];
                 }
               ];
             };

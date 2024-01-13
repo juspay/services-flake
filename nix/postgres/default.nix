@@ -204,11 +204,11 @@ in
               The name of the database to create.
             '';
           };
-          schema = lib.mkOption {
-            type = types.nullOr types.path;
+          schemas = lib.mkOption {
+            type = types.nullOr (types.listOf types.path);
             default = null;
             description = ''
-              The initial schema of the database; if null (the default),
+              The initial list of schemas for the database; if null (the default),
               an empty database is created.
             '';
           };
@@ -223,7 +223,7 @@ in
         [
           {
             name = "foodatabase";
-            schema = ./foodatabase.sql;
+            schemas = [ ./fooschemas ./bar.sql ];
           }
           { name = "bardatabase"; }
         ]
@@ -246,16 +246,6 @@ in
         };
       }));
       default = null;
-    };
-
-    initialDumps = lib.mkOption {
-      type = types.listOf types.path;
-      default = [ ];
-      description = ''List of SQL dumps to run during the database initialization.
-      These dumps are loaded after `initalScript` and `initialDatabases`.'';
-      example = lib.literalExpression ''
-        [ ./foo.sql ./bar.sql ]
-      '';
     };
 
     initialScript = lib.mkOption {
