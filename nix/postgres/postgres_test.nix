@@ -34,7 +34,7 @@
           # initialScript.after test
           echo "SELECT 1 FROM pg_database WHERE datname = 'foo';" | psql -h 127.0.0.1 | grep -q 1
 
-          #intialDumps test
+          # schemas test
           echo "SELECT * from users where user_name = 'test_user';" | psql -h 127.0.0.1 -p 5433 -d sample-db | grep -q test_user
         '';
         name = "postgres-test";
