@@ -43,6 +43,8 @@
               listen_addresses = "127.0.0.1";
               port = 5433;
             };
+            # Start `pg2-init` process after `pg1-init`
+            settings.processes.pg2.depends_on."pg1-init".condition = "process_completed_successfully";
 
             settings.processes.pgweb =
               let
