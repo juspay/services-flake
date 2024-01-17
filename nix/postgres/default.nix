@@ -50,6 +50,12 @@ in
       description = "The DB data directory";
     };
 
+    socketDir = lib.mkOption {
+      type = lib.types.str;
+      default = config.dataDir;
+      description = "The DB socket directory";
+    };
+
     hbaConf =
       let
         hbaConfSubmodule = lib.types.submodule {
@@ -161,7 +167,7 @@ in
         default = {
           listen_addresses = config.listen_addresses;
           port = config.port;
-          unix_socket_directories = config.dataDir;
+          unix_socket_directories = config.socketDir;
           hba_file = "${config.hbaConfFile}";
         };
       };
@@ -181,7 +187,7 @@ in
         default = {
           listen_addresses = config.listen_addresses;
           port = config.port;
-          unix_socket_directories = lib.mkDefault config.dataDir;
+          unix_socket_directories = lib.mkDefault config.socketDir;
           hba_file = "${config.hbaConfFile}";
         };
         example = lib.literalExpression ''
@@ -292,12 +298,13 @@ in
                   text = ''
                     set -euo pipefail
                     PGDATA=$(readlink -f "${config.dataDir}")
+                    PGSOCKETDIR=$(readlink -f "${config.socketDir}")
                     export PGDATA
-                    postgres -k "$PGDATA"
+                    postgres -k "$PGSOCKETDIR"
                   '';
                 };
                 pg_isreadyArgs = [
-                  "-h $(readlink -f ${config.dataDir})"
+                  "-h $(readlink -f \"${config.socketDir}\")"
                   "-p ${toString config.port}"
                   "-d template1"
                 ] ++ (lib.optional (config.superuser != null) "-U ${config.superuser}");
