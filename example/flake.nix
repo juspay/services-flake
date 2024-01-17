@@ -44,7 +44,7 @@
               port = 5433;
             };
             # Start `pg2-init` process after `pg1-init`
-            settings.processes.pg2.depends_on."pg1-init".condition = "process_completed_successfully";
+            settings.processes."pg2-init".depends_on."pg1-init".condition = "process_completed_successfully";
 
             settings.processes.pgweb =
               let
