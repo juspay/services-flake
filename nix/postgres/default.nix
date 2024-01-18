@@ -230,24 +230,6 @@ in
       '';
     };
 
-    depends_on = lib.mkOption {
-      description = "Extra process dependency relationships for `${name}-init` process.";
-      type = types.nullOr (types.attrsOf (types.submodule {
-        options = {
-          condition = lib.mkOption {
-            type = types.enum [
-              "process_completed"
-              "process_completed_successfully"
-              "process_healthy"
-              "process_started"
-            ];
-            example = "process_healthy";
-          };
-        };
-      }));
-      default = null;
-    };
-
     initialScript = lib.mkOption {
       type = types.submodule ({ config, ... }: {
         options = {
@@ -298,7 +280,6 @@ in
               in
               {
                 command = setupScript;
-                depends_on = config.depends_on;
                 namespace = name;
               };
 
