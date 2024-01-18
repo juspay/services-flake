@@ -14,7 +14,8 @@ jobs:
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@v22
       - run: nix --version
-      - uses: DeterminateSystems/magic-nix-cache-action@main
+      # Don't upgrade Nix until https://github.com/srid/nixci/issues/35 is fixed
+      - uses: DeterminateSystems/nix-installer-action@v0.13.1
       - uses: yaxitech/nix-install-pkgs-action@v3
         with:
           inputs-from: ./dev
