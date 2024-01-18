@@ -1,7 +1,6 @@
 { config, pkgs, lib }:
 let
   setupInitialSchema = dbName: schema: ''
-    ${lib.optionalString (schema != null) ''
     echo "Applying database schema on ${dbName}"
     if [ -f "${schema}" ]
     then
@@ -20,7 +19,6 @@ let
       echo "ERROR: Could not determine how to apply schema with ${schema}"
       exit 1
     fi
-    ''}
   '';
   setupInitialDatabases =
     if config.initialDatabases != [ ] then
@@ -37,7 +35,8 @@ let
           if [ 1 -ne "$dbAlreadyExists" ]; then
             echo "Creating database: ${database.name}"
             echo 'create database "${database.name}";' | psql -d postgres
-            ${lib.concatMapStrings (schema: setupInitialSchema (database.name) schema) database.schemas}
+            ${lib.optionalString (database.schemas != null)
+              (lib.concatMapStrings (schema: setupInitialSchema (database.name) schema) database.schemas)}
           fi
         '')
         config.initialDatabases)
@@ -101,7 +100,7 @@ in
       echo
       echo "PostgreSQL is setting up the initial database."
       echo
-      PGHOST=$(mktemp -d "$(readlink -f ${config.dataDir})/pg-init-XXXXXX")
+      PGHOST=$(mktemp -d "$(readlink -f "${config.socketDir}")/pg-init-XXXXXX")
       export PGHOST
 
       function remove_tmp_pg_init_sock_dir() {
