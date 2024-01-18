@@ -41,6 +41,9 @@
         '';
         name = "postgres-test";
       };
-      depends_on."pg1".condition = "process_healthy";
+      depends_on = {
+        "pg1".condition = "process_healthy";
+        "pg2".condition = "process_healthy";
+      };
     };
 }
