@@ -18,4 +18,6 @@ jobs:
         with:
           inputs-from: ./dev
           packages: "nixpkgs#nixci, nix"
-      - run: nixci
+      - run: |
+          nix --version
+          nixci
