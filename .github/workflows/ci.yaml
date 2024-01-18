@@ -13,11 +13,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@v22
+      - run: nix --version
       - uses: DeterminateSystems/magic-nix-cache-action@main
       - uses: yaxitech/nix-install-pkgs-action@v3
         with:
           inputs-from: ./dev
-          packages: "nixpkgs"
-      - run: |
-          nix --version
-          nixci
+          packages: "nixpkgs#nixci"
+      - run: nixci
