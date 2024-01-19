@@ -7,6 +7,7 @@
   };
   services.postgres."pg2" = {
     enable = true;
+    socketDir = "./test/new/socket/path";
     port = 5433;
     listen_addresses = "127.0.0.1";
     # INFO: pg1 creates $USER database while pg2 doesn't because `initialDatabases` is present
@@ -29,7 +30,7 @@
         text = ''
           echo 'SELECT version();' | psql -h 127.0.0.1
           echo 'SHOW hba_file;' | psql -h 127.0.0.1 | ${pkgs.gawk}/bin/awk 'NR==3' | grep '^ /nix/store'
-        
+
           # initialScript.before test
           echo "SELECT 1 FROM pg_roles WHERE rolname = 'bar';" | psql -h 127.0.0.1 | grep -q 1
 
