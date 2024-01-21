@@ -37,7 +37,7 @@ services-flake uses [process-compose-flake](https://community.flake.parts/proces
     };
 }
 ```
-As an example, let's add the [[redis]] service to your flake:
+As an example, let's add the `redis` service to your flake:
 ```nix
 # Inside `perSystem.process-compose.default`
 {
