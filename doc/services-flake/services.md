@@ -1,0 +1,20 @@
+---
+short-title: Services
+---
+
+# Supported services
+
+>[!warning]
+> This list denotes the progress of documentation, not implementation. See full list of implemented services at [gh].
+
+- [ ] Apache Kafka
+- [ ] Elasticsearch
+- [ ] MySQL
+- [ ] Nginx
+- [ ] PostgreSQL
+- [ ] Redis
+- [ ] Redis Cluster
+- [ ] Zookeeper
+- [ ] ...
+
+[gh]: https://github.com/juspay/services-flake

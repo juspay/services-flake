@@ -3,6 +3,8 @@
 
 page:
   siteTitle: services-flake
+  headHtml: |
+    <snippet var="js.highlightjs" />
 
 template:
   # You can add your own variables here, like editBaseUrl.

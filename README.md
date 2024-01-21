@@ -1,12 +1,8 @@
 # services-flake
 
-> **Note**
->
-> 🚧 Work in Progress
-
 NixOS-like services for Nix flakes, as a [process-compose-flake](https://github.com/Platonic-Systems/process-compose-flake) module (based on flake-parts).
 
-![](./doc/demo.gif)
+![](./doc/services-flake/demo.gif)
 
 ## Getting Started
 
@@ -20,14 +16,7 @@ Or see `./test/flake.nix`
 
 ## Services available
 
-- [x] Apache Kafka
-- [x] Elasticsearch
-- [x] MySQL
-- [x] PostgreSQL
-- [x] Redis
-- [x] Redis Cluster
-- [x] Zookeeper
-- [ ] ...
+See the list [here](nix/default.nix).
 
 ## A note on process working directory
 
