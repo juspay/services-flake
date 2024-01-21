@@ -2,7 +2,7 @@
 
 NixOS-like services for Nix flakes, as a [process-compose-flake](https://github.com/Platonic-Systems/process-compose-flake) module (based on flake-parts).
 
-![](./doc/demo.gif)
+![](./doc/services-flake/demo.gif)
 
 ## Getting Started
 
