@@ -5,6 +5,7 @@ in
 {
   imports = builtins.map multiService [
     ./apache-kafka.nix
+    ./clickhouse.nix
     ./elasticsearch.nix
     ./mysql.nix
     ./nginx.nix
