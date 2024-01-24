@@ -11,8 +11,10 @@ ClickHouse is an open-source column-oriented DBMS (columnar database management 
 }
 ```
 
+{#tips}
 ## Tips & Tricks
 
+{#change-port}
 ### Change the HTTP default port
 
 Clickhouse has [HTTP Interface](https://clickhouse.com/docs/en/interfaces/http) that is enabled by default on port 8123. To change the default port, use the `extraConfig` option:
