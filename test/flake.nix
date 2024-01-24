@@ -38,6 +38,7 @@
           in
           builtins.listToAttrs (builtins.map mkPackageFor [
             ../nix/apache-kafka_test.nix
+            ../nix/clickhouse_test.nix
             ../nix/elasticsearch_test.nix
             ../nix/mysql_test.nix
             ../nix/nginx_test.nix

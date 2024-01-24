@@ -8,6 +8,7 @@ short-title: Services
 > This list denotes the progress of documentation, not implementation. See full list of implemented services at [gh].
 
 - [ ] Apache Kafka
+- [ ] [[clickhouse]]#
 - [ ] Elasticsearch
 - [ ] MySQL
 - [ ] Nginx
