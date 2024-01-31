@@ -94,13 +94,19 @@ in
     fi
 
     # Setup config
+    echo "Setting up postgresql.conf"
     cp ${configFile} "$PGDATA/postgresql.conf"
+    # Create socketDir if it doesn't exist
+    if [ ! -d "${config.socketDir}" ]; then
+      echo "Creating socket directory"
+      mkdir -p "${config.socketDir}"
+    fi
 
     if [[ "$POSTGRES_RUN_INITIAL_SCRIPT" = "true" ]]; then
       echo
       echo "PostgreSQL is setting up the initial database."
       echo
-      PGHOST=$(mkdir -p "${config.socketDir}" && mktemp -d "$(readlink -f "${config.socketDir}")/pg-init-XXXXXX")
+      PGHOST=$(mktemp -d "$(readlink -f "${config.socketDir}")/pg-init-XXXXXX")
       export PGHOST
 
       function remove_tmp_pg_init_sock_dir() {
