@@ -109,6 +109,7 @@ in
                 setupScript = pkgs.writeShellApplication {
                   name = "setup-clickhouse";
                   runtimeInputs = with pkgs; [ config.package coreutils gnugrep gawk ];
+                  # TODO: Find a better way to start clickhouse-server than waiting for 5 seconds: https://github.com/juspay/services-flake/pull/91#discussion_r1481710799
                   text = ''
                     if test -d ${config.dataDir}
                       then echo "Clickhouse database directory ${config.dataDir} appears to contain a database; Skipping initialization"
