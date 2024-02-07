@@ -15,7 +15,7 @@
     initialDatabases = [
       {
         name = "sample_db";
-        schemas = [ ./clickhouse_test.sql ];
+        schemas = [ ./test.sql ];
       }
     ];
   };
