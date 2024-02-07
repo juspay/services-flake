@@ -29,3 +29,25 @@ Clickhouse has [HTTP Interface](https://clickhouse.com/docs/en/interfaces/http) 
   };
 }
 ```
+
+### Load database schema
+
+To load a database schema, you can use the `initialDatabases` option:
+
+```nix
+{
+  services.clickhouse."clickhouse-1" = {
+    enable = true;
+    initialDatabases = [
+      {
+        name = "sample_db";
+        schemas = [ ./test.sql ];
+      }
+      # or just create the database:
+      {
+        name = "sample_db_without_schema";
+      }
+    ];
+  };
+}
+```
