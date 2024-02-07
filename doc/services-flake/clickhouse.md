@@ -30,7 +30,8 @@ Clickhouse has [HTTP Interface](https://clickhouse.com/docs/en/interfaces/http) 
 }
 ```
 
-### Load database schema
+{#initial-database}
+### Initial database schema
 
 To load a database schema, you can use the `initialDatabases` option:
 
