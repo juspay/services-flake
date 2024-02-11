@@ -37,15 +37,15 @@
               };
           in
           builtins.listToAttrs (builtins.map mkPackageFor [
-            ../nix/apache-kafka_test.nix
-            ../nix/clickhouse/clickhouse_test.nix
-            ../nix/elasticsearch_test.nix
-            ../nix/mysql_test.nix
-            ../nix/nginx_test.nix
-            ../nix/postgres/postgres_test.nix
-            ../nix/redis_test.nix
-            ../nix/redis-cluster_test.nix
-            ../nix/zookeeper_test.nix
+            "${inputs.services-flake}/nix/apache-kafka_test.nix"
+            "${inputs.services-flake}/nix/clickhouse/clickhouse_test.nix"
+            "${inputs.services-flake}/nix/elasticsearch_test.nix"
+            "${inputs.services-flake}/nix/mysql_test.nix"
+            "${inputs.services-flake}/nix/nginx_test.nix"
+            "${inputs.services-flake}/nix/postgres/postgres_test.nix"
+            "${inputs.services-flake}/nix/redis_test.nix"
+            "${inputs.services-flake}/nix/redis-cluster_test.nix"
+            "${inputs.services-flake}/nix/zookeeper_test.nix"
           ]);
       };
     };
