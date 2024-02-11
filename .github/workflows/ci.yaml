@@ -18,4 +18,4 @@ jobs:
         with:
           inputs-from: ./dev
           packages: "nixpkgs#nixci"
-      - run: nixci
+      - run: nix run github:srid/nixci/nix_rs_dir_fix
