@@ -120,12 +120,29 @@ in
               availability.restart = "on_failure";
             };
           hosts = lib.mapAttrsToList (_: cfg: "${config.bind}:${builtins.toString cfg.port}") config.nodes;
+          clusterCreateScript = pkgs.writeShellApplication {
+            name = "redis-cluster-create";
+            text =
+              let
+                primaryNodePort = (lib.head (lib.mapAttrsToList lib.nameValuePair config.nodes)).value.port;
+              in
+
+              ''
+                if ${config.package}/bin/redis-cli --cluster check ${config.bind}:${builtins.toString primaryNodePort}; then
+                  echo
+                  echo
+                  echo "redis-cluster is already created; Skipping initialization"
+                else
+                  ${config.package}/bin/redis-cli --cluster create ${lib.concatStringsSep " " hosts} --cluster-replicas ${builtins.toString config.replicas} --cluster-yes
+                fi
+              '';
+          };
         in
         {
           processes = (lib.mapAttrs' mkNodeProcess config.nodes) // {
             "${name}-cluster-create" = {
               depends_on = lib.mapAttrs' (nodeName: cfg: lib.nameValuePair "${name}-${nodeName}" { condition = "process_healthy"; }) config.nodes;
-              command = "${config.package}/bin/redis-cli --cluster create ${lib.concatStringsSep " " hosts} --cluster-replicas ${builtins.toString config.replicas} --cluster-yes";
+              command = lib.getExe clusterCreateScript;
               namespace = name;
             };
           };
