@@ -212,7 +212,7 @@ in
               exec ${config.package}/bin/mysqld ${mysqldOptions}
             '';
 
-            runInitialScirpt =
+            runInitialScript =
               if config.initialScript != null then
                 ''
                   echo ${lib.escapeShellArg config.initialScript} | MYSQL_PWD="" ${config.package}/bin/mysql -u root -N
@@ -263,7 +263,7 @@ in
                 '')
                 config.ensureUsers}
     
-              ${runInitialScirpt}
+              ${runInitialScript}
             '';
 
           in
