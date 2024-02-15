@@ -43,6 +43,19 @@ in
       '';
     };
 
+    initialScript = lib.mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = ''
+        Initial SQL commands to run after `initialDatabases`. This can be multiple
+        SQL expressions separated by a semi-colon.
+      '';
+      example = ''
+        CREATE USER foo IDENTIFIED BY 'password@123';
+        CREATE USER bar;
+      '';
+    };
+
     initialDatabases = lib.mkOption {
       type = types.listOf (types.submodule {
         options = {
@@ -198,6 +211,12 @@ in
               ${envs}
               exec ${config.package}/bin/mysqld ${mysqldOptions}
             '';
+            runIntialScirpt =
+              if config.initialScript != null then
+                ''
+                  echo ${config.initialScript} | MYSQL_PWD="" ${config.package}/bin/mysql -u root -N
+                ''
+              else "";
 
             configureScript = pkgs.writeShellScriptBin "configure-mysql" ''
               PATH="${lib.makeBinPath [config.package pkgs.coreutils]}:$PATH"
@@ -230,6 +249,8 @@ in
                   fi
                 '')
                 config.initialDatabases}
+
+              ${runIntialScirpt}
 
               ${lib.concatMapStrings (user: ''
                   echo "Adding user: ${user.name}"
