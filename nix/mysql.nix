@@ -214,7 +214,7 @@ in
             runIntialScirpt =
               if config.initialScript != null then
                 ''
-                  echo ${config.initialScript} | MYSQL_PWD="" ${config.package}/bin/mysql -u root -N
+                  echo ${lib.escapeShellArg config.initialScript} | MYSQL_PWD="" ${config.package}/bin/mysql -u root -N
                 ''
               else "";
 
