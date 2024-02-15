@@ -212,12 +212,8 @@ in
               exec ${config.package}/bin/mysqld ${mysqldOptions}
             '';
 
-            runInitialScript =
-              if config.initialScript != null then
-                ''
-                  echo ${lib.escapeShellArg config.initialScript} | MYSQL_PWD="" ${config.package}/bin/mysql -u root -N
-                ''
-              else "";
+            runInitialScript = lib.optionalString (config.initialScript != null) ''echo ${lib.escapeShellArg config.initialScript} | MYSQL_PWD="" ${config.package}/bin/mysql -u root -N
+'';
 
             configureScript = pkgs.writeShellScriptBin "configure-mysql" ''
               PATH="${lib.makeBinPath [config.package pkgs.coreutils]}:$PATH"
