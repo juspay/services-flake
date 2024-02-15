@@ -43,6 +43,19 @@ in
       '';
     };
 
+    initialScript = lib.mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = ''
+        Initial SQL commands to run after `initialDatabases` and `ensureUsers`. This can be multiple
+        SQL expressions separated by a semi-colon.
+      '';
+      example = ''
+        CREATE USER foo IDENTIFIED BY 'password@123';
+        CREATE USER bar;
+      '';
+    };
+
     initialDatabases = lib.mkOption {
       type = types.listOf (types.submodule {
         options = {
@@ -199,6 +212,9 @@ in
               exec ${config.package}/bin/mysqld ${mysqldOptions}
             '';
 
+            runInitialScript = lib.optionalString (config.initialScript != null) ''echo ${lib.escapeShellArg config.initialScript} | MYSQL_PWD="" ${config.package}/bin/mysql -u root -N
+'';
+
             configureScript = pkgs.writeShellScriptBin "configure-mysql" ''
               PATH="${lib.makeBinPath [config.package pkgs.coreutils]}:$PATH"
               set -euo pipefail
@@ -242,6 +258,8 @@ in
                   ) | MYSQL_PWD="" ${config.package}/bin/mysql -u root -N
                 '')
                 config.ensureUsers}
+    
+              ${runInitialScript}
             '';
 
           in
