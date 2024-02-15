@@ -47,7 +47,7 @@ in
       type = types.nullOr types.str;
       default = null;
       description = ''
-        Initial SQL commands to run after `initialDatabases`. This can be multiple
+        Initial SQL commands to run after `initialDatabases` and `ensureUsers`. This can be multiple
         SQL expressions separated by a semi-colon.
       '';
       example = ''
@@ -211,7 +211,8 @@ in
               ${envs}
               exec ${config.package}/bin/mysqld ${mysqldOptions}
             '';
-            runIntialScirpt =
+
+            runInitialScirpt =
               if config.initialScript != null then
                 ''
                   echo ${lib.escapeShellArg config.initialScript} | MYSQL_PWD="" ${config.package}/bin/mysql -u root -N
@@ -250,8 +251,6 @@ in
                 '')
                 config.initialDatabases}
 
-              ${runIntialScirpt}
-
               ${lib.concatMapStrings (user: ''
                   echo "Adding user: ${user.name}"
                   ${lib.optionalString (user.password != null) "password='${user.password}'"}
@@ -263,6 +262,8 @@ in
                   ) | MYSQL_PWD="" ${config.package}/bin/mysql -u root -N
                 '')
                 config.ensureUsers}
+    
+              ${runInitialScirpt}
             '';
 
           in
