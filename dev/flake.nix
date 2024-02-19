@@ -15,7 +15,7 @@
       perSystem = { pkgs, lib, config, ... }: {
         treefmt = {
           projectRoot = ../.;
-          projectRootFile = "flake.nix";
+          projectRootFile = "dev/flake.nix";
           programs = {
             nixpkgs-fmt.enable = true;
           };
