@@ -27,6 +27,11 @@
           inputsFrom = [
             config.treefmt.build.devShell
           ];
+          shellHook = ''
+            echo
+            echo "🍎🍎 Run 'just <recipe>' to get started"
+            just
+          '';
         };
       };
     };
