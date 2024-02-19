@@ -4,6 +4,7 @@
     flake-parts.url = "github:hercules-ci/flake-parts";
     flake-root.url = "github:srid/flake-root";
     treefmt-nix.url = "github:numtide/treefmt-nix";
+    # CI will override `services-flake` to run checks on the latest source
     services-flake.url = "github:juspay/services-flake";
   };
   outputs = inputs@{ self, nixpkgs, flake-parts, ... }:
