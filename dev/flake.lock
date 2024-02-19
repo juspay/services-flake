@@ -94,14 +94,17 @@
     },
     "services-flake": {
       "locked": {
-        "lastModified": 0,
-        "narHash": "sha256-X97SAw/4FVSb+4SORDS5Kzuvqs5DoD7oS4CQ3BjMXW4=",
-        "path": "../.",
-        "type": "path"
+        "lastModified": 1708321363,
+        "narHash": "sha256-8tyA4VIUrbYJaF/eOnx5fzvw3jSskQ622XPUqSoAEGU=",
+        "owner": "juspay",
+        "repo": "services-flake",
+        "rev": "29781d10d08ab704dacf58cad35cddac7d19d5bd",
+        "type": "github"
       },
       "original": {
-        "path": "../.",
-        "type": "path"
+        "owner": "juspay",
+        "repo": "services-flake",
+        "type": "github"
       }
     },
     "treefmt-nix": {
