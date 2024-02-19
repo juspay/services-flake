@@ -1,1 +1,3 @@
 .direnv
+# created when `just test <service>` is used
+/result
