@@ -21,6 +21,7 @@
         dir = "./test";
       };
       dev = {
+        inherit overrideInputs;
         dir = "./dev";
       };
       doc = {
