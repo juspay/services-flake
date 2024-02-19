@@ -88,7 +88,20 @@
         "flake-parts": "flake-parts",
         "flake-root": "flake-root",
         "nixpkgs": "nixpkgs",
+        "services-flake": "services-flake",
         "treefmt-nix": "treefmt-nix"
+      }
+    },
+    "services-flake": {
+      "locked": {
+        "lastModified": 0,
+        "narHash": "sha256-lP05XSpUY4ILkuqAxcOGFlGmcK6r6d4Bv1zSXUQ+Ld0=",
+        "path": "../.",
+        "type": "path"
+      },
+      "original": {
+        "path": "../.",
+        "type": "path"
       }
     },
     "treefmt-nix": {
