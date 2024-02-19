@@ -5,28 +5,19 @@
     systems.url = "github:nix-systems/default";
     process-compose-flake.url = "github:Platonic-Systems/process-compose-flake";
     services-flake.url = "github:juspay/services-flake";
-    treefmt-nix.url = "github:numtide/treefmt-nix";
   };
   outputs = inputs:
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       systems = import inputs.systems;
       imports = [
         inputs.process-compose-flake.flakeModule
-        inputs.treefmt-nix.flakeModule
       ];
-      perSystem = { self', pkgs, system, lib, config, ... }: {
+      perSystem = { self', pkgs, system, lib, ... }: {
         _module.args.pkgs = import inputs.nixpkgs {
           inherit system;
           # Required for elastic search
           config.allowUnfree = true;
         };
-        treefmt = {
-          projectRootFile = "flake.nix";
-          programs = {
-            nixpkgs-fmt.enable = true;
-          };
-        };
-        checks.fmt-check = config.treefmt.build.check inputs.services-flake;
         process-compose =
           let
             mkPackageFor = mod:
