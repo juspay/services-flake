@@ -43,14 +43,15 @@ in
       default = {
         processes."${name}" =
           let
-            grafanaConfig =
+            grafanaConfig = lib.recursiveUpdate
               {
                 server = {
                   protocol = "http";
                   http_port = config.port;
                   domain = "localhost";
                 };
-              } // config.extraConf;
+              }
+              config.extraConf;
             grafanaConfigIni = iniFormat.generate "defaults.ini" grafanaConfig;
             startScript = pkgs.writeShellApplication {
               name = "start-grafana";
