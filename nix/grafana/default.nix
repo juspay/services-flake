@@ -82,7 +82,12 @@ in
           {
             command = startScript;
             readiness_probe = {
-              exec.command = "${pkgs.curl}/bin/curl -f ${config.root_url}/api/health";
+              http_get = {
+                host = config.domain;
+                scheme = config.protocol;
+                port = config.http_port;
+                path = "/api/health";
+              };
               initial_delay_seconds = 15;
               period_seconds = 10;
               timeout_seconds = 2;
