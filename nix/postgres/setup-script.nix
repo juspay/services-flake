@@ -1,11 +1,12 @@
 { config, pkgs, lib }:
 let
+  psqlUserArg = lib.optionalString (config.superuser != null) "-U ${config.superuser}";
   setupInitialSchema = dbName: schema: ''
     echo "Applying database schema on ${dbName}"
     if [ -f "${schema}" ]
     then
       echo "Running file ${schema}"
-      awk 'NF' "${schema}" | psql -d ${dbName}
+      awk 'NF' "${schema}" | psql ${psqlUserArg} -d ${dbName}
     elif [ -d "${schema}" ]
     then
       # Read sql files in version order. Apply one file
@@ -13,7 +14,7 @@ let
       # doesn't end in a ;.
       find "${schema}"/*.sql | while read -r f ; do
         echo "Applying sql file: $f"
-        awk 'NF' "$f" | psql -d ${dbName}
+        awk 'NF' "$f" | psql ${psqlUserArg} -d ${dbName}
       done
     else
       echo "ERROR: Could not determine how to apply schema with ${schema}"
@@ -28,13 +29,13 @@ let
           # Create initial databases
           dbAlreadyExists=$(
             echo "SELECT 1 as exists FROM pg_database WHERE datname = '${database.name}';" | \
-            psql -d postgres | \
+            psql ${psqlUserArg} -d postgres | \
             grep -c 'exists = "1"' || true
           )
           echo "$dbAlreadyExists"
           if [ 1 -ne "$dbAlreadyExists" ]; then
             echo "Creating database: ${database.name}"
-            echo 'create database "${database.name}";' | psql -d postgres
+            echo 'create database "${database.name}";' | psql ${psqlUserArg} -d postgres
             ${lib.optionalString (database.schemas != null)
               (lib.concatMapStrings (schema: setupInitialSchema (database.name) schema) database.schemas)}
           fi
@@ -42,13 +43,13 @@ let
         config.initialDatabases)
     else
       lib.optionalString config.createDatabase ''
-        echo "CREATE DATABASE ''${USER:-$(id -nu)};" | psql -d postgres '';
+        echo "CREATE DATABASE ''${USER:-$(id -nu)};" | psql ${psqlUserArg} -d postgres '';
 
 
   runInitialScript =
     let
       scriptCmd = sqlScript: ''
-        echo "${sqlScript}" | psql -d postgres
+        echo "${sqlScript}" | psql ${psqlUserArg} -d postgres
       '';
     in
     {
