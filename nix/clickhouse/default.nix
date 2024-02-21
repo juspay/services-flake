@@ -152,7 +152,10 @@ in
                 command = "${lib.getExe startScript}";
 
                 readiness_probe = {
-                  exec.command = ''${config.package}/bin/clickhouse-client --query "SELECT 1" --port ${builtins.toString config.port}'';
+                  http_get = {
+                    host = "localhost";
+                    port = if (lib.hasAttr "http_port" config.extraConfig) then config.extraConfig.http_port else 8123;
+                  };
                   initial_delay_seconds = 2;
                   period_seconds = 10;
                   timeout_seconds = 4;
