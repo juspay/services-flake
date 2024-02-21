@@ -12,10 +12,28 @@ in
 
     package = lib.mkPackageOption pkgs "grafana" { };
 
-    port = lib.mkOption {
+    http_port = lib.mkOption {
       type = types.int;
       description = "Which port to run grafana on.";
       default = 3000;
+    };
+
+    domain = lib.mkOption {
+      type = types.str;
+      description = "The public facing domain name used to access grafana from a browser.";
+      default = "localhost";
+    };
+
+    protocol = lib.mkOption {
+      type = types.str;
+      description = "Protocol (http, https, h2, socket).";
+      default = "http";
+    };
+
+    root_url = lib.mkOption {
+      type = types.str;
+      description = "The full public facing url.";
+      default = "${config.protocol}://${config.domain}:${builtins.toString config.http_port}";
     };
 
     dataDir = lib.mkOption {
@@ -44,14 +62,12 @@ in
         processes."${name}" =
           let
             grafanaConfig = lib.recursiveUpdate
+              config.extraConf
               {
                 server = {
-                  protocol = "http";
-                  http_port = config.port;
-                  domain = "localhost";
+                  inherit (config) protocol http_port domain root_url;
                 };
-              }
-              config.extraConf;
+              };
             grafanaConfigIni = iniFormat.generate "defaults.ini" grafanaConfig;
             startScript = pkgs.writeShellApplication {
               name = "start-grafana";
@@ -66,7 +82,7 @@ in
           {
             command = startScript;
             readiness_probe = {
-              exec.command = "${pkgs.curl}/bin/curl -f ${grafanaConfig.server.protocol}://${grafanaConfig.server.domain}:${builtins.toString grafanaConfig.server.http_port}/api/health";
+              exec.command = "${pkgs.curl}/bin/curl -f ${config.root_url}/api/health";
               initial_delay_seconds = 15;
               period_seconds = 10;
               timeout_seconds = 2;

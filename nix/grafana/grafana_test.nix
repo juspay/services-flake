@@ -2,7 +2,7 @@
   services.grafana."gf1" =
     {
       enable = true;
-      port = 3000;
+      http_port = 3000;
       extraConf = {
         security.admin_user = "patato";
         security.admin_password = "potato";
@@ -21,8 +21,8 @@
           ''
             ADMIN=${cfg.extraConf.security.admin_user}
             PASSWORD=${cfg.extraConf.security.admin_password}
-            curl -sSfN -u $ADMIN:$PASSWORD http://127.0.0.1:3000/api/org/users -i
-            curl -sSfN -u $ADMIN:$PASSWORD http://127.0.0.1:3000/api/org/users | grep admin\@localhost
+            curl -sSfN -u $ADMIN:$PASSWORD ${cfg.root_url}/api/org/users -i
+            curl -sSfN -u $ADMIN:$PASSWORD ${cfg.root_url}/api/org/users | grep admin\@localhost
           '';
         name = "grafana-test";
       };
