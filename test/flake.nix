@@ -46,6 +46,7 @@
             "${inputs.services-flake}/nix/redis_test.nix"
             "${inputs.services-flake}/nix/redis-cluster_test.nix"
             "${inputs.services-flake}/nix/zookeeper_test.nix"
+            "${inputs.services-flake}/nix/grafana/grafana_test.nix"
           ]);
       };
     };

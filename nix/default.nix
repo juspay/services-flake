@@ -13,5 +13,6 @@ in
     ./redis-cluster.nix
     ./redis.nix
     ./zookeeper.nix
+    ./grafana
   ];
 }
