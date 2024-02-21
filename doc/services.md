@@ -16,6 +16,7 @@ short-title: Services
 - [ ] Redis
 - [ ] Redis Cluster
 - [ ] Zookeeper
+- [ ] [[grafana]]#
 - [ ] ...
 
 [gh]: https://github.com/juspay/services-flake
