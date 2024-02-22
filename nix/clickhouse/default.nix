@@ -27,7 +27,7 @@ in
       description = "The clickhouse data directory";
     };
 
-    defaultConfig = lib.mkOption {
+    defaultExtraConfig = lib.mkOption {
       type = yamlFormat.type;
       internal = true;
       readOnly = true;
@@ -97,7 +97,7 @@ in
         processes =
           let
             clickhouseConfig = yamlFormat.generate "clickhouse-config.yaml" (
-              lib.recursiveUpdate config.defaultConfig config.extraConfig
+              lib.recursiveUpdate config.defaultExtraConfig config.extraConfig
             );
           in
           {
