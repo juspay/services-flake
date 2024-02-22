@@ -75,24 +75,26 @@ in
         processes =
           let
             clickhouseConfig = yamlFormat.generate "clickhouse-config.yaml" (
-              {
-                logger = {
-                  level = "warning";
-                  console = 1;
-                };
-                tcp_port = "${toString config.port}";
-                default_profile = "default";
-                default_database = "default";
-                path = "${config.dataDir}/clickhouse";
-                tmp_path = "${config.dataDir}/clickhouse/tmp";
-                user_files_path = "${config.dataDir}/clickhouse/user_files";
-                format_schema_path = "${config.dataDir}/clickhouse/format_schemas";
-                user_directories = {
-                  users_xml = {
-                    path = "${config.package}/etc/clickhouse-server/users.xml";
+              lib.recursiveUpdate
+                config.extraConfig
+                {
+                  logger = {
+                    level = "warning";
+                    console = 1;
                   };
-                };
-              } // config.extraConfig
+                  tcp_port = "${toString config.port}";
+                  default_profile = "default";
+                  default_database = "default";
+                  path = "${config.dataDir}/clickhouse";
+                  tmp_path = "${config.dataDir}/clickhouse/tmp";
+                  user_files_path = "${config.dataDir}/clickhouse/user_files";
+                  format_schema_path = "${config.dataDir}/clickhouse/format_schemas";
+                  user_directories = {
+                    users_xml = {
+                      path = "${config.package}/etc/clickhouse-server/users.xml";
+                    };
+                  };
+                }
             );
           in
           {
