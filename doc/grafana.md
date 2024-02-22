@@ -21,42 +21,20 @@ By default, Grafana stores data in the `sqlite3` [database](https://grafana.com/
 
 To change the database to `postgres`, we can use the following config:
 
-1. Create `postgres` service.
-
 ```nix
-services.postgres."pg1" = {
-  enable = true;
-  listen_addresses = "127.0.0.1";
-  port = 5435;
-  initialDatabases = [{
-    name = "grafana-db";
-  }];
-  initialScript.after = ''
-    CREATE USER gfuser with PASSWORD 'gfpassword' SUPERUSER;
-  '';
-};
-```
-
-2. Create `grafana` service, and change its config to use the `postgres` database.
-
-```nix
-services.grafana."gf1" = {
-  enable = true;
-  http_port = 3001;
-  extraConf = {
-    database = {
-      type = "postgres";
-      host = "127.0.0.1:5435";
-      name = "grafana-db";
-      user = "gfuser";
-      password = "gfpassword";
+    services.postgres.pg1 = {
+      enable = true;
+      listen_addresses = "127.0.0.1";
+      initialScript.after = "CREATE USER root SUPERUSER;";
     };
-  };
-};
-```
-
-3. Add a setting to start `grafana` only after `postgres` is running.
-
-```nix
-settings.processes."gf1".depends_on."pg1".condition = "process_healthy";
+    services.grafana.gf1 = {
+      enable = true;
+      extraConf.database = with config.services.postgres.pg1; {
+        type = "postgres";
+        host = "${listen_addresses}:${builtins.toString port}";
+        name = "postgres"; # database name
+      };
+    };
+    settings.processes."gf1".depends_on."pg1".condition = "process_healthy";
+    };
 ```
