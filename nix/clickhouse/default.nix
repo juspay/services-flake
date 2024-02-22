@@ -27,39 +27,15 @@ in
       description = "The clickhouse data directory";
     };
 
-    loggerLevel = lib.mkOption {
-      type = types.str;
-      default = "warning";
-      description = "Log level for clickhouse";
-    };
-
-    loggerConsole = lib.mkOption {
-      type = types.int;
-      default = 1;
-      description = "Log to console if not daemon mode and is tty";
-    };
-
-    defaultProfile = lib.mkOption {
-      type = types.str;
-      default = "default";
-      description = "Default profile of settings";
-    };
-
-    defaultDatabase = lib.mkOption {
-      type = types.str;
-      default = "default";
-      description = "Default database";
-    };
-
     defaultConfig = lib.mkOption {
       type = yamlFormat.type;
       internal = true;
       readOnly = true;
       default = {
-        logger.level = config.loggerLevel;
-        logger.console = config.loggerConsole;
-        default_profile = config.defaultProfile;
-        default_database = config.defaultDatabase;
+        logger.level = "warning";
+        logger.console = 1;
+        default_profile = "default";
+        default_database = "default";
         tcp_port = toString config.port;
         path = "${config.dataDir}/clickhouse";
         tmp_path = "${config.dataDir}/clickhouse/tmp";
