@@ -56,12 +56,12 @@ in
         processes."${name}" =
           let
             grafanaConfig = lib.recursiveUpdate
-              config.extraConf
               {
                 server = {
                   inherit (config) protocol http_port domain;
                 };
-              };
+              }
+              config.extraConf;
             grafanaConfigIni = iniFormat.generate "defaults.ini" grafanaConfig;
             startScript = pkgs.writeShellApplication {
               name = "start-grafana";
