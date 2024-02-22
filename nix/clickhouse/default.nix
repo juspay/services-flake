@@ -97,7 +97,7 @@ in
         processes =
           let
             clickhouseConfig = yamlFormat.generate "clickhouse-config.yaml" (
-              lib.recursiveUpdate config.extraConfig config.defaultConfig
+              lib.recursiveUpdate config.defaultConfig config.extraConfig
             );
           in
           {
