@@ -21,8 +21,9 @@
           ''
             ADMIN=${cfg.extraConf.security.admin_user}
             PASSWORD=${cfg.extraConf.security.admin_password}
-            curl -sSfN -u $ADMIN:$PASSWORD ${cfg.root_url}/api/org/users -i
-            curl -sSfN -u $ADMIN:$PASSWORD ${cfg.root_url}/api/org/users | grep admin\@localhost
+            ROOT_URL="${cfg.protocol}://${cfg.domain}:${builtins.toString cfg.http_port}";
+            curl -sSfN -u $ADMIN:$PASSWORD $ROOT_URL/api/org/users -i
+            curl -sSfN -u $ADMIN:$PASSWORD $ROOT_URL/api/org/users | grep admin\@localhost
           '';
         name = "grafana-test";
       };

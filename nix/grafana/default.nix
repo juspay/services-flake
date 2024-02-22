@@ -30,12 +30,6 @@ in
       default = "http";
     };
 
-    root_url = lib.mkOption {
-      type = types.str;
-      description = "The full public facing url.";
-      default = "${config.protocol}://${config.domain}:${builtins.toString config.http_port}";
-    };
-
     dataDir = lib.mkOption {
       type = types.str;
       description = "Directory where grafana stores its logs and data.";
@@ -65,7 +59,7 @@ in
               config.extraConf
               {
                 server = {
-                  inherit (config) protocol http_port domain root_url;
+                  inherit (config) protocol http_port domain;
                 };
               };
             grafanaConfigIni = iniFormat.generate "defaults.ini" grafanaConfig;
