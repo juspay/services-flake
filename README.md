@@ -28,8 +28,7 @@ To discuss the project, please [join our Zulip](https://nixos.zulipchat.com/#nar
 
 ## Contributing
 
-- If you are adding a *new* service, see <https://github.com/cachix/devenv/tree/main/src/modules/services> for inspiration.
-- For contributing to docs, see <https://github.com/flake-parts/community.flake.parts#guidelines-for-writing-docs>
+See <https://community.flake.parts/services-flake/contributing>
 
 ## Credits
 
