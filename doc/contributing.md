@@ -18,6 +18,8 @@ An `.envrc` is also provided, so it is recommended to use `direnv` to automatica
 {#new-service}
 ## New service
 
+The project repository is structure to make addition of new services easy. Here's how to add a new service:
+
 > [!info]
 > See <https://github.com/cachix/devenv/tree/main/src/modules/services> for inspiration.
 > 
