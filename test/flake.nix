@@ -4,7 +4,7 @@
     flake-parts.url = "github:hercules-ci/flake-parts";
     systems.url = "github:nix-systems/default";
     process-compose-flake.url = "github:Platonic-Systems/process-compose-flake";
-    services-flake.url = "github:juspay/services-flake";
+    services-flake = { };
   };
   outputs = inputs:
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
@@ -46,6 +46,7 @@
             "${inputs.services-flake}/nix/redis_test.nix"
             "${inputs.services-flake}/nix/redis-cluster_test.nix"
             "${inputs.services-flake}/nix/zookeeper_test.nix"
+            "${inputs.services-flake}/nix/grafana_test.nix"
           ]);
       };
     };

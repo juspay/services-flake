@@ -2,16 +2,12 @@
   services.clickhouse."clickhouse1" = {
     enable = true;
     port = 9000;
-    extraConfig = ''
-      http_port: 9050
-    '';
+    extraConfig.http_port = 9050;
   };
   services.clickhouse."clickhouse2" = {
     enable = true;
     port = 9001;
-    extraConfig = ''
-      http_port: 9051
-    '';
+    extraConfig.http_port = 9051;
     initialDatabases = [
       {
         name = "sample_db";

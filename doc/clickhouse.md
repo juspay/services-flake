@@ -23,9 +23,9 @@ Clickhouse has [HTTP Interface](https://clickhouse.com/docs/en/interfaces/http) 
 {
   services.clickhouse."clickhouse-1" = {
     enable = true;
-    extraConfig = ''
-      http_port: 9050
-    '';
+    extraConfig = {
+      http_port = 9050
+    };
   };
 }
 ```

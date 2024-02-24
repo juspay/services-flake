@@ -2,6 +2,7 @@
 { pkgs, lib, name, config, ... }:
 let
   inherit (lib) types;
+  yamlFormat = pkgs.formats.yaml { };
 in
 {
   options = {
@@ -26,10 +27,32 @@ in
       description = "The clickhouse data directory";
     };
 
+    defaultExtraConfig = lib.mkOption {
+      type = yamlFormat.type;
+      internal = true;
+      readOnly = true;
+      default = {
+        logger.level = "warning";
+        logger.console = 1;
+        default_profile = "default";
+        default_database = "default";
+        tcp_port = toString config.port;
+        path = "${config.dataDir}/clickhouse";
+        tmp_path = "${config.dataDir}/clickhouse/tmp";
+        user_files_path = "${config.dataDir}/clickhouse/user_files";
+        format_schema_path = "${config.dataDir}/clickhouse/format_schemas";
+        user_directories = {
+          users_xml = {
+            path = "${config.package}/etc/clickhouse-server/users.xml";
+          };
+        };
+      };
+    };
+
     extraConfig = lib.mkOption {
-      type = types.lines;
+      type = yamlFormat.type;
       description = "Additional configuration to be appended to `clickhouse-config.yaml`.";
-      default = "";
+      default = { };
     };
 
     initialDatabases = lib.mkOption {
@@ -73,22 +96,9 @@ in
       default = {
         processes =
           let
-            clickhouseConfig = pkgs.writeText "clickhouse-config.yaml" ''
-              logger:
-                level: warning
-                console: 1
-              tcp_port: ${toString config.port}
-              default_profile: default
-              default_database: default
-              path: ${config.dataDir}/clickhouse
-              tmp_path: ${config.dataDir}/clickhouse/tmp
-              user_files_path: ${config.dataDir}/clickhouse/user_files
-              format_schema_path: ${config.dataDir}/clickhouse/format_schemas
-              user_directories:
-                users_xml:
-                  path: ${config.package}/etc/clickhouse-server/users.xml
-              ${config.extraConfig}
-            '';
+            clickhouseConfig = yamlFormat.generate "clickhouse-config.yaml" (
+              lib.recursiveUpdate config.defaultExtraConfig config.extraConfig
+            );
           in
           {
             # DB initialization
