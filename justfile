@@ -1,3 +1,4 @@
+# List all the just commands
 default:
     @just --list
 
@@ -17,3 +18,11 @@ test-all:
 # Run native test for a specific service
 test service:
     nix build ./test#checks.$(nix eval --impure --expr "builtins.currentSystem").{{service}} --override-input services-flake . -L
+
+# Run doc server with hot-reload
+doc:
+    cd ./doc && nix run
+
+# Run service whose configuration is defined in `<service>_test.nix`
+run service:
+    cd test && nix run .#{{service}} --override-input services-flake ../

@@ -9,9 +9,9 @@ emanote:
 
 # Running services using `services-flake`
 
-[services-flake][gh] is a [flake-parts](https://flake.parts/) module providing [NixOS-like services](https://github.com/NixOS/nixpkgs/tree/master/nixos/modules/services) for [Nix flakes](https://nixos.asia/en/flakes), enabling the users to use same configuration for local development across platforms.
+[services-flake][gh] provides declarative, composable, and reproducible services for Nix development environment, as a [process-compose-flake](https://github.com/Platonic-Systems/process-compose-flake) module (based on [flake-parts](https://flake.parts)). Enabling users to have NixOS-like service on MacOS and Linux.
 
-It builds on top of the [process-compose-flake](https://community.flake.parts/process-compose-flake) module which allows running arbitrary processes in the devShell environment.
+It builds on top of the [process-compose-flake](https://community.flake.parts/process-compose-flake) module which allows running arbitrary processes declared in Nix.
 
 See:
 - [[start]]#
