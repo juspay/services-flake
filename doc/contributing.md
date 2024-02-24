@@ -16,7 +16,7 @@ nix develop .#dev
 An `.envrc` is also provided, so it is recommended to use `direnv` to automatically enter the dev shell when you `cd` into the project directory. See [this tutorial](https://nixos.asia/en/direnv).
 
 {#new-service}
-## New service
+## Adding a new service
 
 The project repository is structure to make addition of new services easy. Here's how to add a new service:
 
@@ -52,26 +52,24 @@ or test all services:
 just test-all
 ```
 
+{#service-doc}
+### Add documentation for the new service
+
+It is important to add documentation along with any new services you are contributing. Create a new file `./doc/<service-name>.md` (see [[clickhouse]] for example) and add the service to the list in [[services]].
+
+> [!note]
+> It is recommended to add documentation for non-trivial tasks. For example, grafana documentation mentions [how to change the default database backend](https://community.flake.parts/services-flake/grafana#change-database).
+
+
+
 {#docs}
 ## Documentation
 
 For contributing to docs, see <https://github.com/flake-parts/community.flake.parts#guidelines-for-writing-docs>
 
-
-We use [emanote](https://emanote.srid.ca/) to render our documentation. The source files are in the `doc` directory.
-
-{#doc-run}
-### Run the doc server
+We use [emanote](https://emanote.srid.ca/) to render our documentation. The source files are in the `doc` directory. To run the docs, use:
 
 ```sh
-just doc
+just doc # Or, `cd doc && nix run`
 ```
-
-{#doc-new-service}
-### Add documentation for a new service
-
-Create a new file `./doc/<service-name>.md` (see [[clickhouse]] for example) and add the service to the list in [[services]].
-
-> [!note]
-> It is recommended to add documentation for non-trivial tasks. For example, grafana documentation mentions [how to change the default database backend](https://community.flake.parts/services-flake/grafana#change-database).
 
