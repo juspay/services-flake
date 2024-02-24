@@ -1,5 +1,4 @@
 [![project chat](https://img.shields.io/badge/zulip-join_chat-brightgreen.svg)](https://nixos.zulipchat.com/#narrow/stream/414011-services-flake)
-[![CI](https://github.com/juspay/services-flake/actions/workflows/ci.yml/badge.svg)](https://github.com/juspay/services-flake/actions)
 
 # services-flake
 
