@@ -1,4 +1,5 @@
 [![project chat](https://img.shields.io/badge/zulip-join_chat-brightgreen.svg)](https://nixos.zulipchat.com/#narrow/stream/414011-services-flake)
+[![CI](https://github.com/juspay/services-flake/actions/workflows/ci.yml/badge.svg)](https://github.com/juspay/services-flake/actions)
 
 # services-flake
 
@@ -8,13 +9,7 @@ NixOS-like services for Nix flakes, as a [process-compose-flake](https://github.
 
 ## Getting Started
 
-```sh
-$ nix flake new --template github:juspay/services-flake ./my-project
-$ cd my-project
-$ nix run
-```
-
-Or see `./test/flake.nix`
+See <https://community.flake.parts/services-flake/start>
 
 ## Services available
 
@@ -30,8 +25,8 @@ To discuss the project, please [join our Zulip](https://nixos.zulipchat.com/#nar
 
 ## Contributing
 
-- If you are adding a *new* service, see https://github.com/cachix/devenv/tree/main/src/modules/services for inspiration.
-- For contributing to docs, see https://github.com/flake-parts/community.flake.parts#guidelines-for-writing-docs
+- If you are adding a *new* service, see <https://github.com/cachix/devenv/tree/main/src/modules/services> for inspiration.
+- For contributing to docs, see <https://github.com/flake-parts/community.flake.parts#guidelines-for-writing-docs>
 
 ## Credits
 
@@ -41,4 +36,4 @@ Thanks to [the devenv project](https://github.com/cachix/devenv/tree/main/src/mo
 
 ### Why not re-use devenv service modules?
 
-This is currently not possible (nor prioritized by the devenv project), which is why we must create our own services. See https://github.com/cachix/devenv/issues/75
+This is currently not possible (nor prioritized by the devenv project), which is why we must create our own services. See <https://github.com/cachix/devenv/issues/75>
