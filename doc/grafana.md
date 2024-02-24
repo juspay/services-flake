@@ -22,19 +22,21 @@ By default, Grafana stores data in the `sqlite3` [database](https://grafana.com/
 To change the database to `postgres`, we can use the following config:
 
 ```nix
-    services.postgres.pg1 = {
-      enable = true;
-      listen_addresses = "127.0.0.1";
-      initialScript.after = "CREATE USER root SUPERUSER;";
+{
+  services.postgres.pg1 = {
+    enable = true;
+    listen_addresses = "127.0.0.1";
+    initialScript.after = "CREATE USER root SUPERUSER;";
+  };
+  services.grafana.gf1 = {
+    enable = true;
+    extraConf.database = with config.services.postgres.pg1; {
+      type = "postgres";
+      host = "${listen_addresses}:${builtins.toString port}";
+      name = "postgres"; # database name
     };
-    services.grafana.gf1 = {
-      enable = true;
-      extraConf.database = with config.services.postgres.pg1; {
-        type = "postgres";
-        host = "${listen_addresses}:${builtins.toString port}";
-        name = "postgres"; # database name
-      };
-    };
-    settings.processes."gf1".depends_on."pg1".condition = "process_healthy";
-    };
+  };
+  settings.processes."gf1".depends_on."pg1".condition = "process_healthy";
+  };
+}
 ```
