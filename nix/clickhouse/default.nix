@@ -157,6 +157,9 @@ in
                 command = "${lib.getExe startScript}";
 
                 readiness_probe = {
+                  # FIXME: revert back to clickhouse-client readiness_probe once CI is moved out of github public runners
+                  # See: https://github.com/juspay/services-flake/issues/100
+                  # exec.command = ''${config.package}/bin/clickhouse-client --query "SELECT 1" --port ${builtins.toString config.port}'';
                   http_get = {
                     host = "localhost";
                     port = if (lib.hasAttr "http_port" config.extraConfig) then config.extraConfig.http_port else 8123;
