@@ -16,6 +16,7 @@ It builds on top of the [process-compose-flake](https://community.flake.parts/pr
 See:
 - [[start]]#
 - [[services]]#
+- [[contributing]]#
 
 ## Demo
 
