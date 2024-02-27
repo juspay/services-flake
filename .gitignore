@@ -1,3 +1,5 @@
 .direnv
 # created when `just test <service>` is used
 /result
+# created when `just run <service>` is used
+/test/data

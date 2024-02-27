@@ -8,7 +8,7 @@ short-title: Services
 > This list denotes the progress of documentation, not implementation. See full list of implemented services at [gh].
 
 - [ ] Apache Kafka
-- [ ] [[clickhouse]]#
+- [x] [[clickhouse]]#
 - [ ] Elasticsearch
 - [ ] MySQL
 - [ ] Nginx
@@ -16,6 +16,7 @@ short-title: Services
 - [ ] Redis
 - [ ] Redis Cluster
 - [ ] Zookeeper
+- [x] [[grafana]]#
 - [ ] ...
 
 [gh]: https://github.com/juspay/services-flake
