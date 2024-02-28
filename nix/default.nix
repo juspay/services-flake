@@ -14,5 +14,6 @@ in
     ./redis.nix
     ./zookeeper.nix
     ./grafana.nix
+    ./prometheus.nix
   ];
 }
