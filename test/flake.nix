@@ -48,6 +48,7 @@
             "${inputs.services-flake}/nix/zookeeper_test.nix"
             "${inputs.services-flake}/nix/grafana_test.nix"
             "${inputs.services-flake}/nix/prometheus_test.nix"
+            "${inputs.services-flake}/nix/pgadmin_test.nix"
           ]);
       };
     };
