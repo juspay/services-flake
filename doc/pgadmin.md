@@ -2,7 +2,7 @@
 
 [pgAdmin] is a feature rich Open Source administration and development platform for PostgreSQL.
 
-[pgAdmin]: https://github.com/prometheus/prometheus
+[pgAdmin]: https://www.pgadmin.org/
 
 ## Getting Started
 
