@@ -17,6 +17,11 @@
           inherit system;
           # Required for elastic search
           config.allowUnfree = true;
+          overlays = [
+            (final: prev: {
+              pgadmin4 = prev.pgadmin4.overrideAttrs (_: { doInstallCheck = false; });
+            })
+          ];
         };
         process-compose =
           let
