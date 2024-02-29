@@ -17,6 +17,12 @@
           inherit system;
           # Required for elastic search
           config.allowUnfree = true;
+          overlays = [
+            (final: prev: {
+              # Because tests are failing on darwin: https://github.com/juspay/services-flake/pull/115#issuecomment-1970467684
+              pgadmin4 = prev.pgadmin4.overrideAttrs (_: { doInstallCheck = false; });
+            })
+          ];
         };
         process-compose =
           let
@@ -48,6 +54,7 @@
             "${inputs.services-flake}/nix/zookeeper_test.nix"
             "${inputs.services-flake}/nix/grafana_test.nix"
             "${inputs.services-flake}/nix/prometheus_test.nix"
+            "${inputs.services-flake}/nix/pgadmin_test.nix"
           ]);
       };
     };

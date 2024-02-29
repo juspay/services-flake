@@ -18,6 +18,7 @@ short-title: Services
 - [ ] Zookeeper
 - [x] [[grafana]]#
 - [X] [[prometheus]]#
+- [X] [[pgadmin]]#
 - [ ] ...
 
 [gh]: https://github.com/juspay/services-flake

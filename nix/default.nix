@@ -15,5 +15,6 @@ in
     ./zookeeper.nix
     ./grafana.nix
     ./prometheus.nix
+    ./pgadmin.nix
   ];
 }
