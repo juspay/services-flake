@@ -16,5 +16,6 @@ in
     ./grafana.nix
     ./prometheus.nix
     ./pgadmin.nix
+    ./cassandra.nix
   ];
 }
