@@ -118,7 +118,7 @@ in
                       ${config.package}/bin/.pgadmin4-setup-wrapped setup
                     else
                       # pgadmin-8.2 has .pgadmin4-cli-wrapped
-                      ${config.package}/bin/.pgadmin4-cli-wrapped setup
+                      ${config.package}/bin/.pgadmin4-cli-wrapped setup-db
                     fi
                   '';
                 };
