@@ -1,5 +1,4 @@
 # Based on https://github.com/cachix/devenv/blob/fa9a708e240c6174f9fc4c6eefbc6a89ce01c350/src/modules/services/cassandra.nix
-
 { pkgs, lib, name, config, ... }:
 let
   inherit (lib) types;
@@ -102,24 +101,47 @@ in
         processes = {
           "${name}" =
             let
-              cassandraConfig = yamlFormat.generate "cassandra.yaml" (
-                lib.recursiveUpdate config.defaultExtraConfig config.extraConfig
-              );
+              cassandraConfig = pkgs.stdenv.mkDerivation {
+                name = "cassandra-config";
+                cassandraYaml = yamlFormat.generate "cassandra.yaml" (
+                  lib.recursiveUpdate config.defaultExtraConfig config.extraConfig
+                );
+                buildCommand = ''
+                  mkdir -p $out
+                  for d in ${config.package}/conf/*; do ln -s "$d" $out/; done
+                  rm -rf $out/cassandra.y*ml
+                  ln -s "$cassandraYaml" "$out/cassandra.yaml"
+
+                  rm -rf $out/cassandra-env.sh
+                  cat ${config.package}/conf/cassandra-env.sh > $out/cassandra-env.sh
+                  LOCAL_JVM_OPTS="${lib.concatStringsSep " " config.jvmOpts}"
+                  echo "JVM_OPTS=\"\$JVM_OPTS $LOCAL_JVM_OPTS\"" >> $out/cassandra-env.sh
+                '';
+              };
 
               startScript = pkgs.writeShellScriptBin "start-cassandra" ''
                 set -euo pipefail
 
-                if [[ ! -d "${config.dataDir}" ]]; then
-                  mkdir -p "${config.dataDir}"
+                DATA_DIR="$(readlink -m ${config.dataDir})"
+                if [[ ! -d "$DATA_DIR" ]]; then
+                  mkdir -p "$DATA_DIR"
                 fi
 
-                CASSANDRA_LOG_DIR="${config.dataDir}/log/"
+                CASSANDRA_CONF="${cassandraConfig}"
+                export CASSANDRA_CONF
+
+                CASSANDRA_LOG_DIR="$DATA_DIR/log/"
                 mkdir -p "$CASSANDRA_LOG_DIR"
                 export CASSANDRA_LOG_DIR
 
+                CASSANDRA_HOME="${config.package}"
+                export CASSANDRA_HOME
+
+                CLASSPATH="${config.package}/lib"
+                export CLASSPATH
+
                 export LOCAL_JMX="yes"
-                export JVM_OPTS="${lib.concatStringsSep " " config.jvmOpts}"
-                exec ${config.package}/bin/cassandra -Dcassandra.config=file:///${cassandraConfig} -f
+                exec ${config.package}/bin/cassandra -f
               '';
             in
             {
