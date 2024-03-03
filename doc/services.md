@@ -19,6 +19,7 @@ short-title: Services
 - [x] [[grafana]]#
 - [X] [[prometheus]]#
 - [X] [[pgadmin]]#
+- [X] [[cassandra]]#
 - [ ] ...
 
 [gh]: https://github.com/juspay/services-flake
