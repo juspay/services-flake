@@ -148,7 +148,9 @@ in
               command = startScript;
 
               readiness_probe = {
-                exec.command = "${config.package}/bin/nodetool -h ${config.listenAddress} -Dcom.sun.jndi.rmiURLParsing=legacy status";
+                exec.command = ''
+                  echo 'show version;' | CQLSH_HOST=${config.listenAddress} CQLSH_PORT=${toString config.nativeTransportPort} ${config.package}/bin/cqlsh
+                '';
                 initial_delay_seconds = 2;
                 period_seconds = 10;
                 timeout_seconds = 4;
