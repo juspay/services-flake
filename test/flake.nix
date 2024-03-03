@@ -23,10 +23,6 @@
               pgadmin4 = prev.pgadmin4.overrideAttrs (_: { doInstallCheck = false; });
             })
           ];
-          config.permittedInsecurePackages = [
-            # Required for cassandra. Python 2.7 has reached its EOL.
-            "python-2.7.18.7"
-          ];
         };
         process-compose =
           let
