@@ -1,6 +1,7 @@
 {
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    nixpkgs-2023.url = "github:nixos/nixpkgs/976fa3369d722e76f37c77493d99829540d43845";
     flake-parts.url = "github:hercules-ci/flake-parts";
     systems.url = "github:nix-systems/default";
     process-compose-flake.url = "github:Platonic-Systems/process-compose-flake";
@@ -21,6 +22,8 @@
             (final: prev: {
               # Because tests are failing on darwin: https://github.com/juspay/services-flake/pull/115#issuecomment-1970467684
               pgadmin4 = prev.pgadmin4.overrideAttrs (_: { doInstallCheck = false; });
+              # grafana builds are failing on aarch64-darwin latest nixpkgs-unstable: https://github.com/NixOS/nixpkgs/issues/273998
+              grafana = inputs.nixpkgs-2023.legacyPackages.${system}.grafana;
             })
           ];
         };
