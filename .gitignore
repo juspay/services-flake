@@ -3,3 +3,4 @@
 /result
 # created when `just run <service>` is used
 /test/data
+/.pre-commit-config.yaml
