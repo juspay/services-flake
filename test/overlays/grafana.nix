@@ -7,9 +7,9 @@
       proxyVendor = true;
 
       offlineCache = args.offlineCache.overrideAttrs (oa: {
-        buildPhase = final.lib.replaceStrings 
-          ["yarn config set --json supportedArchitectures.os '[ \"linux\" ]'"]
-          ["yarn config set --json supportedArchitectures.os '[ \"linux\", \"darwin\" ]'"]
+        buildPhase = final.lib.replaceStrings
+          [ "yarn config set --json supportedArchitectures.os '[ \"linux\" ]'" ]
+          [ "yarn config set --json supportedArchitectures.os '[ \"linux\", \"darwin\" ]'" ]
           oa.buildPhase;
         outputHash = "sha256-pqInPfZEg2tcp8BXg1nnMddRZ1yyZ6KQa2flWd4IZSU=";
       });
@@ -21,7 +21,7 @@
       # both excluding and removing (`go.mod`) is also not an option because excludedPackages expects a `go.mod`
       excludedPackages = args.excludedPackages ++ [ "xorm" ];
 
-      postConfigure = final.lib.replaceStrings [ "rm pkg/util/xorm/go.{mod,sum}" ] [""] args.postConfigure;
+      postConfigure = final.lib.replaceStrings [ "rm pkg/util/xorm/go.{mod,sum}" ] [ "" ] args.postConfigure;
     });
   });
 })
