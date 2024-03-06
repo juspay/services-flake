@@ -11,6 +11,11 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, macos-14]
     steps:
+      - name: Free up space
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo rm -rf "/usr/local/share/boost"
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
       - uses: actions/checkout@v3
       - uses: DeterminateSystems/nix-installer-action@main
         with:
