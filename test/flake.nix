@@ -18,14 +18,7 @@
           inherit system;
           # Required for elastic search
           config.allowUnfree = true;
-          overlays = [
-            (final: prev: {
-              # Because tests are failing on darwin: https://github.com/juspay/services-flake/pull/115#issuecomment-1970467684
-              pgadmin4 = prev.pgadmin4.overrideAttrs (_: { doInstallCheck = false; });
-              # grafana builds are failing on aarch64-darwin latest nixpkgs-unstable: https://github.com/NixOS/nixpkgs/issues/273998
-              grafana = inputs.nixpkgs-2023.legacyPackages.${system}.grafana;
-            })
-          ];
+          overlays = import ./overlays;
         };
         process-compose =
           let
