@@ -10,7 +10,7 @@ order: -9
 A Nix dev shell is available, providing `nixpkgs-fmt` and `just`. To enter the dev shell, run:
 
 ```sh
-nix develop .#dev
+nix develop ./dev
 ```
 
 An `.envrc` is also provided, so it is recommended to use `direnv` to automatically enter the dev shell when you `cd` into the project directory. See [this tutorial](https://nixos.asia/en/direnv).
