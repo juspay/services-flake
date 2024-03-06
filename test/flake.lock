@@ -72,23 +72,7 @@
         "flake-parts": "flake-parts",
         "nixpkgs": "nixpkgs",
         "process-compose-flake": "process-compose-flake",
-        "services-flake": "services-flake",
         "systems": "systems"
-      }
-    },
-    "services-flake": {
-      "locked": {
-        "lastModified": 1709210422,
-        "narHash": "sha256-XoEjb4sqgvMP0A4xRPgI6y5Spzx1xyprwVMAITceC4g=",
-        "ref": "refs/heads/update-flake-lock",
-        "rev": "5e48c5a965290845f4d42cc17216231ca910ab39",
-        "revCount": 105,
-        "type": "git",
-        "url": "file:///home/abhishek/dev/nix/services-flake"
-      },
-      "original": {
-        "id": "services-flake",
-        "type": "indirect"
       }
     },
     "systems": {
