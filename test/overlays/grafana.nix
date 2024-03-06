@@ -11,7 +11,12 @@
           [ "yarn config set --json supportedArchitectures.os '[ \"linux\" ]'" ]
           [ "yarn config set --json supportedArchitectures.os '[ \"linux\", \"darwin\" ]'" ]
           oa.buildPhase;
-        outputHash = "sha256-pqInPfZEg2tcp8BXg1nnMddRZ1yyZ6KQa2flWd4IZSU=";
+
+        outputHash =
+          if final.stdenv.isLinux then
+            "sha256-IlNe89T6cfXGy1WY73Yd+wg1bt9UuBCkKSDkrazybQM="
+          else
+            "sha256-pqInPfZEg2tcp8BXg1nnMddRZ1yyZ6KQa2flWd4IZSU=";
       });
 
       # exclude the package instead of `rm pkg/util/xorm/go.{mod,sum}`
