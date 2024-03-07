@@ -58,3 +58,7 @@ nix run
 [^how-default]: `default` is the name of the process group that is derived from `process-compose.<name>` in `perSystem.process-compose`.
 
 [^sample-config]: See the example configuration from the [getting started](https://f1bonacc1.github.io/process-compose/intro/) section of the process-compose docs.
+
+## Examples
+
+- In [Nammayatri](https://github.com/nammayatri/nammayatri), services-flakes is used to run the local services stack (which used to be run with docker-compose). Read about it [in this blog post](https://nixos.asia/en/blog/replacing-docker-compose).

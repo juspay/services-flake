@@ -6,6 +6,15 @@ Declarative, composable, and reproducible services for Nix development environme
 
 ![Demo](./doc/demo.gif)
 
+## Motivation
+
+With `services-flake`, we aim to solve the following problems:
+
+- Run external services like databases, Redis, etc. natively across platforms.
+- Enable users to configure multiple instances of these external services.
+- Provide project-specific service configuration and data isolation.
+
+Consider a scenario where we are juggling two projects, located at `~/code/foo` and `~/code/bar`. The `foo` project integrates postgres and nginx, while `bar` encompasses postgres, pgAdmin, and kafka. It's crucial that the postgres data remains segregated across these projects. Additionally, the `bar` project is designed to facilitate multiple instances of postgres. Both projects are equipped with a flake app, streamlining the launch of their respective service stacks. Consequently, anyone using a Linux or macOS system can effortlessly clone either project and execute `nix run .#services` to activate the full suite of services without the need for manual configuration.
 ## Getting Started
 
 See <https://community.flake.parts/services-flake/start>
