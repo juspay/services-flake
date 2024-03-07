@@ -25,7 +25,7 @@ List of supported services is available at https://community.flake.parts/service
 
 ## Comparison with similar approaches
 
-| | services-flake | [devenv](https://devenv.sh/) |
+| | services-flake | [devenv services](https://devenv.sh/services/) |
 | --- | --- | --- |
 | macOS support | ✔️  | ✔️  |
 | Pure Flakes | ✔️  | ❌[^1]  |
