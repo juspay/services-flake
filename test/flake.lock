@@ -34,6 +34,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-grafana": {
+      "locked": {
+        "lastModified": 1696630667,
+        "narHash": "sha256-kO67pYOeT/6m9BnPO+zNHWnC4eGiW87gIAJ+e8f3gwU=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "b604023e0a5549b65da3040a07d2beb29ac9fc63",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "b604023e0a5549b65da3040a07d2beb29ac9fc63",
+        "type": "github"
+      }
+    },
     "nixpkgs-lib": {
       "locked": {
         "dir": "lib",
@@ -71,6 +87,7 @@
       "inputs": {
         "flake-parts": "flake-parts",
         "nixpkgs": "nixpkgs",
+        "nixpkgs-grafana": "nixpkgs-grafana",
         "process-compose-flake": "process-compose-flake",
         "systems": "systems"
       }

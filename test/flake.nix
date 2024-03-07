@@ -5,6 +5,10 @@
     systems.url = "github:nix-systems/default";
     process-compose-flake.url = "github:Platonic-Systems/process-compose-flake";
     services-flake = { };
+
+    # Deal with broken packages:
+    # grafana is broken on aarch64-darwin: https://github.com/NixOS/nixpkgs/issues/273998
+    nixpkgs-grafana.url = "github:nixos/nixpkgs/b604023e0a5549b65da3040a07d2beb29ac9fc63";
   };
   outputs = inputs:
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
@@ -12,12 +16,12 @@
       imports = [
         inputs.process-compose-flake.flakeModule
       ];
-      perSystem = { self', pkgs, system, lib, ... }: {
+      perSystem = { self', inputs', pkgs, system, lib, ... }: {
         _module.args.pkgs = import inputs.nixpkgs {
           inherit system;
           # Required for elastic search
           config.allowUnfree = true;
-          overlays = import ./overlays { inherit system lib; };
+          overlays = import ./overlays { inherit system inputs' lib; };
         };
         process-compose =
           let
