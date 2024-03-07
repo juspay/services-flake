@@ -27,6 +27,7 @@ jobs:
         with:
           name: services-flake
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      - run: nix show-config | grep max-jobs
       - uses: yaxitech/nix-install-pkgs-action@v3
         with:
           packages: "github:srid/nixci"
