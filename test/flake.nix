@@ -17,7 +17,7 @@
           inherit system;
           # Required for elastic search
           config.allowUnfree = true;
-          overlays = import ./overlays;
+          overlays = import ./overlays { inherit system lib; };
         };
         process-compose =
           let
