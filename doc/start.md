@@ -59,6 +59,6 @@ nix run
 
 [^sample-config]: See the example configuration from the [getting started](https://f1bonacc1.github.io/process-compose/intro/) section of the process-compose docs.
 
-## See also
+## Examples
 
-If you are looking to replace docker and use `services-flake` in your dev environment, read about how we accomplished it at [Nammayatri](https://github.com/nammayatri/nammayatri): <https://nixos.asia/en/blog/replacing-docker-compose>
+- In [Nammayatri](https://github.com/nammayatri/nammayatri), services-flakes is used to run the local services stack (which used to be run with docker-compose). Read about it [in this blog post](https://nixos.asia/en/blog/replacing-docker-compose).
