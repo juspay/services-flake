@@ -1,4 +1,5 @@
 (final: prev: {
+  # grafana is broken on aarch64-darwin: https://github.com/NixOS/nixpkgs/issues/273998
   grafana = (prev.callPackage "${prev.path}/pkgs/servers/monitoring/grafana" {
     buildGoModule = args: prev.buildGoModule (args // {
 
