@@ -6,6 +6,14 @@ Declarative, composable, and reproducible services for Nix development environme
 
 ![Demo](./doc/demo.gif)
 
+## Motivation
+
+With `services-flake`, we aim to solve the following problems:
+
+- Run external services like databases, Redis, etc. natively across platforms.
+- Enable users to configure multiple instances of these external services.
+- Provide project-specific service configuration and data isolation.
+
 ## Getting Started
 
 See <https://community.flake.parts/services-flake/start>
