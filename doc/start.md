@@ -58,3 +58,7 @@ nix run
 [^how-default]: `default` is the name of the process group that is derived from `process-compose.<name>` in `perSystem.process-compose`.
 
 [^sample-config]: See the example configuration from the [getting started](https://f1bonacc1.github.io/process-compose/intro/) section of the process-compose docs.
+
+## See also
+
+If you are looking to replace docker and use `services-flake` in your dev environment, read about how we accomplished it at [Nammayatri](https://github.com/nammayatri/nammayatri): <https://nixos.asia/en/blog/replacing-docker-compose>
