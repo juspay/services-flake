@@ -31,10 +31,12 @@ List of supported services is available at https://community.flake.parts/service
 | Pure Flakes | ✔️  | ❌[^1]  |
 | Share services across flakes | ✔️[^2]  | ❌  |
 | Services as flake apps | ✔️  | ❌[^3]  |
+| Multiple instances of a service | ✔️  | ❌[^4]  |
 
 [^1]: Devenv's flakes integration [requires](https://devenv.sh/guides/using-with-flakes/) you use run the nix shell in impure mode by passing `--impure`. 
 [^2]: `services-flake` is built on top of [flake-parts](https://flake.parts/), thus you may share your service and process modules for re-use across flakes, whilst making them general enough for customization based on the module system.
 [^3]: `services-flake` produces a flake app that you can run using the Nix command, `nix run`, whereas with devenv you must use devenv's CLI, `devenv up`.
+[^4]: `services-flake` allows you to configure multiple instances of the same service, whereas [devenv does not](https://github.com/cachix/devenv/issues/75#issuecomment-1638859874).
 
 
 ## A note on process working directory
