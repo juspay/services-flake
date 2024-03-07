@@ -21,7 +21,7 @@ See <https://community.flake.parts/services-flake/start>
 
 ## Services available
 
-See the list [here](nix/default.nix).
+List of supported services is available at https://community.flake.parts/services-flake/services
 
 ## A note on process working directory
 

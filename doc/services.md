@@ -4,22 +4,21 @@ short-title: Services
 
 # Supported services
 
->[!warning]
-> This list denotes the progress of documentation, not implementation. See full list of implemented services at [gh].
+>[!warning] WIP
+> Documentation for the services is still in progress. Please refer to [this issue][gh] for progress.
 
-- [ ] Apache Kafka
-- [x] [[clickhouse]]#
-- [ ] Elasticsearch
-- [ ] MySQL
-- [ ] Nginx
-- [ ] PostgreSQL
-- [ ] Redis
-- [ ] Redis Cluster
-- [ ] Zookeeper
-- [x] [[grafana]]#
-- [x] [[prometheus]]#
-- [x] [[pgadmin]]#
-- [x] [[cassandra]]#
-- [ ] ...
+- Apache Kafka
+- [[clickhouse]]#
+- Elasticsearch
+- MySQL
+- Nginx
+- PostgreSQL
+- Redis
+- Redis Cluster
+- Zookeeper
+- [[grafana]]#
+- [[prometheus]]#
+- [[pgadmin]]#
+- [[cassandra]]#
 
-[gh]: https://github.com/juspay/services-flake
+[gh]: https://github.com/juspay/services-flake/issues/132
