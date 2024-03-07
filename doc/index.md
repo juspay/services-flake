@@ -25,6 +25,6 @@ This is how running a service with `services-flake` looks like[^demo]:
 ![[demo.gif]]
 :::
 
-[^demo]: The commands used in the demo are available in the [getting started](https://github.com/juspay/services-flake#getting-started) section of the `services-flake` README.
+[^demo]: The commands used in the demo are available [[start]].
 
 [gh]: https://github.com/juspay/services-flake
