@@ -28,11 +28,11 @@ List of supported services is available at https://community.flake.parts/service
 | | services-flake | [devenv services](https://devenv.sh/services/) |
 | --- | --- | --- |
 | macOS support | ✔️  | ✔️  |
-| Pure Flakes | ✔️  | ❌[^1]  |
-| Share services across flakes | ✔️[^2]  | ❌  |
-| Services as flake apps | ✔️  | ❌[^3]  |
-| Multiple instances of a service | ✔️  | ❌[^4]  |
-| Reusable services | ✔️  | ❌[^5]  |
+| Pure Flakes | ✔️  | ✖️[^1]  |
+| Share services across flakes | ✔️[^2]  | ✖️  |
+| Services as flake apps | ✔️  | ✖️[^3]  |
+| Multiple instances of a service | ✔️  | ✖️[^4]  |
+| Reusable services | ✔️  | ✖️[^5]  |
 
 [^1]: Devenv's flakes integration [requires](https://devenv.sh/guides/using-with-flakes/) you use run the nix shell in impure mode by passing `--impure`. 
 [^2]: `services-flake` is built on top of [flake-parts](https://flake.parts/), thus you may share your service and process modules for re-use across flakes, whilst making them general enough for customization based on the module system.
