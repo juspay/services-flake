@@ -23,16 +23,18 @@ See <https://community.flake.parts/services-flake/start>
 
 List of supported services is available at https://community.flake.parts/services-flake/services
 
-## Comparison with similar approaches
+## Comparison with other tools
 
 | | services-flake | [devenv services](https://devenv.sh/services/) |
 | --- | --- | --- |
 | macOS support | ✔️  | ✔️  |
 | Pure Flakes | ✔️  | ✖️[^1]  |
-| Share services | ✔️  | ✖️[^2]  |
 | Services as flake apps | ✔️  | ✖️[^3]  |
 | Multiple instances of a service | ✔️  | ✖️[^4]  |
+| Share services | ✔️  | ✖️[^2]  |
 | Reusable services | ✔️  | ✖️[^5]  |
+
+Want to compare with other tools? [Let us know](https://github.com/juspay/services-flake/issues).
 
 [^1]: Devenv's flakes integration [requires](https://devenv.sh/guides/using-with-flakes/) you use run the nix shell in impure mode by passing `--impure`. 
 [^2]: `services-flake` is built on top of [flake-parts](https://flake.parts/), thus you may share your service and process modules for re-use across flakes, whilst making them general enough for customization based on the module system. With devenv, you can only share whole devenv configuration as modules. See [here](https://github.com/juspay/services-flake/pull/135#discussion_r1517425295).
