@@ -10,6 +10,7 @@
       ];
 
       # pre-run cleanup
+      # TODO: auto-detect the data directory
       preHook = ''
         rm -rf ./data
       '';
