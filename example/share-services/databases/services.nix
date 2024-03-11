@@ -6,7 +6,7 @@ let
   };
 in
 {
-  services.postgres."pg1" = {
+  services.postgres."northwind" = {
     imports = [ globalSocket ];
     enable = true;
     listen_addresses = "127.0.0.1";

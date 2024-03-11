@@ -29,12 +29,12 @@
 
             settings.processes.pgweb =
               let
-                pgcfg = config.services.postgres.pg1;
+                pgcfg = config.services.postgres.northwind;
               in
               {
                 environment.PGWEB_DATABASE_URL = "postgres://$USER@${pgcfg.listen_addresses}:${builtins.toString pgcfg.port}/${dbName}";
                 command = pkgs.pgweb;
-                depends_on."pg1".condition = "process_healthy";
+                depends_on."northwind".condition = "process_healthy";
               };
           };
       };
