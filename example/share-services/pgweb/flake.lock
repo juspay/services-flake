@@ -1,25 +1,5 @@
 {
   "nodes": {
-    "databases": {
-      "inputs": {
-        "flake-parts": "flake-parts",
-        "nixpkgs": "nixpkgs",
-        "northwind": "northwind",
-        "process-compose-flake": "process-compose-flake",
-        "services-flake": "services-flake",
-        "systems": "systems"
-      },
-      "locked": {
-        "lastModified": 1,
-        "narHash": "sha256-HLkTNoB7kJt6YjbjtGGcyI/80csIvWL09BP4Mf6iG+g=",
-        "path": "/nix/store/ybfqh37hvnza1dv1vmzpbjwgi1kqb9kl-source/example/share-services/databases",
-        "type": "path"
-      },
-      "original": {
-        "path": "/nix/store/ybfqh37hvnza1dv1vmzpbjwgi1kqb9kl-source/example/share-services/databases",
-        "type": "path"
-      }
-    },
     "flake-parts": {
       "inputs": {
         "nixpkgs-lib": "nixpkgs-lib"
@@ -125,6 +105,32 @@
       }
     },
     "northwind": {
+      "inputs": {
+        "flake-parts": "flake-parts_2",
+        "nixpkgs": "nixpkgs_2",
+        "northwind": "northwind_2",
+        "process-compose-flake": "process-compose-flake",
+        "services-flake": "services-flake",
+        "systems": "systems"
+      },
+      "locked": {
+        "dir": "example/share-services/northwind",
+        "lastModified": 1710167564,
+        "narHash": "sha256-StRjzomzbYEho0bpDGIJK6HdFgBTm3gcMxu3XDvrjkY=",
+        "owner": "juspay",
+        "repo": "services-flake",
+        "rev": "fc3cebb519a44c2eeb7b850080b300779488f19b",
+        "type": "github"
+      },
+      "original": {
+        "dir": "example/share-services/northwind",
+        "owner": "juspay",
+        "ref": "share-services",
+        "repo": "services-flake",
+        "type": "github"
+      }
+    },
+    "northwind_2": {
       "flake": false,
       "locked": {
         "lastModified": 1666887048,
@@ -172,9 +178,9 @@
     },
     "root": {
       "inputs": {
-        "databases": "databases",
-        "flake-parts": "flake-parts_2",
-        "nixpkgs": "nixpkgs_2",
+        "flake-parts": "flake-parts",
+        "nixpkgs": "nixpkgs",
+        "northwind": "northwind",
         "process-compose-flake": "process-compose-flake_2",
         "services-flake": "services-flake_2",
         "systems": "systems_2"
