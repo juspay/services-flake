@@ -4,7 +4,7 @@ default:
 
 # Run example/simple
 ex-simple:
-    cd ./example/simple && nix run . --override-input services-flake ..
+    cd ./example/simple && nix run . --override-input services-flake ../..
 
 # Run example/share-services
 ex-share-services:
