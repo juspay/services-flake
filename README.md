@@ -32,7 +32,7 @@ List of supported services is available at https://community.flake.parts/service
 | Services as flake apps | ✔️  | ✖️[^3]  |
 | Multiple instances of a service | ✔️  | ✖️[^4]  |
 | Share services | ✔️  | ✖️[^2]  |
-| Reusable services | ✔️  | ✖️[^5]  |
+| No coupling | ✔️  | ✖️[^5]  |
 
 Want to compare with other tools? [Let us know](https://github.com/juspay/services-flake/issues).
 
