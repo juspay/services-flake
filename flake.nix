@@ -21,7 +21,7 @@
           inherit (overrideInputs) services-flake;
           northwind = ./example/share-services/northwind;
         };
-        dir = "./example/share-services";
+        dir = "./example/share-services/pgweb";
       };
       test = {
         inherit overrideInputs;
