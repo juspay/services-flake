@@ -7,8 +7,8 @@
     process-compose-flake.url = "github:Platonic-Systems/process-compose-flake";
     services-flake.url = "github:juspay/services-flake";
 
-    # FIXME: don't use relative path
-    northwind.url = "../northwind";
+    # TODO: Remove 'share-services' branch before merging to `main`.
+    northwind.url = "github:juspay/services-flake/share-services?dir=example/share-services/northwind";
   };
   outputs = inputs:
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
