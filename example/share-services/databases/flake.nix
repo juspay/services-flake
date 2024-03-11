@@ -16,16 +16,15 @@
       imports = [
         inputs.process-compose-flake.flakeModule
       ];
+      flake.processComposeModules.default =
+        import ./services.nix { inherit inputs; };
       perSystem = { self', pkgs, lib, ... }: {
-        # This adds a `self.packages.default`
-        process-compose."default" = { config, ... }:
-          {
-            imports = [
-              inputs.services-flake.processComposeModules.default
-              (import ./services.nix { inherit inputs; })
-            ];
-          };
+        process-compose."default" = { config, ... }: {
+          imports = [
+            inputs.services-flake.processComposeModules.default
+            inputs.self.processComposeModules.default
+          ];
+        };
       };
-      flake.processComposeModules.default = import ./services.nix { inherit inputs; };
     };
 }
