@@ -17,7 +17,9 @@
         inputs.process-compose-flake.flakeModule
       ];
       perSystem = { self', pkgs, lib, ... }: {
-        # This adds a `self.packages.default`
+        # `process-compose.foo` will add a flake package output called "foo".
+        # Therefore, this will add a default package that you can build using
+        # `nix build` and run using `nix run`.
         process-compose."default" = { config, ... }:
           let
             dbName = "sample";
