@@ -12,9 +12,16 @@
     # Config for https://github.com/srid/nixci
     # To run this, `nix run github:srid/nixci`
     nixci.default = let overrideInputs = { "services-flake" = ./.; }; in {
-      example = {
+      simple-example = {
         inherit overrideInputs;
-        dir = "./example";
+        dir = "./example/simple";
+      };
+      share-services-example = {
+        overrideInputs = {
+          inherit (overrideInputs) services-flake;
+          northwind = ./example/share-services/northwind;
+        };
+        dir = "./example/share-services/pgweb";
       };
       test = {
         inherit overrideInputs;
