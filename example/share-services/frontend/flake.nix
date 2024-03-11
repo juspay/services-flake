@@ -17,26 +17,24 @@
         inputs.process-compose-flake.flakeModule
       ];
       perSystem = { self', pkgs, lib, ... }: {
-        process-compose."default" = { config, ... }:
-          let
-            dbName = "sample";
-          in
-          {
-            imports = [
-              inputs.services-flake.processComposeModules.default
-              inputs.databases.processComposeModules.default
-            ];
+        process-compose."default" = { config, ... }: {
+          imports = [
+            inputs.services-flake.processComposeModules.default
+            inputs.databases.processComposeModules.default
+          ];
 
-            settings.processes.pgweb =
+          # Add a pgweb process, that knows how to connect to our northwind db
+          settings.processes.pgweb = {
+            command = pkgs.pgweb;
+            depends_on."northwind".condition = "process_healthy";
+            environment.PGWEB_DATABASE_URL =
               let
-                pgcfg = config.services.postgres.northwind;
+                inherit (config.services.postgres.northwind)
+                  listen_addresses port;
               in
-              {
-                environment.PGWEB_DATABASE_URL = "postgres://$USER@${pgcfg.listen_addresses}:${builtins.toString pgcfg.port}/${dbName}";
-                command = pkgs.pgweb;
-                depends_on."northwind".condition = "process_healthy";
-              };
+              "postgres://$USER@${listen_addresses}:${builtins.toString port}/sample";
           };
+        };
       };
     };
 }
