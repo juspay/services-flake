@@ -8,7 +8,10 @@ ex-simple:
 
 # Run example/share-services
 ex-share-services:
-    cd ./example/share-services/frontend && nix run . --override-input services-flake ../../..
+    cd ./example/share-services/pgweb && \
+        nix run . \
+            --override-input services-flake ../../.. \
+            --override-input northwind ../northwind \
 
 # Auto-format the project tree
 fmt:

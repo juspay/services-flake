@@ -1,5 +1,5 @@
 {
-  description = "Frontend for the postgres service defined in databases flake";
+  description = "pgweb frontend for the northwind db in ../northwind flake";
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
@@ -8,7 +8,7 @@
     services-flake.url = "github:juspay/services-flake";
 
     # FIXME: don't use relative path
-    databases.url = "../databases";
+    northwind.url = "../northwind";
   };
   outputs = inputs:
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
@@ -20,7 +20,7 @@
         process-compose."default" = { config, ... }: {
           imports = [
             inputs.services-flake.processComposeModules.default
-            inputs.databases.processComposeModules.default
+            inputs.northwind.processComposeModules.default
           ];
 
           # Add a pgweb process, that knows how to connect to our northwind db

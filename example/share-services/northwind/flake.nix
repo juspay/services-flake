@@ -1,5 +1,5 @@
 {
-  description = "A demo of sqlite-web and multiple postgres services";
+  description = "A flake module exposing postgres service with northwind sample database";
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
