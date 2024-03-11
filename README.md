@@ -23,6 +23,26 @@ See <https://community.flake.parts/services-flake/start>
 
 List of supported services is available at https://community.flake.parts/services-flake/services
 
+## Comparison with other tools
+
+| | services-flake | [devenv services](https://devenv.sh/services/) |
+| --- | --- | --- |
+| macOS support | ✔️  | ✔️  |
+| Pure Flakes | ✔️  | ✖️[^1]  |
+| Services as flake apps | ✔️  | ✖️[^3]  |
+| Multiple instances of a service | ✔️  | ✖️[^4]  |
+| Share services | ✔️  | ✖️[^2]  |
+| No coupling | ✔️  | ✖️[^5]  |
+
+Want to compare with other tools? [Let us know](https://github.com/juspay/services-flake/issues).
+
+[^1]: Devenv's flakes integration [requires](https://devenv.sh/guides/using-with-flakes/) you use run the nix shell in impure mode by passing `--impure`. 
+[^2]: `services-flake` is built on top of [flake-parts](https://flake.parts/), thus you may share your service and process modules for re-use across flakes (see [example](./example/share-services)), whilst making them general enough for customization based on the module system. With devenv, as far as we can ascertain, you can only share whole devenv configuration as modules. See [here](https://github.com/juspay/services-flake/pull/135#discussion_r1517425295).
+[^3]: `services-flake` produces a flake app that you can run using the Nix command (`nix run`) outside of the devShell, whereas with devenv you must use devenv's CLI, `devenv up`, inside of devShell. See [here](https://github.com/juspay/services-flake/pull/135#discussion_r1517213858).
+[^4]: `services-flake` allows you to configure multiple instances of the same service, whereas [devenv does not](https://github.com/cachix/devenv/issues/75#issuecomment-1638859874).
+[^5]: `service-flake` exposes [`process-compose-flake`](https://github.com/Platonic-Systems/process-compose-flake) modules for each service, which can be reused as long as your project is using `flake-parts`. With devenv, sharing is not possible (nor [prioritized](https://github.com/cachix/devenv/issues/75#issuecomment-1324914551) in future) unless you buy into the whole devenv ecosystem.
+
+
 ## A note on process working directory
 
 The `dataDir` of these services tend to take *relative* paths, which are usually relative to the project root. As such, when you run these services using `nix run`, their data files are created relative to whichever directory you are in. If you want these data files to always reside relative to the project directory, instead of using `nix run` consider wrapping the process-compose packages in script, via either [mission-control](https://community.flake.parts/mission-control) module or a [justfile](https://just.systems/). The example uses the latter.
@@ -38,9 +58,3 @@ See <https://community.flake.parts/services-flake/contributing>
 ## Credits
 
 Thanks to [the devenv project](https://github.com/cachix/devenv/tree/main/src/modules/services) on which much of our services implementation is based on.
-
-## FAQ
-
-### Why not re-use devenv service modules?
-
-This is currently not possible (nor prioritized by the devenv project), which is why we must create our own services. See <https://github.com/cachix/devenv/issues/75>
