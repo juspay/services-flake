@@ -1,6 +1,13 @@
 { inputs }:
-{ ... }: {
+let
+  globalSocket = { name, ... }: {
+    # Required due to socket length being limited to 100 chars, see: https://github.com/juspay/services-flake/pull/77
+    socketDir = "$HOME/.services/postgres/${name}";
+  };
+in
+{
   services.postgres."pg1" = {
+    imports = [ globalSocket ];
     enable = true;
     listen_addresses = "127.0.0.1";
     initialDatabases = [
@@ -9,15 +16,13 @@
         schemas = [ "${inputs.northwind}/northwind.sql" ];
       }
     ];
-    # Required due to socket length being limited to 100 chars, see: https://github.com/juspay/services-flake/pull/77
-    socketDir = "$HOME/.services/postgres/pg1";
   };
 
   services.postgres."pg2" = {
+    imports = [ globalSocket ];
     enable = true;
     listen_addresses = "127.0.0.1";
     port = 5433;
-    socketDir = "$HOME/.services/postgres/pg2";
   };
 
   # Start `pg2-init` process after `pg1-init` to avoid race condition for creating
