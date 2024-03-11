@@ -26,6 +26,6 @@
             ];
           };
       };
-      flake.processComposeModules.default = ./services.nix;
+      flake.processComposeModules.default = import ./services.nix { inherit inputs; };
     };
 }

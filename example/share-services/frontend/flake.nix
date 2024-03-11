@@ -24,7 +24,7 @@
           {
             imports = [
               inputs.services-flake.processComposeModules.default
-              (import inputs.databases.processComposeModules.default { inherit (inputs.databases) inputs; })
+              inputs.databases.processComposeModules.default
             ];
 
             settings.processes.pgweb =
