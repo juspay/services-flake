@@ -115,17 +115,16 @@
       },
       "locked": {
         "dir": "example/share-services/northwind",
-        "lastModified": 1710167564,
-        "narHash": "sha256-StRjzomzbYEho0bpDGIJK6HdFgBTm3gcMxu3XDvrjkY=",
+        "lastModified": 1710180330,
+        "narHash": "sha256-NFq9mKl3gW9fZMcphAvQpBe7efS/FrygDFdDYjSsKCQ=",
         "owner": "juspay",
         "repo": "services-flake",
-        "rev": "fc3cebb519a44c2eeb7b850080b300779488f19b",
+        "rev": "51ecb713515d5310eb0cc446df13547bb7efc917",
         "type": "github"
       },
       "original": {
         "dir": "example/share-services/northwind",
         "owner": "juspay",
-        "ref": "share-services",
         "repo": "services-flake",
         "type": "github"
       }
