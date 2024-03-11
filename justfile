@@ -2,9 +2,13 @@
 default:
     @just --list
 
-# Run example
-ex:
-    cd ./example && nix run . --override-input services-flake ..
+# Run example/simple
+ex-simple:
+    cd ./example/simple && nix run . --override-input services-flake ..
+
+# Run example/share-services
+ex-share-services:
+    cd ./example/share-services/frontend && nix run . --override-input services-flake ../../..
 
 # Auto-format the project tree
 fmt:
