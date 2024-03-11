@@ -17,7 +17,10 @@
         dir = "./example/simple";
       };
       share-services-example = {
-        inherit overrideInputs;
+        overrideInputs = {
+          inherit (overrideInputs) services-flake;
+          databases = ./example/share-services/databases;
+        };
         dir = "./example/share-services";
       };
       test = {
