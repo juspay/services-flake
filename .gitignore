@@ -3,5 +3,9 @@
 /result
 # created when `just run <service>` is used
 /test/data
-/example/**/data
+
+# created when `just run ex-*` is used
+/example/share-services/pgweb/data/
+/example/simple/data/
+
 /.pre-commit-config.yaml
