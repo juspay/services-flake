@@ -19,7 +19,7 @@
       share-services-example = {
         overrideInputs = {
           inherit (overrideInputs) services-flake;
-          databases = ./example/share-services/databases;
+          northwind = ./example/share-services/northwind;
         };
         dir = "./example/share-services";
       };
