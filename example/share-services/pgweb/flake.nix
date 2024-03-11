@@ -20,6 +20,9 @@
         process-compose."default" = { config, ... }: {
           imports = [
             inputs.services-flake.processComposeModules.default
+            # Importing this brings whatever processes/services the
+            # ../northwind/services.nix module exposes, which in our case is a
+            # postgresql process loaded with northwind sample database.
             inputs.northwind.processComposeModules.default
           ];
 
