@@ -17,6 +17,7 @@
 
 ## Gotchas
 
+{#socket-path}
 ### Unix-domain socket path is too long
 
 We already talk about this in the [data directory guide](https://community.flake.parts/services-flake/datadir#socket-path). In case of postgres, you can set `socketDir` while keeping the `dataDir` unchanged.
