@@ -7,18 +7,6 @@ page:
     <snippet var="js.highlightjs" />
 
 template:
-  # You can add your own variables here, like editBaseUrl.
-  # See after-note.tpl to see where editBaseUrl gets used.
   editBaseUrl: https://github.com/juspay/services-flake/edit/main/doc
-
-  # Uncomment this to get neuron-style pages
-  # name: /templates/layouts/note
-  # layout:
-  #   note:
-  #     containerClass: container mx-auto max-w-screen-lg
-
   sidebar:
     collapsed: false
-
-  # If you are hosting on GitLab Pages, you may want to remove this.
-  urlStrategy: pretty

@@ -28,7 +28,11 @@ test service:
 
 # Run doc server with hot-reload
 doc:
-    cd ./doc && nix run
+    nix run ./doc
+
+# Build docs static website (this runs linkcheck automatically)
+doc-static:
+    nix build ./doc
 
 # Run service whose configuration is defined in `<service>_test.nix`
 run service:
