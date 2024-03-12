@@ -21,11 +21,11 @@
         "services-flake": "services-flake"
       },
       "locked": {
-        "lastModified": 1710101483,
-        "narHash": "sha256-J0Up78NX+/zWBtwspS8V+6eia3UtK1E9Gvpyu2Q4coQ=",
+        "lastModified": 1710272905,
+        "narHash": "sha256-MU3cEeZVJX+wC5FTxdQXTOSds9OLScJv1b+hshrq0gM=",
         "owner": "flake-parts",
         "repo": "community.flake.parts",
-        "rev": "f10e4a49dd2e7c37e1a15e3a5e5f108b07e0bd07",
+        "rev": "52a0ad1d6fd3ff123efa7a58d96eb6c14359dc91",
         "type": "github"
       },
       "original": {

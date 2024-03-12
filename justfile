@@ -28,11 +28,11 @@ test service:
 
 # Run doc server with hot-reload
 doc:
-    nix run ./doc#docs
+    nix run ./doc
 
 # Build docs static website
 doc-static:
-    nix build ./doc#docs
+    nix build ./doc
 
 # Run service whose configuration is defined in `<service>_test.nix`
 run service:
