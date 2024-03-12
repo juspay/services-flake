@@ -60,8 +60,11 @@ in
     connectionURI = lib.mkOption {
       type = lib.types.functionTo lib.types.str;
       readOnly = true;
-      default = dbName: "postgres://${config.listen_addresses}:${builtins.toString config.port}/${dbName}";
-      description = "A function that accepts database name and returns the [postgres connection URI](https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING-URIS)";
+      default = { dbName, ... }: "postgres://${config.listen_addresses}:${builtins.toString config.port}/${dbName}";
+      description = ''
+        A function that accepts an attrset overriding the connection parameters
+        and returns the [postgres connection URI](https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING-URIS)
+      '';
     };
 
     hbaConf =

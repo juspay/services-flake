@@ -45,7 +45,7 @@
                 pgcfg = config.services.postgres.pg1;
               in
               {
-                environment.PGWEB_DATABASE_URL = pgcfg.connectionURI dbName;
+                environment.PGWEB_DATABASE_URL = pgcfg.connectionURI { inherit dbName; };
                 command = pkgs.pgweb;
                 depends_on."pg1".condition = "process_healthy";
               };

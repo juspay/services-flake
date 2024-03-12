@@ -29,12 +29,7 @@
           settings.processes.pgweb = {
             command = pkgs.pgweb;
             depends_on."northwind".condition = "process_healthy";
-            environment.PGWEB_DATABASE_URL =
-              let
-                inherit (config.services.postgres.northwind)
-                  listen_addresses port;
-              in
-              "postgres://$USER@${listen_addresses}:${builtins.toString port}/sample";
+            environment.PGWEB_DATABASE_URL = config.services.postgres.northwind.connectionURI { dbName = "sample"; };
           };
         };
       };
