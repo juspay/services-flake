@@ -30,7 +30,7 @@ test service:
 doc:
     nix run ./doc
 
-# Build docs static website
+# Build docs static website (this runs linkcheck automatically)
 doc-static:
     nix build ./doc
 
