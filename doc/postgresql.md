@@ -20,7 +20,7 @@
 {#socket-path}
 ### Unix-domain socket path is too long
 
-We already talk about this in the [data directory guide](datadir.md#socket-path). In case of postgres, you can set `socketDir` while keeping the `dataDir` unchanged.
+We already talk about this in the [data directory guide](guide/datadir.md#socket-path). In case of postgres, you can set `socketDir` while keeping the `dataDir` unchanged.
 
 >[!note]
 > The `socketDir` must be set to a shorter path (less than 100 chars) as a workaround.
