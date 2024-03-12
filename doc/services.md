@@ -12,7 +12,7 @@ short-title: Services
 - Elasticsearch
 - MySQL
 - Nginx
-- PostgreSQL
+- [[postgresql]]#
 - Redis
 - Redis Cluster
 - Zookeeper
