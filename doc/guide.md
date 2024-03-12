@@ -1,6 +1,3 @@
----
-short-title: Guide
----
 
 # Guide
 
