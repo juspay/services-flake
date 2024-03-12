@@ -53,7 +53,7 @@
                 pgcfg = config.services.postgres.pg1;
               in
               {
-                environment.PGWEB_DATABASE_URL = "postgres://$USER@${pgcfg.listen_addresses}:${builtins.toString pgcfg.port}/${dbName}";
+                environment.PGWEB_DATABASE_URL = pgcfg.connectionURI dbName;
                 command = pkgs.pgweb;
                 depends_on."pg1".condition = "process_healthy";
               };
