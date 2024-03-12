@@ -1,6 +1,6 @@
 {
   inputs = {
-    cfp.url = "github:flake-parts/community.flake.parts/mod";
+    cfp.url = "github:flake-parts/community.flake.parts";
     nixpkgs.follows = "cfp/nixpkgs";
     flake-parts.follows = "cfp/flake-parts";
   };
