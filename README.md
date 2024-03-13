@@ -43,9 +43,9 @@ Want to compare with other tools? [Let us know](https://github.com/juspay/servic
 [^5]: `service-flake` exposes [`process-compose-flake`](https://github.com/Platonic-Systems/process-compose-flake) modules for each service, which can be reused as long as your project is using `flake-parts`. With devenv, decoupling is not possible (nor [prioritized](https://github.com/cachix/devenv/issues/75#issuecomment-1324914551) in future) unless you buy into the whole devenv ecosystem.
 
 
-## A note on process working directory
+## Service data directory
 
-The `dataDir` of these services tend to take *relative* paths, which are usually relative to the project root. As such, when you run these services using `nix run`, their data files are created relative to whichever directory you are in. If you want these data files to always reside relative to the project directory, instead of using `nix run` consider wrapping the process-compose packages in script, via either [mission-control](https://community.flake.parts/mission-control) module or a [justfile](https://just.systems/). The example uses the latter.
+See <https://community.flake.parts/services-flake/guide/datadir>
 
 ## Discussions
 

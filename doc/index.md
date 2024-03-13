@@ -17,6 +17,7 @@ See:
 - [[start]]#
 - [[services]]#
 - [[contributing]]#
+- [[guide]]#
 
 ## Demo
 
