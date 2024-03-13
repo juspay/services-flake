@@ -14,7 +14,7 @@
       perSystem = {
         flake-parts-docs = {
           enable = true;
-          modules."nixos-flake" = {
+          modules."services-flake" = {
             path = ./.;
             pathString = "./.";
           };
