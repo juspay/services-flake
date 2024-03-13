@@ -28,7 +28,7 @@ test service:
 
 # Run doc server with hot-reload
 doc:
-    nix run ./doc
+    cd ./doc && nix run
 
 # Build docs static website (this runs linkcheck automatically)
 doc-static:
