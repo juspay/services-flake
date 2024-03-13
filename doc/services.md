@@ -13,12 +13,12 @@ short-title: Services
 - MySQL
 - Nginx
 - [[postgresql]]#
+  - [[pgadmin]]
 - Redis
-- Redis Cluster
+  - Redis Cluster
 - Zookeeper
 - [[grafana]]#
 - [[prometheus]]#
-- [[pgadmin]]#
 - [[cassandra]]#
 
 [gh]: https://github.com/juspay/services-flake/issues/132

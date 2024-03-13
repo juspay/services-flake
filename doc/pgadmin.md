@@ -1,6 +1,6 @@
 # pgAdmin
 
-[pgAdmin] is a feature rich Open Source administration and development platform for PostgreSQL.
+[pgAdmin] is a feature rich Open Source administration and development platform for #[[postgresql]].
 
 [pgAdmin]: https://www.pgadmin.org/
 
