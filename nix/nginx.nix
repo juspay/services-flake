@@ -92,13 +92,17 @@ in
       readOnly = true;
       default =
         let
-          startScript = pkgs.writeShellScriptBin "start-nginx" ''
-            set -euo pipefail
-            if [[ ! -d "${config.dataDir}" ]]; then
-              mkdir -p "${config.dataDir}"
-            fi
-            ${config.package}/bin/nginx -p $(pwd) -c ${config.configFile} -e /dev/stderr
-          '';
+          startScript = pkgs.writeShellApplication {
+            name = "start-nginx";
+            runtimeInputs = [ pkgs.coreutils config.package ];
+            text = ''
+              set -euo pipefail
+              if [[ ! -d "${config.dataDir}" ]]; then
+                mkdir -p "${config.dataDir}"
+              fi
+              nginx -p "$(pwd)" -c ${config.configFile} -e /dev/stderr
+            '';
+          };
         in
         {
           processes."${name}" = {

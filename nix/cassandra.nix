@@ -119,30 +119,34 @@ in
                 '';
               };
 
-              startScript = pkgs.writeShellScriptBin "start-cassandra" ''
-                set -euo pipefail
+              startScript = pkgs.writeShellApplication {
+                name = "start-cassandra";
+                runtimeInputs = [ pkgs.coreutils config.package ];
+                text = ''
+                  set -euo pipefail
 
-                DATA_DIR="$(readlink -m ${config.dataDir})"
-                if [[ ! -d "$DATA_DIR" ]]; then
-                  mkdir -p "$DATA_DIR"
-                fi
+                  DATA_DIR="$(readlink -m ${config.dataDir})"
+                  if [[ ! -d "$DATA_DIR" ]]; then
+                    mkdir -p "$DATA_DIR"
+                  fi
 
-                CASSANDRA_CONF="${cassandraConfig}"
-                export CASSANDRA_CONF
+                  CASSANDRA_CONF="${cassandraConfig}"
+                  export CASSANDRA_CONF
 
-                CASSANDRA_LOG_DIR="$DATA_DIR/log/"
-                mkdir -p "$CASSANDRA_LOG_DIR"
-                export CASSANDRA_LOG_DIR
+                  CASSANDRA_LOG_DIR="$DATA_DIR/log/"
+                  mkdir -p "$CASSANDRA_LOG_DIR"
+                  export CASSANDRA_LOG_DIR
 
-                CASSANDRA_HOME="${config.package}"
-                export CASSANDRA_HOME
+                  CASSANDRA_HOME="${config.package}"
+                  export CASSANDRA_HOME
 
-                CLASSPATH="${config.package}/lib"
-                export CLASSPATH
+                  CLASSPATH="${config.package}/lib"
+                  export CLASSPATH
 
-                export LOCAL_JMX="yes"
-                exec ${config.package}/bin/cassandra -f
-              '';
+                  export LOCAL_JMX="yes"
+                  cassandra -f
+                '';
+              };
             in
             {
               command = startScript;

@@ -161,14 +161,18 @@ with lib;
         processes = {
           "${name}" =
             let
-              startScript = pkgs.writeShellScriptBin "start-kafka" ''
-                ${config.jre}/bin/java \
-                  -cp "${config.package}/libs/*" \
-                  -Dlog4j.configuration=file:${config.configFiles.log4jProperties} \
-                  ${toString config.jvmOptions} \
-                  kafka.Kafka \
-                  ${config.configFiles.serverProperties}
-              '';
+              startScript = pkgs.writeShellApplication {
+                name = "start-kafka";
+                runtimeInputs = [ config.jre ];
+                text = ''
+                  java \
+                    -cp "${config.package}/libs/*" \
+                    -Dlog4j.configuration=file:${config.configFiles.log4jProperties} \
+                    ${toString config.jvmOptions} \
+                    kafka.Kafka \
+                    ${config.configFiles.serverProperties}
+                '';
+              };
             in
             {
               command = "${startScript}/bin/start-kafka";
