@@ -141,41 +141,50 @@ in
               postBuild = "${pkgs.coreutils}/bin/mkdir -p $out/plugins";
             };
 
-            startScript = pkgs.writeShellScript "es-startup" ''
-              set -e
+            startScript = pkgs.writeShellApplication {
 
-              mkdir -m 0700 -p "${config.dataDir}"
-              export ES_HOME=$(${pkgs.coreutils}/bin/realpath ${config.dataDir})
-              export ES_JAVA_OPTS="${toString config.extraJavaOptions}"
-              export ES_PATH_CONF="${config.dataDir}/config"
-              # Install plugins
-              rm -f "${config.dataDir}/plugins"
-              ln -sf ${esPlugins}/plugins "${config.dataDir}/plugins"
-              rm -f "${config.dataDir}/lib"
-              ln -sf ${config.package}/lib "${config.dataDir}/lib"
-              rm -f "${config.dataDir}/modules"
-              ln -sf ${config.package}/modules "${config.dataDir}/modules"
+              name = "es-startup";
+              runtimeInputs = [ pkgs.coreutils config.package ];
+              text = ''
+                set -e
 
-              # Create config dir
-              mkdir -m 0700 -p "${config.dataDir}/config"
-              rm -f "${config.dataDir}/config/elasticsearch.yml"
-              cp ${elasticsearchYml} "${config.dataDir}/config/elasticsearch.yml"
-              rm -f "${config.dataDir}/logging.yml"
-              rm -f "${config.dataDir}/config/${loggingConfigFilename}"
-              cp ${loggingConfigFile} "${config.dataDir}/config/${loggingConfigFilename}"
+                mkdir -p "${config.dataDir}"
+                chmod 0700 "${config.dataDir}"
+                ES_HOME=$(${pkgs.coreutils}/bin/realpath ${config.dataDir})
+                ES_JAVA_OPTS="${toString config.extraJavaOptions}"
+                ES_PATH_CONF="${config.dataDir}/config"
+                export ES_HOME ES_JAVA_OPTS ES_PATH_CONF
 
-              mkdir -p "${config.dataDir}/scripts"
-              rm -f "${config.dataDir}/config/jvm.options"
+                # Install plugins
+                rm -f "${config.dataDir}/plugins"
+                ln -sf ${esPlugins}/plugins "${config.dataDir}/plugins"
+                rm -f "${config.dataDir}/lib"
+                ln -sf ${config.package}/lib "${config.dataDir}/lib"
+                rm -f "${config.dataDir}/modules"
+                ln -sf ${config.package}/modules "${config.dataDir}/modules"
 
-              cp ${config.package}/config/jvm.options "${config.dataDir}/config/jvm.options"
+                # Create config dir
+                mkdir -p "${config.dataDir}/config"
+                chmod 0700 "${config.dataDir}/config"
+                rm -f "${config.dataDir}/config/elasticsearch.yml"
+                cp ${elasticsearchYml} "${config.dataDir}/config/elasticsearch.yml"
+                rm -f "${config.dataDir}/logging.yml"
+                rm -f "${config.dataDir}/config/${loggingConfigFilename}"
+                cp ${loggingConfigFile} "${config.dataDir}/config/${loggingConfigFilename}"
 
-              # Create log dir
-              mkdir -m 0700 -p "${config.dataDir}/logs"
+                mkdir -p "${config.dataDir}/scripts"
+                rm -f "${config.dataDir}/config/jvm.options"
 
-              # Start it
-              exec ${config.package}/bin/elasticsearch ${toString config.extraCmdLineOptions}
-            '';
+                cp ${config.package}/config/jvm.options "${config.dataDir}/config/jvm.options"
 
+                # Create log dir
+                mkdir -p "${config.dataDir}/logs"
+                chmod 0700 "${config.dataDir}/logs"
+
+                # Start it
+                elasticsearch ${toString config.extraCmdLineOptions}
+              '';
+            };
           in
           {
             command = startScript;
