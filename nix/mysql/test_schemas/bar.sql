@@ -1,0 +1,1 @@
+CREATE TABLE bar (id INT PRIMARY KEY);

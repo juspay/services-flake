@@ -216,7 +216,7 @@ in
 '';
 
             configureScript = pkgs.writeShellScriptBin "configure-mysql" ''
-              PATH="${lib.makeBinPath [config.package pkgs.coreutils]}:$PATH"
+              PATH="${lib.makeBinPath [config.package pkgs.coreutils pkgs.findutils]}:$PATH"
               set -euo pipefail
               ${envs} 
               ${lib.concatMapStrings (database: ''
@@ -237,7 +237,7 @@ in
                         cat ${database.schema}
                     elif [ -d "${database.schema}" ]
                     then
-                        cat ${database.schema}/mysql-databases/*.sql
+                        find ${database.schema} -type f -name '*.sql' | xargs cat
                     fi
                   ''}
                     ) | MYSQL_PWD="" ${config.package}/bin/mysql -u root -N
