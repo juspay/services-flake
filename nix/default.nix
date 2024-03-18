@@ -7,7 +7,7 @@ in
     ./apache-kafka.nix
     ./clickhouse
     ./elasticsearch.nix
-    ./mysql.nix
+    ./mysql
     ./nginx.nix
     ./postgres
     ./redis-cluster.nix

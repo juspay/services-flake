@@ -1,7 +1,7 @@
 { pkgs, config, ... }: {
   services.mysql.m1 = {
     enable = true;
-    initialDatabases = [{ name = "test_database"; }];
+    initialDatabases = [{ name = "test_database"; schema = ./test_schemas; }];
     initialScript = ''
       CREATE USER foo IDENTIFIED BY 'password@123';
       CREATE USER bar;
@@ -35,6 +35,15 @@
           echo "$isFooPresent" | grep 1
           echo "$isBarPresent" | grep 1
 
+          echo "Checking if both foo.sql and bar.sql are executed, ignoring baz.md"
+          echo "SELECT * FROM information_schema.tables WHERE table_schema = 'test_database' AND table_name = 'foo' LIMIT 1;" | MYSQL_PWD="" mysql -h 127.0.0.1 -u root | grep foo
+          echo "SELECT * FROM information_schema.tables WHERE table_schema = 'test_database' AND table_name = 'bar' LIMIT 1;" | MYSQL_PWD="" mysql -h 127.0.0.1 -u root | grep bar
+          if [[ -z $(echo "SELECT * FROM information_schema.tables WHERE table_schema = 'test_database' AND table_name = 'baz' LIMIT 1;" | MYSQL_PWD="" mysql -h 127.0.0.1 -u root) ]]; then
+            echo "success! baz table not found"
+          else
+            echo "baz table shoudn't exist"
+            exit 1
+          fi
         '';
         name = "mysql-test";
       };
