@@ -84,7 +84,7 @@ in
               };
             in
             {
-              command = "${startScript}/bin/start-prometheus";
+              command = startScript;
               readiness_probe = {
                 http_get = {
                   host = config.listenAddress;

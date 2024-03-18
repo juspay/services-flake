@@ -123,18 +123,22 @@ with lib;
                 ];
               };
 
-              startScript = pkgs.writeShellScriptBin "start-zookeeper" ''
-                ${config.jre}/bin/java \
-                  -cp "${config.package}/lib/*:${configDir}" \
-                  ${escapeShellArgs config.extraCmdLineOptions} \
-                  -Dzookeeper.datadir.autocreate=true \
-                  ${optionalString config.preferIPv4 "-Djava.net.preferIPv4Stack=true"} \
-                  org.apache.zookeeper.server.quorum.QuorumPeerMain \
-                  ${configDir}/zoo.cfg
-              '';
+              startScript = pkgs.writeShellApplication {
+                name = "start-zookeeper";
+                runtimeInputs = [ config.jre ];
+                text = ''
+                  java \
+                    -cp "${config.package}/lib/*:${configDir}" \
+                    ${escapeShellArgs config.extraCmdLineOptions} \
+                    -Dzookeeper.datadir.autocreate=true \
+                    ${optionalString config.preferIPv4 "-Djava.net.preferIPv4Stack=true"} \
+                    org.apache.zookeeper.server.quorum.QuorumPeerMain \
+                    ${configDir}/zoo.cfg
+                '';
+              };
             in
             {
-              command = "${startScript}/bin/start-zookeeper";
+              command = startScript;
 
               readiness_probe = {
                 exec.command = "echo stat | ${pkgs.netcat.nc}/bin/nc localhost ${toString config.port}";

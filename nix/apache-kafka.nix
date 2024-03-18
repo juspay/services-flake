@@ -161,17 +161,21 @@ with lib;
         processes = {
           "${name}" =
             let
-              startScript = pkgs.writeShellScriptBin "start-kafka" ''
-                ${config.jre}/bin/java \
-                  -cp "${config.package}/libs/*" \
-                  -Dlog4j.configuration=file:${config.configFiles.log4jProperties} \
-                  ${toString config.jvmOptions} \
-                  kafka.Kafka \
-                  ${config.configFiles.serverProperties}
-              '';
+              startScript = pkgs.writeShellApplication {
+                name = "start-kafka";
+                runtimeInputs = [ config.jre ];
+                text = ''
+                  java \
+                    -cp "${config.package}/libs/*" \
+                    -Dlog4j.configuration=file:${config.configFiles.log4jProperties} \
+                    ${toString config.jvmOptions} \
+                    kafka.Kafka \
+                    ${config.configFiles.serverProperties}
+                '';
+              };
             in
             {
-              command = "${startScript}/bin/start-kafka";
+              command = startScript;
 
               readiness_probe = {
                 # TODO: need to find a better way to check if kafka is ready. Maybe use one of the scripts in bin?

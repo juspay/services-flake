@@ -55,20 +55,24 @@ in
                 ${config.extraConfig}
               '';
 
-              startScript = pkgs.writeShellScriptBin "start-redis" ''
-                set -euo pipefail
+              startScript = pkgs.writeShellApplication {
+                name = "start-redis";
+                runtimeInputs = [ pkgs.coreutils config.package ];
+                text = ''
+                  set -euo pipefail
 
-                export REDISDATA=${config.dataDir}
+                  export REDISDATA=${config.dataDir}
 
-                if [[ ! -d "$REDISDATA" ]]; then
-                  mkdir -p "$REDISDATA"
-                fi
+                  if [[ ! -d "$REDISDATA" ]]; then
+                    mkdir -p "$REDISDATA"
+                  fi
 
-                exec ${config.package}/bin/redis-server ${redisConfig} --dir "$REDISDATA"
-              '';
+                  exec redis-server ${redisConfig} --dir "$REDISDATA"
+                '';
+              };
             in
             {
-              command = "${startScript}/bin/start-redis";
+              command = startScript;
 
               readiness_probe = {
                 exec.command = "${config.package}/bin/redis-cli -p ${toString config.port} ping";
