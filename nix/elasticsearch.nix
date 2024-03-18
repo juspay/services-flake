@@ -182,7 +182,7 @@ in
                 chmod 0700 "${config.dataDir}/logs"
 
                 # Start it
-                elasticsearch ${toString config.extraCmdLineOptions}
+                exec elasticsearch ${toString config.extraCmdLineOptions}
               '';
             };
           in

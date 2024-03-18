@@ -217,7 +217,7 @@ in
                   ${lib.optionalString importTimeZones configureTimezones}
                 fi
                 ${envs}
-                mysqld ${mysqldOptions}
+                exec mysqld ${mysqldOptions}
               '';
             };
 

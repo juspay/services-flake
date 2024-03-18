@@ -144,7 +144,7 @@ in
                   export CLASSPATH
 
                   export LOCAL_JMX="yes"
-                  cassandra -f
+                  exec cassandra -f
                 '';
               };
             in

@@ -102,7 +102,7 @@ in
                     mkdir -p "$REDISDATA"
                   fi
 
-                  redis-server ${redisConfig} --dir "$REDISDATA"
+                  exec redis-server ${redisConfig} --dir "$REDISDATA"
                 '';
               };
             in
