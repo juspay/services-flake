@@ -107,7 +107,7 @@ in
               };
             in
             lib.nameValuePair "${name}-${nodeName}" {
-              command = "${startScript}/bin/start-redis";
+              command = startScript;
               shutdown.command = "${config.package}/bin/redis-cli -p ${port} shutdown nosave";
 
               readiness_probe = {

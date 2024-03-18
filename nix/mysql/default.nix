@@ -278,7 +278,7 @@ in
           {
             "${name}" =
               {
-                command = "${startScript}/bin/start-mysql";
+                command = startScript;
 
                 readiness_probe = {
                   # Turns out using `--defaults-file` alone doesn't make the readiness_probe work unless `MYSQL_UNIX_PORT` is set.
@@ -296,7 +296,7 @@ in
                 availability.restart = "on_failure";
               };
             "${name}-configure" = {
-              command = "${configureScript}/bin/configure-mysql";
+              command = configureScript;
               namespace = name;
               depends_on."${name}".condition = "process_healthy";
             };

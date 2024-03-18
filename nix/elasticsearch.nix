@@ -178,7 +178,7 @@ in
 
           in
           {
-            command = "${startScript}";
+            command = startScript;
 
             readiness_probe = {
               exec.command = "${pkgs.curl}/bin/curl -f -k http://${config.listenAddress}:${toString config.port}";

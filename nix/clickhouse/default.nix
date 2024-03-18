@@ -154,7 +154,7 @@ in
                 };
               in
               {
-                command = "${lib.getExe startScript}";
+                command = startScript;
 
                 readiness_probe = {
                   # FIXME: revert back to clickhouse-client readiness_probe once CI is moved out of github public runners

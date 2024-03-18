@@ -175,7 +175,7 @@ with lib;
               };
             in
             {
-              command = "${startScript}/bin/start-kafka";
+              command = startScript;
 
               readiness_probe = {
                 # TODO: need to find a better way to check if kafka is ready. Maybe use one of the scripts in bin?

@@ -106,7 +106,7 @@ in
         in
         {
           processes."${name}" = {
-            command = "${startScript}/bin/start-nginx";
+            command = startScript;
             readiness_probe = {
               # FIXME need a better health check
               exec.command = "[ -e ${config.dataDir}/nginx/nginx.pid ]";

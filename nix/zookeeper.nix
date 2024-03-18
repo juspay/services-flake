@@ -138,7 +138,7 @@ with lib;
               };
             in
             {
-              command = "${startScript}/bin/start-zookeeper";
+              command = startScript;
 
               readiness_probe = {
                 exec.command = "echo stat | ${pkgs.netcat.nc}/bin/nc localhost ${toString config.port}";
