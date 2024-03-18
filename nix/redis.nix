@@ -72,7 +72,7 @@ in
               };
             in
             {
-              command = "${startScript}/bin/start-redis";
+              command = startScript;
 
               readiness_probe = {
                 exec.command = "${config.package}/bin/redis-cli -p ${toString config.port} ping";
