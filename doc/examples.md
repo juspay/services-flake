@@ -1,4 +1,3 @@
 # Examples
 
-- [ ] [[simple]]
 - [ ] [[share-services]]
