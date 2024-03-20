@@ -14,7 +14,9 @@ emanote:
 It builds on top of the [process-compose-flake](https://community.flake.parts/process-compose-flake) module which allows running arbitrary processes declared in Nix.
 
 See:
+
 - [[start]]#
+- [[examples]]#
 - [[services]]#
 - [[contributing]]#
 - [[guide]]#

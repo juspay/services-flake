@@ -7,16 +7,16 @@ short-title: Services
 >[!warning] WIP
 > Documentation for the services is still in progress. Please refer to [this issue][gh] for progress.
 
-- Apache Kafka
+- [[apache-kafka]]#
 - [[clickhouse]]#
-- Elasticsearch
-- MySQL
-- Nginx
+- [[elasticsearch]]#
+- [[mysql]]#
+- [[nginx]]#
 - [[postgresql]]#
   - [[pgadmin]]
-- Redis
-  - Redis Cluster
-- Zookeeper
+- [[redis]]#
+  - [[redis-cluster]]#
+- [[zookeeper]]#
 - [[grafana]]#
 - [[prometheus]]#
 - [[cassandra]]#
