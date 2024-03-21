@@ -2,6 +2,8 @@
 
 [MySQL](https://github.com/mysql/mysql-server) is a popular open-source relational database management system (RDBMS).
 
+{#start}
+
 ## Getting started
 
 ```nix
@@ -11,7 +13,11 @@
 }
 ```
 
+{#tips}
+
 ## Tips & Tricks
+
+{#port}
 
 ### Use a different port
 
@@ -23,6 +29,8 @@
   };
 }
 ```
+
+{#schema}
 
 ### Multiple `.sql` files for schema
 
