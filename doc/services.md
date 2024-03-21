@@ -15,7 +15,7 @@ short-title: Services
 - [[postgresql]]#
   - [[pgadmin]]
 - [[redis]]#
-  - [[redis-cluster]]#
+  - [[redis-cluster]]
 - [[zookeeper]]#
 - [[grafana]]#
 - [[prometheus]]#
