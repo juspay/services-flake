@@ -36,6 +36,7 @@
             "${inputs.services-flake}/nix/apache-kafka_test.nix"
             "${inputs.services-flake}/nix/clickhouse/clickhouse_test.nix"
             "${inputs.services-flake}/nix/elasticsearch_test.nix"
+            "${inputs.services-flake}/nix/ollama_test.nix"
             "${inputs.services-flake}/nix/mysql/mysql_test.nix"
             "${inputs.services-flake}/nix/nginx_test.nix"
             "${inputs.services-flake}/nix/postgres/postgres_test.nix"

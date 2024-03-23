@@ -7,6 +7,7 @@ in
     ./apache-kafka.nix
     ./clickhouse
     ./elasticsearch.nix
+    ./ollama.nix
     ./mysql
     ./nginx.nix
     ./postgres
