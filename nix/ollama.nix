@@ -94,6 +94,8 @@ in
               name = "${name}-models";
               text = ''
                 set -x
+                OLLAMA_HOST=${config.host}:${toString config.port}
+                export OLLAMA_HOST
                 models="${lib.concatStringsSep " " config.models}"
                 for model in $models
                 do
