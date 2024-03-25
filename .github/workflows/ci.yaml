@@ -30,4 +30,4 @@ jobs:
       - uses: yaxitech/nix-install-pkgs-action@v3
         with:
           packages: "github:srid/nixci"
-      - run: nixci
+      - run: nixci build
