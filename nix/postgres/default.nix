@@ -54,6 +54,10 @@ in
       type = lib.types.str;
       default = "";
       description = "The DB socket directory";
+      defaultText = ''
+        An empty value specifies not listening on any Unix-domain sockets, in which case only TCP/IP sockets can be used to connect to the server.
+        See: https://www.postgresql.org/docs/current/runtime-config-connection.html#GUC-UNIX-SOCKET-DIRECTORIES
+      '';
     };
 
     # Based on: https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING-URIS
