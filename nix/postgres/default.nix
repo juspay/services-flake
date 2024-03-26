@@ -52,7 +52,7 @@ in
 
     socketDir = lib.mkOption {
       type = lib.types.str;
-      default = config.dataDir;
+      default = "";
       description = "The DB socket directory";
     };
 
@@ -128,7 +128,7 @@ in
     listen_addresses = lib.mkOption {
       type = lib.types.str;
       description = "Listen address";
-      default = "";
+      default = "127.0.0.1";
       example = "127.0.0.1";
     };
 
@@ -309,13 +309,17 @@ in
                   text = ''
                     set -euo pipefail
                     PGDATA=$(readlink -f "${config.dataDir}")
-                    PGSOCKETDIR=$(readlink -f "${config.socketDir}")
                     export PGDATA
-                    postgres -k "$PGSOCKETDIR"
+                    ${ if config.socketDir != "" then ''
+                      PGSOCKETDIR=$(readlink -f "${config.socketDir}")
+                      postgres -k "$PGSOCKETDIR"
+                    '' else ''
+                      postgres
+                    ''}
                   '';
                 };
                 pg_isreadyArgs = [
-                  "-h $(readlink -f \"${config.socketDir}\")"
+                  "-h ${config.listen_addresses}"
                   "-p ${toString config.port}"
                   "-d template1"
                 ] ++ (lib.optional (config.superuser != null) "-U ${config.superuser}");
