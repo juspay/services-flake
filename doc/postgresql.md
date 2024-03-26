@@ -20,6 +20,9 @@
 {#socket-path}
 ### Unix-domain socket path is too long
 
+> [!warning]
+> Only relevant if `socketDir` is set. If not, postgres uses TCP/IP by default.
+
 We already talk about this in the [data directory guide](datadir.md#socket-path). In case of postgres, you can set `socketDir` while keeping the `dataDir` unchanged.
 
 >[!note]
