@@ -31,7 +31,6 @@
 
             services.postgres."pg1" = {
               enable = true;
-              listen_addresses = "127.0.0.1";
               initialDatabases = [
                 {
                   name = dbName;

@@ -1,7 +1,6 @@
 { pkgs, config, ... }: {
   services.postgres."pg1" = {
     enable = true;
-    listen_addresses = "127.0.0.1";
     initialScript.before = "CREATE USER bar;";
     initialScript.after = "CREATE DATABASE foo OWNER bar;";
   };
@@ -9,7 +8,6 @@
     enable = true;
     socketDir = "./test/new/socket/path";
     port = 5433;
-    listen_addresses = "127.0.0.1";
     # INFO: pg1 creates $USER database while pg2 doesn't because `initialDatabases` is present
     initialDatabases = [
       {
