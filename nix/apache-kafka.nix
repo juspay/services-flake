@@ -63,7 +63,7 @@ with lib;
             # to have users choose a safer value -- /tmp might be volatile and is a
             # slightly scary default choice.
             # default = [ "/tmp/apache-kafka" ];
-            type = with types; listOf string;
+            type = with types; listOf str;
             default = [ (config.dataDir + "/logs") ];
           };
 
