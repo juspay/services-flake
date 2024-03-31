@@ -2,6 +2,10 @@
 default:
     @just --list
 
+# Generate CHANGELOG under `Unreleased`, starting from the previous release
+changelog:
+    cz ch --start-rev $(git describe --tags --abbrev=0 HEAD^) --incremental
+
 # Run example/simple
 ex-simple:
     cd ./example/simple && nix run . --override-input services-flake ../..

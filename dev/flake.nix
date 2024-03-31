@@ -31,10 +31,10 @@
           };
         };
         devShells.default = pkgs.mkShell {
-          nativeBuildInputs = [
+          packages = [
             pkgs.just
+            config.pre-commit.settings.tools.commitizen
           ];
-          # cf. https://flakular.in/haskell-flake/devshell#composing-devshells
           inputsFrom = [
             config.treefmt.build.devShell
             config.pre-commit.devShell
