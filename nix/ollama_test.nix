@@ -1,5 +1,8 @@
 { pkgs, config, ... }: {
-  services.ollama."lama1".enable = true;
+  services.ollama."lama1" = {
+    enable = true;
+    port = 14544;
+  };
 
   settings.processes.test =
     let

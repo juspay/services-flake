@@ -48,6 +48,31 @@ in
       '';
     };
 
+    defaultEnvs = lib.mkOption {
+      type = types.attrsOf types.str;
+      internal = true;
+      readOnly = true;
+      default = {
+        OLLAMA_MODELS = config.dataDir;
+        OLLAMA_HOST = "${config.host}:${toString config.port}";
+        OLLAMA_KEEP_ALIVE = config.keepAlive;
+      };
+      description = ''
+        Default environment variables passed to the `ollama-server` process.
+      '';
+    };
+
+    extraEnvs = lib.mkOption {
+      type = types.attrsOf types.str;
+      default = { };
+      example = {
+        OLLAMA_DEBUG = "1";
+      };
+      description = ''
+        Extra environment variables passed to the `ollama-server` process. This is prioritized over `defaultEnvs`.
+      '';
+    };
+
     outputs.settings = lib.mkOption {
       type = types.deferredModule;
       internal = true;
@@ -63,11 +88,6 @@ in
                     echo "Creating directory ${config.dataDir}"
                     mkdir -p ${config.dataDir}
                   fi
-                  OLLAMA_HOST=${config.host}:${toString config.port}
-                  OLLAMA_MODELS=${config.dataDir}
-                  OLLAMA_KEEP_ALIVE=${config.keepAlive}
-
-                  export OLLAMA_HOST OLLAMA_MODELS OLLAMA_KEEP_ALIVE
 
                   ${lib.getExe config.package} serve
                 '';
@@ -75,6 +95,7 @@ in
             in
             {
               command = startScript;
+              environment = lib.recursiveUpdate config.defaultEnvs config.extraEnvs;
               readiness_probe = {
                 http_get = {
                   host = config.host;
