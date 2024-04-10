@@ -65,7 +65,11 @@ in
             grafanaConfigIni = iniFormat.generate "defaults.ini" grafanaConfig;
             startScript = pkgs.writeShellApplication {
               name = "start-grafana";
-              runtimeInputs = [ config.package ];
+              runtimeInputs =
+                [ config.package ] ++
+                (lib.lists.optionals pkgs.stdenv.isDarwin [
+                  pkgs.coreutils
+                ]);
               text = ''
                 grafana server --config ${grafanaConfigIni} \
                                --homepath ${config.package}/share/grafana \
