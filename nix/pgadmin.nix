@@ -103,7 +103,11 @@ in
               let
                 setupScript = pkgs.writeShellApplication {
                   name = "setup-pgadmin";
-                  runtimeInputs = [ config.package ];
+                  runtimeInputs =
+                    [ config.package ] ++
+                    (lib.lists.optionals pkgs.stdenv.isDarwin [
+                      pkgs.coreutils
+                    ]);
                   text = ''
                     export PYTHONPATH="${pgadminConfig}"
                     PGADMIN_DATADIR="$(readlink -m ${config.dataDir})"
@@ -132,7 +136,11 @@ in
               let
                 startScript = pkgs.writeShellApplication {
                   name = "start-pgadmin";
-                  runtimeInputs = [ config.package ];
+                  runtimeInputs =
+                    [ config.package ] ++
+                    (lib.lists.optionals pkgs.stdenv.isDarwin [
+                      pkgs.coreutils
+                    ]);
                   text = ''
                     export PYTHONPATH="${pgadminConfig}"
                     PGADMIN_DATADIR="$(readlink -m ${config.dataDir})"
