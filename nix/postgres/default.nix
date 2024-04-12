@@ -323,7 +323,7 @@ in
                   '';
                 };
                 pg_isreadyArgs = [
-                  "-h ${config.listen_addresses}"
+                  (if config.socketDir != "" then "-h $(readlink -f \"${config.socketDir}\")" else "-h ${config.listen_addresses}")
                   "-p ${toString config.port}"
                   "-d template1"
                 ] ++ (lib.optional (config.superuser != null) "-U ${config.superuser}");
