@@ -1,4 +1,5 @@
 {
+  description = "declarative, composable, and reproducible services for Nix development environment";
   outputs = _: {
     processComposeModules.default = ./nix;
 
