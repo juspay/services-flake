@@ -193,16 +193,15 @@ in
             configureTimezones = ''
               # Start a temp database with the default-time-zone to import tz data
               # and hide the temp database from the configureScript by setting a custom socket
-              nohup mysqld ${mysqldOptions} --socket="${config.dataDir}/config.sock" --skip-networking --default-time-zone=SYSTEM &
+              CONFIG_SOCKET="$(${pkgs.coreutils}/bin/realpath ${config.dataDir + "/config.sock"})"
+              nohup mysqld ${mysqldOptions} --socket="$CONFIG_SOCKET" --skip-networking --default-time-zone=SYSTEM &
 
-              while ! MYSQL_PWD="" mysqladmin --socket="${config.dataDir}/config.sock" ping -u root --silent; do
+              while ! MYSQL_PWD="" mysqladmin --socket="$CONFIG_SOCKET" ping -u root --silent; do
                 sleep 1
               done
-
-              mysql_tzinfo_to_sql ${pkgs.tzdata}/share/zoneinfo/ | MYSQL_PWD="" mysql --socket="${config.dataDir}/config.sock" -u root mysql
-
+              mysql_tzinfo_to_sql ${pkgs.tzdata}/share/zoneinfo | MYSQL_PWD="" mysql --socket="$CONFIG_SOCKET" -u root mysql
               # Shutdown the temp database
-              MYSQL_PWD="" mysqladmin --socket="${config.dataDir}/config.sock" shutdown -u root
+              MYSQL_PWD="" mysqladmin --socket="$CONFIG_SOCKET" shutdown -u root
             '';
 
             startScript = pkgs.writeShellApplication {
