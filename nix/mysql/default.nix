@@ -21,6 +21,12 @@ in
       description = "The mysql data directory";
     };
 
+    socketDir = lib.mkOption {
+      type = types.nullOr types.str;
+      default = config.dataDir;
+      description = "The mysql socket directory. If null, defaults to dataDir.";
+    };
+
     settings = lib.mkOption {
       type = format.type;
       default = { };
@@ -170,8 +176,8 @@ in
             mysqldOptions = "${mysqlOptions} --datadir=${config.dataDir} --basedir=${config.package}";
             envs = ''
               MYSQL_HOME=$(${pkgs.coreutils}/bin/realpath ${config.dataDir})
-              MYSQL_UNIX_PORT=$(${pkgs.coreutils}/bin/realpath ${config.dataDir + "/mysql.sock"})
-              MYSQLX_UNIX_PORT=$(${pkgs.coreutils}/bin/realpath ${config.dataDir + "/mysqlx.sock"})
+              MYSQL_UNIX_PORT=$(${pkgs.coreutils}/bin/realpath ${config.socketDir + "/mysql.sock"})
+              MYSQLX_UNIX_PORT=$(${pkgs.coreutils}/bin/realpath ${config.socketDir + "/mysqlx.sock"})
 
               export MYSQL_HOME
               export MYSQL_UNIX_PORT
@@ -193,7 +199,7 @@ in
             configureTimezones = ''
               # Start a temp database with the default-time-zone to import tz data
               # and hide the temp database from the configureScript by setting a custom socket
-              CONFIG_SOCKET="$(${pkgs.coreutils}/bin/realpath ${config.dataDir + "/config.sock"})"
+              CONFIG_SOCKET="$(${pkgs.coreutils}/bin/realpath ${config.socketDir + "/config.sock"})"
               nohup mysqld ${mysqldOptions} --socket="$CONFIG_SOCKET" --skip-networking --default-time-zone=SYSTEM &
 
               while ! MYSQL_PWD="" mysqladmin --socket="$CONFIG_SOCKET" ping -u root --silent; do
@@ -210,6 +216,9 @@ in
               text = ''
                 set -euo pipefail
 
+                if [[ ! -d ${config.socketDir} ]]; then
+                  mkdir -p ${config.socketDir}
+                fi
                 if [[ ! -d ${config.dataDir} || ! -f ${config.dataDir}/ibdata1 ]]; then
                   mkdir -p ${config.dataDir}
                   ${initDatabaseCmd}
@@ -282,7 +291,7 @@ in
                 readiness_probe = {
                   # Turns out using `--defaults-file` alone doesn't make the readiness_probe work unless `MYSQL_UNIX_PORT` is set.
                   # Hence the use of `--socket`.
-                  exec.command = "${config.package}/bin/mysqladmin --socket=${config.dataDir}/mysql.sock ping -h localhost";
+                  exec.command = "${config.package}/bin/mysqladmin --socket=${config.socketDir}/mysql.sock ping -h localhost";
                   initial_delay_seconds = 2;
                   period_seconds = 10;
                   timeout_seconds = 4;
