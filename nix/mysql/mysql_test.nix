@@ -6,24 +6,27 @@
       CREATE USER foo IDENTIFIED BY 'password@123';
       CREATE USER bar;
     '';
+    ensureUsers = [
+      {
+        name = "test_database";
+        password = "test_database";
+        ensurePermissions = { "test_database.*" = "ALL PRIVILEGES"; };
+      }
+    ];
   };
+  services.mysql.m2 =
+    { name, ... }:
+    {
+      enable = true;
+      importTimeZones = true;
+      socketDir = "/tmp/${name}";
+      settings.mysqld.port = 3308;
+    };
   services.mysql.m3 = {
     enable = true;
     importTimeZones = true;
     package = pkgs.mysql80;
     settings.mysqld.port = 3309;
-  };
-  services.mysql.m1.ensureUsers = [
-    {
-      name = "test_database";
-      password = "test_database";
-      ensurePermissions = { "test_database.*" = "ALL PRIVILEGES"; };
-    }
-  ];
-  services.mysql.m2 = {
-    enable = true;
-    importTimeZones = true;
-    settings.mysqld.port = 3308;
   };
   settings.processes.test =
     {
@@ -60,7 +63,24 @@
           else
             echo "time_zone_name table is correctly populated with $tz_names rows on mariadb"
           fi
-
+          echo "Checking socketDir:"
+          socket=$(echo 'SELECT @@GLOBAL.socket' | MYSQL_PWD="" mysql -h 127.0.0.1 -u root | tail -n1)
+          m1socket="$(${pkgs.coreutils}/bin/realpath ${config.services.mysql.m1.dataDir + "/mysql.sock"})"
+          if [[ "$socket" != "$m1socket" ]]; then
+            echo "socket is not in $m1socket"
+            exit 1
+          else
+            echo "socket is in $m1socket"
+          fi
+          m2socket="$(${pkgs.coreutils}/bin/realpath ${config.services.mysql.m2.socketDir + "/mysql.sock"})"
+          socket=$(echo 'SELECT @@GLOBAL.socket' | MYSQL_PWD="" mysql -h 127.0.0.1 -P 3308 -u root | tail -n1)
+          if [[ "$socket" != "$m2socket" ]]; then
+            echo "socket is not in $m2socket"
+            exit 1
+          else
+            echo "socket is in $m2socket"
+          fi
+          
           echo "Checking if both foo.sql and bar.sql are executed, ignoring baz.md"
           echo "SELECT * FROM information_schema.tables WHERE table_schema = 'test_database' AND table_name = 'foo' LIMIT 1;" | MYSQL_PWD="" mysql -h 127.0.0.1 -u root | grep foo
           echo "SELECT * FROM information_schema.tables WHERE table_schema = 'test_database' AND table_name = 'bar' LIMIT 1;" | MYSQL_PWD="" mysql -h 127.0.0.1 -u root | grep bar
