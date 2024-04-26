@@ -86,6 +86,15 @@ in
       description = "The nginx configuration file.";
     };
 
+    configFilePath = lib.mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = ''
+        Provides optional setting to copy the config file to the user provided path.
+        Useful for scenarios where you want to relatively import files in the config.
+      '';
+    };
+
     outputs.settings = lib.mkOption {
       type = lib.types.deferredModule;
       internal = true;
@@ -100,7 +109,8 @@ in
               if [[ ! -d "${config.dataDir}" ]]; then
                 mkdir -p "${config.dataDir}"
               fi
-              nginx -p "$(pwd)" -c ${config.configFile} -e /dev/stderr
+              ${if isNull config.configFilePath then "" else "ln -sfn ${config.configFile} ${config.configFilePath}"}
+              nginx -p "$(pwd)" -c "${if isNull config.configFilePath then config.configFile else config.configFilePath}" -e /dev/stderr
             '';
           };
         in
