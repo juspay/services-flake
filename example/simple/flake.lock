@@ -5,11 +5,11 @@
         "nixpkgs-lib": "nixpkgs-lib"
       },
       "locked": {
-        "lastModified": 1685662779,
-        "narHash": "sha256-cKDDciXGpMEjP1n6HlzKinN0H+oLmNpgeCTzYnsA2po=",
+        "lastModified": 1712014858,
+        "narHash": "sha256-sB4SWl2lX95bExY2gMFG5HIzvva5AVMJd4Igm+GpZNw=",
         "owner": "hercules-ci",
         "repo": "flake-parts",
-        "rev": "71fb97f0d875fd4de4994dfb849f2c75e17eb6c3",
+        "rev": "9126214d0a59633752a136528f5f3b9aa8565b7d",
         "type": "github"
       },
       "original": {
@@ -20,11 +20,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1696630667,
-        "narHash": "sha256-kO67pYOeT/6m9BnPO+zNHWnC4eGiW87gIAJ+e8f3gwU=",
+        "lastModified": 1714213793,
+        "narHash": "sha256-Yg5D5LhyAZvd3DZrQQfJAVK8K3TkUYKooFtH1ulM0mw=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "b604023e0a5549b65da3040a07d2beb29ac9fc63",
+        "rev": "d6f6eb2a984f2ba9a366c31e4d36d65465683450",
         "type": "github"
       },
       "original": {
@@ -37,11 +37,11 @@
     "nixpkgs-lib": {
       "locked": {
         "dir": "lib",
-        "lastModified": 1685564631,
-        "narHash": "sha256-8ywr3AkblY4++3lIVxmrWZFzac7+f32ZEhH/A8pNscI=",
+        "lastModified": 1711703276,
+        "narHash": "sha256-iMUFArF0WCatKK6RzfUJknjem0H9m4KgorO/p3Dopkk=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "4f53efe34b3a8877ac923b9350c874e3dcd5dc0a",
+        "rev": "d8fe5e6c92d0d190646fb9f1056741a229980089",
         "type": "github"
       },
       "original": {
@@ -70,11 +70,11 @@
     },
     "process-compose-flake": {
       "locked": {
-        "lastModified": 1708620954,
-        "narHash": "sha256-kFgAt2kJZ9JleWgo+cFULoya31o9EiukNg1H4G0+KnM=",
+        "lastModified": 1713920695,
+        "narHash": "sha256-pQIg3wrNBDdRiuhcVC8DFmTXK8GHtR+iV+5Gvsozx5s=",
         "owner": "Platonic-Systems",
         "repo": "process-compose-flake",
-        "rev": "dded78fff52b069bd55607b15b49739e8310efb3",
+        "rev": "ee8cd505f08f6cd691930e70987a306b7726851b",
         "type": "github"
       },
       "original": {
@@ -95,11 +95,11 @@
     },
     "services-flake": {
       "locked": {
-        "lastModified": 1708620951,
-        "narHash": "sha256-5CUc2m90tIx8vCuQ9bSLiNl2x9VDijXR4hVdwagoEj8=",
+        "lastModified": 1714137124,
+        "narHash": "sha256-+gszdjbWWt5m+77weTSk9l67Z4cUAmDLp+ucjJViEpc=",
         "owner": "juspay",
         "repo": "services-flake",
-        "rev": "625f2070346f1a6d11d5c482c0c987010c3ba2fc",
+        "rev": "dbb93b39ce83530e6f86daa46c671055f224816d",
         "type": "github"
       },
       "original": {
