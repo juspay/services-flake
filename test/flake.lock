@@ -72,7 +72,23 @@
         "flake-parts": "flake-parts",
         "nixpkgs": "nixpkgs",
         "process-compose-flake": "process-compose-flake",
+        "services-flake": "services-flake",
         "systems": "systems"
+      }
+    },
+    "services-flake": {
+      "locked": {
+        "lastModified": 1714414649,
+        "narHash": "sha256-oui6I0Sx/dw9t0XmT6dtmZr6lZ2yFmcwfVEQ9FAxMlw=",
+        "owner": "juspay",
+        "repo": "services-flake",
+        "rev": "fa079ed2a907c38403046404dbcd3a3b7892f0f0",
+        "type": "github"
+      },
+      "original": {
+        "owner": "juspay",
+        "repo": "services-flake",
+        "type": "github"
       }
     },
     "systems": {
