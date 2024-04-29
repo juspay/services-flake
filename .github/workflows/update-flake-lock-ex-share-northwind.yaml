@@ -1,0 +1,23 @@
+name: update-flake-lock-ex-share-northwind
+on:
+  workflow_dispatch: # allows manual triggering
+  schedule:
+    - cron: '0 0 * * 0' # runs weekly on Sunday at 00:00
+
+jobs:
+  example-lock:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+      - name: Update flake.lock
+        uses: DeterminateSystems/update-flake-lock@main
+        with:
+          commit-msg: "chore(example): Update share-services/northwind/flake.lock"
+          pr-title: "Update example/share-services/northwind/flake.lock"
+          pr-labels: |
+            automated
+          path-to-flake-dir: 'example/share-services/northwind'
+          branch: "update_flake_lock_ex_share_northwind"
