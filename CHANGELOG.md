@@ -1,9 +1,10 @@
 # Changelog for services-flake
 
-## Unreleased
+## 0.2.0 (Apr 30, 2024)
 
 ### Feat
 
+- **mysql**: allow configuring socketDir on mysql. if not provided, uses dataDir as default. solves #171
 - **dev**: add `just changelog` (#162)
 - **postgres**: add connectionURI option (#143)
 - add pre-commit-hooks.nix, enforcing conventional commits
@@ -25,7 +26,6 @@
 - writeShellScriptBin -> writeShellApplication (#155)
 - **postgres**: replace string argument with attrset for `connectionURI` (#146)
 - **example**: remove unused pg2 service (#142)
-- overlays for packages in test flake (#120)
 
 ## 0.1.0 (Mar 6, 2024)
 
