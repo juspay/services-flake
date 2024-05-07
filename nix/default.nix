@@ -8,7 +8,7 @@ in
     ./clickhouse
     ./elasticsearch.nix
     ./mysql
-    ./nginx.nix
+    ./nginx
     ./postgres
     ./redis-cluster.nix
     ./redis.nix
