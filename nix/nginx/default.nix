@@ -100,7 +100,8 @@ in
               if [[ ! -d "${config.dataDir}" ]]; then
                 mkdir -p "${config.dataDir}"
               fi
-              nginx -p "$(pwd)" -c ${config.configFile} -e /dev/stderr
+              ln -sfn ${config.configFile} "${config.dataDir}/nginx.conf"
+              nginx -p "$(pwd)" -c "${config.dataDir}/nginx.conf" -e /dev/stderr
             '';
           };
         in
