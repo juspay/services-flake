@@ -2,6 +2,7 @@
 let
   inherit (lib) types;
   iniFormat = pkgs.formats.ini { };
+  yamlFormat = pkgs.formats.yaml { };
 in
 {
   options = {
@@ -48,6 +49,32 @@ in
       '';
     };
 
+    datasources = lib.mkOption {
+      type = types.listOf yamlFormat.type;
+      description = "List of data sources to configure.";
+      default = [ ];
+      example = ''
+        [
+          {
+            name = "Tempo";
+            type = "tempo";
+            access = "proxy";
+          }
+        ]
+      '';
+    };
+
+    deleteDatasources = lib.mkOption {
+      type = types.listOf yamlFormat.type;
+      description = "List of data sources to remove.";
+      default = [ ];
+      example = ''
+        [
+          { name = "Tempo"; }
+        ]
+      '';
+    };
+
     outputs.settings = lib.mkOption {
       type = types.deferredModule;
       internal = true;
@@ -63,6 +90,23 @@ in
               }
               config.extraConf;
             grafanaConfigIni = iniFormat.generate "defaults.ini" grafanaConfig;
+            provisioningConfig = pkgs.stdenv.mkDerivation {
+              name = "grafana-provisioning";
+              datasourcesYaml = yamlFormat.generate "datasources.yaml" {
+                apiVersion = 1;
+                deleteDatasources = config.deleteDatasources;
+                datasources = config.datasources;
+              };
+              buildCommand = ''
+                mkdir -p $out
+                mkdir -p $out/alerting
+                mkdir -p $out/dashboards
+                mkdir -p $out/datasources
+                ln -s "$datasourcesYaml" "$out/datasources/datasources.yaml"
+                mkdir -p $out/notifiers
+                mkdir -p $out/plugins
+              '';
+            };
             startScript = pkgs.writeShellApplication {
               name = "start-grafana";
               runtimeInputs =
@@ -73,7 +117,8 @@ in
               text = ''
                 grafana server --config ${grafanaConfigIni} \
                                --homepath ${config.package}/share/grafana \
-                               cfg:paths.data="$(readlink -m ${config.dataDir})"
+                               cfg:paths.data="$(readlink -m ${config.dataDir})" \
+                               cfg:paths.provisioning="${provisioningConfig}"
               '';
             };
           in

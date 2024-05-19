@@ -18,6 +18,7 @@ short-title: Services
   - [[redis-cluster]]
 - [[zookeeper]]#
 - [[grafana]]#
+  - [[tempo]]
 - [[prometheus]]#
 - [[cassandra]]#
 
