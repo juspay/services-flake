@@ -14,7 +14,7 @@
 {#tips}
 ## Tips & Tricks
 
-{#change-database}
+{#usage-with-grafana}
 ### Usage with Grafana
 
 To add tempo as a datasource to Grafana, we can use the following config:
