@@ -17,7 +17,7 @@
 {#usage-with-grafana}
 ### Usage with Grafana
 
-To add tempo as a datasource to Grafana, we can use the following config:
+To add tempo as a datasource to #[[grafana]], we can use the following config:
 
 ```nix
 {
