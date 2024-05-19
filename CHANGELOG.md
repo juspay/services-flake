@@ -1,5 +1,15 @@
 # Changelog for services-flake
 
+## Unreleased
+
+### Feat
+
+- add tempo service (#192)
+
+### Fix
+
+- **nginx**: link nginx.conf to dataDir (#173)
+
 ## 0.2.0 (Apr 30, 2024)
 
 ### Feat
