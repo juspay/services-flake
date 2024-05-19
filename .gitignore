@@ -7,5 +7,6 @@
 # created when `just run ex-*` is used
 /example/share-services/pgweb/data/
 /example/simple/data/
+/example/grafana-tempo/data/
 
 /.pre-commit-config.yaml

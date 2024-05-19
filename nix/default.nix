@@ -17,5 +17,6 @@ in
     ./prometheus.nix
     ./pgadmin.nix
     ./cassandra.nix
+    ./tempo.nix
   ];
 }
