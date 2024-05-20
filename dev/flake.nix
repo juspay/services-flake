@@ -33,6 +33,7 @@
         devShells.default = pkgs.mkShell {
           packages = [
             pkgs.just
+            pkgs.nixd
             config.pre-commit.settings.tools.commitizen
           ];
           inputsFrom = [
