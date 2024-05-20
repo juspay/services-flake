@@ -21,30 +21,56 @@
         inputs.pre-commit-hooks-nix.flakeModule
         ./nix/pre-commit.nix
       ];
-      perSystem = { pkgs, lib, config, ... }: {
-        treefmt = {
-          projectRoot = inputs.services-flake;
-          projectRootFile = "flake.nix";
-          flakeCheck = false; # pre-commit-hooks.nix checks this
-          programs = {
-            nixpkgs-fmt.enable = true;
+      perSystem = { pkgs, lib, config, ... }:
+        let
+          inherit (config.pre-commit.settings.tools) commitizen;
+        in
+        {
+          treefmt = {
+            projectRoot = inputs.services-flake;
+            projectRootFile = "flake.nix";
+            flakeCheck = false; # pre-commit-hooks.nix checks this
+            programs = {
+              nixpkgs-fmt.enable = true;
+            };
           };
-        };
-        devShells.default = pkgs.mkShell {
-          packages = [
-            pkgs.just
-            config.pre-commit.settings.tools.commitizen
-          ];
-          inputsFrom = [
-            config.treefmt.build.devShell
-            config.pre-commit.devShell
-          ];
-          shellHook = ''
-            echo
-            echo "🍎🍎 Run 'just <recipe>' to get started"
-            just
+          devShells.default = pkgs.mkShell {
+            packages = [
+              pkgs.just
+              commitizen
+            ];
+            inputsFrom = [
+              config.treefmt.build.devShell
+              config.pre-commit.devShell
+            ];
+            shellHook = ''
+              echo
+              echo "🍎🍎 Run 'just <recipe>' to get started"
+              just
+            '';
+          };
+          checks.cz-check = pkgs.runCommand "cz-check" { buildInputs = [ pkgs.git commitizen ]; } ''
+            # Set pipefail option for safer bash
+            set -euo pipefail
+        
+            export HOME=$PWD
+            cp -R ${inputs.services-flake} $HOME/source
+
+            cd $HOME/source
+
+            # Get the number of commits in the range
+            num_commits=$(git rev-list --count main..HEAD)
+
+            # If there are commits in the range, run the check
+            if [ "$num_commits" -gt 0 ]; then
+              echo "Checking $num_commits commit(s)..."
+              cz check --rev-range main..HEAD
+            else
+              echo "No commits to check."
+            fi
+
+            touch $out
           '';
         };
-      };
     };
 }
