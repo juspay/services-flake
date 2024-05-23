@@ -18,5 +18,6 @@ in
     ./pgadmin.nix
     ./cassandra.nix
     ./tempo.nix
+    ./weaviate.nix
   ];
 }
