@@ -1,13 +1,18 @@
 { pkgs, lib, name, config, ... }:
 let
   inherit (lib) types;
-  format = pkgs.formats.json { };
 in
 {
   options = {
     enable = lib.mkEnableOption name;
 
     package = lib.mkPackageOption pkgs "weaviate" { };
+
+    dataDir = lib.mkOption {
+      type = types.str;
+      default = "./data";
+      description = "Path to the Weaviate data store";
+    };
 
     host = lib.mkOption {
       type = types.nullOr types.str;
@@ -26,30 +31,19 @@ in
       '';
     };
 
-    settings = lib.mkOption {
-      type = format.type;
+    envs = lib.mkOption {
+      type = types.attrsOf (types.oneOf [ types.str types.int types.bool (types.listOf types.str) ]);
       default = { };
       description = ''
-        Weaviate configuration.
+        Weaviate environment variables.
       '';
       example = lib.literalExpression ''
         {
-          "authentication": {
-            "anonymous_access": {
-              "enabled": true
-            }
-          },
-          "authorization": {
-            "admin_list": {
-              "enabled": false
-            }
-          },
-          "query_defaults": {
-            "limit": 100
-          },
-          "persistence": {
-            "dataPath": "./data"
-          }
+          AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED = true;
+          QUERY_DEFAULTS_LIMIT = 100;
+          DISABLE_TELEMETRY = true;
+          LIMIT_RESOURCES = true;
+          ENABLE_MODULES = ["text2vec-openai" "generative-openai"];
         }
       '';
     };
@@ -62,13 +56,22 @@ in
         processes = {
           "${name}" =
             let
-              configFile = format.generate "weaviate.conf.json" config.settings;
+              toStr = value:
+                if builtins.isString value then builtins.toJSON value
+                else if builtins.isBool value then (if value then "true" else "false")
+                else if builtins.isList value then builtins.toJSON (lib.concatStringsSep "," value)
+                else if builtins.isInt value then toString value
+                else throw "Unrecognized type";
+
+              exports = (lib.mapAttrsToList (name: value: "export ${name}=${toStr value}") ({ "PERSISTENCE_DATA_PATH" = config.dataDir; }
+                // config.envs));
 
               startScript = pkgs.writeShellApplication {
                 name = "start-weaviate";
                 runtimeInputs = [ config.package ];
                 text = ''
-                  exec weaviate --scheme http --host ${config.host} --port ${toString config.port} --config-file ${configFile}
+                  ${lib.concatStringsSep "\n" exports}
+                  exec weaviate --scheme http --host ${config.host} --port ${toString config.port}
                 '';
               };
 
