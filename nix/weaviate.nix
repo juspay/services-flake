@@ -74,19 +74,17 @@ in
                   exec weaviate --scheme http --host ${config.host} --port ${toString config.port}
                 '';
               };
-
-              readyScript = pkgs.writeText "ready.py" ''
-                import weaviate
-                client = weaviate.connect_to_local(port=${toString config.port}, host="${config.host}")
-                client.close()
-              '';
             in
             {
               command = startScript;
 
               readiness_probe = {
-                exec.command = "${(pkgs.python3.withPackages (p: [ p.weaviate-client ]))}/bin/python ${readyScript}";
-                initial_delay_seconds = 2;
+                http_get = {
+                  host = config.host;
+                  port = config.port;
+                  path = "/v1/.well-known/ready";
+                };
+                initial_delay_seconds = 3;
                 period_seconds = 10;
                 timeout_seconds = 4;
                 success_threshold = 1;
