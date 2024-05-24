@@ -1,5 +1,10 @@
 { pkgs, config, ... }: {
-  services.weaviate."weaviate1".enable = true;
+  services.weaviate."weaviate1" = {
+    enable = true;
+    envs = {
+      CLUSTER_ADVERTISE_ADDR = "127.0.0.1";
+    };
+  };
 
   settings.processes.test =
     let
