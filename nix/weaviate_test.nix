@@ -1,7 +1,7 @@
 { pkgs, config, ... }: {
   services.weaviate."weaviate1" = {
     enable = true;
-    envs = {
+    environment = {
       # To fix the problem with nix failing to run weaviate in sandbox mode
       CLUSTER_ADVERTISE_ADDR = "127.0.0.1";
     };

@@ -31,11 +31,13 @@ in
       '';
     };
 
-    envs = lib.mkOption {
-      type = types.attrsOf (types.oneOf [ types.str types.int types.bool (types.listOf types.str) ]);
+    environment = lib.mkOption {
+      type = types.attrsOf (types.oneOf [ types.raw (types.listOf types.str) ]);
       default = { };
       description = ''
         Weaviate environment variables.
+
+        See https://weaviate.io/developers/weaviate/config-refs/env-vars
       '';
       example = lib.literalExpression ''
         {
@@ -56,32 +58,30 @@ in
         processes = {
           "${name}" =
             let
+              asAtom = value:
+                if builtins.isList value then lib.concatStringsSep "," value else value;
               toStr = value:
-                if builtins.isString value then builtins.toJSON value
-                else if builtins.isBool value then (if value then "true" else "false")
-                else if builtins.isList value then builtins.toJSON (lib.concatStringsSep "," value)
-                else if builtins.isInt value then toString value
-                else throw "Unrecognized type";
+                if builtins.isString value then value else builtins.toJSON value;
 
-              exports = (lib.mapAttrsToList (name: value: "export ${name}=${toStr value}") ({ "PERSISTENCE_DATA_PATH" = config.dataDir; }
-                // config.envs));
+              environment = (lib.mapAttrsToList (name: value: "${name}=${toStr (asAtom value)}") ({ "PERSISTENCE_DATA_PATH" = config.dataDir; }
+                // config.environment));
 
               startScript = pkgs.writeShellApplication {
                 name = "start-weaviate";
                 runtimeInputs = [ config.package ];
                 text = ''
-                  ${lib.concatStringsSep "\n" exports}
                   exec weaviate --scheme http --host ${config.host} --port ${toString config.port}
                 '';
               };
             in
             {
+              inherit environment;
+
               command = startScript;
 
               readiness_probe = {
                 http_get = {
-                  host = config.host;
-                  port = config.port;
+                  inherit (config) host port;
                   path = "/v1/.well-known/ready";
                 };
                 initial_delay_seconds = 3;
