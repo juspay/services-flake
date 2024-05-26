@@ -52,8 +52,7 @@ in
           ENABLE_MODULES = ["text2vec-openai" "generative-openai"];
         }
       '';
-      apply = attrs:
-        lib.mapAttrs (_: value: toStr (asAtom value)) attrs;
+      apply = lib.mapAttrs (_: value: toStr (asAtom value));
     };
 
     outputs.settings = lib.mkOption {
