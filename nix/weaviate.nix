@@ -1,6 +1,10 @@
 { pkgs, lib, name, config, ... }:
 let
   inherit (lib) types;
+  asAtom = value:
+    if builtins.isList value then lib.concatStringsSep "," value else value;
+  toStr = value:
+    if builtins.isString value then value else builtins.toJSON value;
 in
 {
   options = {
@@ -48,6 +52,8 @@ in
           ENABLE_MODULES = ["text2vec-openai" "generative-openai"];
         }
       '';
+      apply = attrs:
+        lib.mapAttrs (_: value: toStr (asAtom value)) attrs;
     };
 
     outputs.settings = lib.mkOption {
@@ -58,14 +64,6 @@ in
         processes = {
           "${name}" =
             let
-              asAtom = value:
-                if builtins.isList value then lib.concatStringsSep "," value else value;
-              toStr = value:
-                if builtins.isString value then value else builtins.toJSON value;
-
-              environment = (lib.mapAttrsToList (name: value: "${name}=${toStr (asAtom value)}") ({ "PERSISTENCE_DATA_PATH" = config.dataDir; }
-                // config.environment));
-
               startScript = pkgs.writeShellApplication {
                 name = "start-weaviate";
                 runtimeInputs = [ config.package ];
@@ -75,7 +73,7 @@ in
               };
             in
             {
-              inherit environment;
+              environment = config.environment // { "PERSISTENCE_DATA_PATH" = config.dataDir; };
 
               command = startScript;
 
