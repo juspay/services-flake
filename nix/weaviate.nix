@@ -10,12 +10,12 @@ in
 
     dataDir = lib.mkOption {
       type = types.str;
-      default = "./data";
+      default = "./data/${name}";
       description = "Path to the Weaviate data store";
     };
 
     host = lib.mkOption {
-      type = types.nullOr types.str;
+      type = types.str;
       default = "127.0.0.1";
       description = ''
         The IP to listen on
