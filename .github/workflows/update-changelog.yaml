@@ -1,0 +1,42 @@
+name: update-changelog
+on:
+  workflow_dispatch: # allows manual triggering
+  schedule:
+    - cron: '0 0 * * 0' # runs weekly on Sunday at 00:00
+
+jobs:
+  update-changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate Github App Token
+        uses: navikt/github-app-token-generator@v1
+        id: github-app-token
+        with:
+          app-id: ${{ vars.NIXOS_ASIA_APP_ID }}
+          private-key: ${{ secrets.NIXOS_ASIA_PRIVATE_KEY }}
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+      - uses: cachix/cachix-action@v14
+        with:
+          name: services-flake
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      - run: "nix develop ./dev -c just changelog"
+      - name: Create PR
+        id: create-pr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: update_changelog
+          commit-message: |
+            chore: update changelog
+          delete-branch: true
+          title: "chore: update changelog"
+          token: ${{ steps.github-app-token.outputs.token }}
+          labels: |
+            automated
+          body: ""
+      - run: "gh pr merge --auto --rebase --delete-branch ${{ steps.create-pr.outputs.pull-request-number }}"
+        env:
+          GH_TOKEN: ${{ github.token }}
+
