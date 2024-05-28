@@ -21,5 +21,6 @@ short-title: Services
   - [[tempo]]
 - [[prometheus]]#
 - [[cassandra]]#
+- [[weaviate]]#
 
 [gh]: https://github.com/juspay/services-flake/issues/132
