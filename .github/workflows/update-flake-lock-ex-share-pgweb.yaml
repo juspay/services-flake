@@ -35,7 +35,7 @@ jobs:
           path-to-flake-dir: 'example/share-services/pgweb'
           branch: "update_flake_lock_ex_share_pgweb"
           token: ${{ steps.github-app-token.outputs.token }}
-      - run: "gh pr merge --auto --rebase ${{ steps.update-flake-lock.outputs.pull-request-number }}"
+      - run: "gh pr merge --auto --rebase --delete-branch ${{ steps.update-flake-lock.outputs.pull-request-number }}"
         env:
           GH_TOKEN: ${{ github.token }}
 
