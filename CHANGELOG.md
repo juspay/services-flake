@@ -4,6 +4,7 @@
 
 ### Feat
 
+- Add Weaviate service (#195)
 - add tempo service (#192)
 
 ### Fix
