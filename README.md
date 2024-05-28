@@ -57,4 +57,4 @@ See <https://community.flake.parts/services-flake/contributing>
 
 ## Credits
 
-Thanks to [the devenv project](https://github.com/cachix/devenv/tree/main/src/modules/services) on which much of our services implementation is based on.
+Thanks to [the devenv project](https://github.com/cachix/devenv/tree/main/src/modules/services), which originally inspired this project to provide the same for Nix flake users.
