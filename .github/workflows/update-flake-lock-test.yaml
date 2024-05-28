@@ -5,7 +5,7 @@ on:
     - cron: '0 0 * * 0' # runs weekly on Sunday at 00:00
 
 jobs:
-  example-lock:
+  update-test-lock:
     runs-on: ubuntu-latest
     steps:
       - name: Generate Github App Token
