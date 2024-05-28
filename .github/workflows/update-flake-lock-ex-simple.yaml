@@ -37,4 +37,4 @@ jobs:
           token: ${{ steps.github-app-token.outputs.token }}
       - run: "gh pr merge --auto --rebase ${{ steps.update-flake-lock.outputs.pull-request-number }}"
         env:
-          GH_TOKEN: ${{ github.token }
+          GH_TOKEN: ${{ github.token }}
