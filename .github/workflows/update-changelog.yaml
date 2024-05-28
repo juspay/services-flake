@@ -16,6 +16,8 @@ jobs:
           private-key: ${{ secrets.NIXOS_ASIA_PRIVATE_KEY }}
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # this fetches all history so `git describe` can see tags
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
       - uses: cachix/cachix-action@v14
