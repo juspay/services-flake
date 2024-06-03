@@ -32,7 +32,7 @@
                 ];
               };
           in
-          builtins.listToAttrs (builtins.map mkPackageFor [
+          builtins.listToAttrs (builtins.map mkPackageFor ([
             "${inputs.services-flake}/nix/apache-kafka_test.nix"
             "${inputs.services-flake}/nix/clickhouse/clickhouse_test.nix"
             "${inputs.services-flake}/nix/elasticsearch_test.nix"
@@ -42,13 +42,15 @@
             "${inputs.services-flake}/nix/redis_test.nix"
             "${inputs.services-flake}/nix/redis-cluster_test.nix"
             "${inputs.services-flake}/nix/zookeeper_test.nix"
-            "${inputs.services-flake}/nix/grafana_test.nix"
             "${inputs.services-flake}/nix/prometheus_test.nix"
             "${inputs.services-flake}/nix/pgadmin_test.nix"
             "${inputs.services-flake}/nix/cassandra_test.nix"
             "${inputs.services-flake}/nix/tempo_test.nix"
             "${inputs.services-flake}/nix/weaviate_test.nix"
-          ]);
+          ] ++ lib.optionals pkgs.stdenv.isLinux [
+            # Broken on Darwin: https://github.com/NixOS/nixpkgs/issues/316954
+            "${inputs.services-flake}/nix/grafana_test.nix"
+          ]));
       };
     };
 }
