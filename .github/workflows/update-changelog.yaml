@@ -38,7 +38,14 @@ jobs:
           labels: |
             automated
           body: ""
-      - run: "gh pr merge --auto --rebase --delete-branch ${{ steps.create-pr.outputs.pull-request-number }}"
+
+      - name: Check if PR is available
+        id: check-pr
+        run: echo "::set-output name=pr-available::${{ steps.create-pr.outputs.pull-request-number != '' }}"
+
+      - name: Merge PR
+        if: steps.check-pr.outputs.pr-available == 'true'
+        run: "gh pr merge --auto --rebase --delete-branch ${{ steps.create-pr.outputs.pull-request-number }}"
         env:
           GH_TOKEN: ${{ github.token }}
 
