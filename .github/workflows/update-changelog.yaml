@@ -41,7 +41,7 @@ jobs:
 
       - name: Check if PR is available
         id: check-pr
-        run: echo "::set-output name=pr-available::${{ steps.create-pr.outputs.pull-request-number != '' }}"
+        run: echo "pr-available=${{ steps.create-pr.outputs.pull-request-number != '' }}" >> $GITHUB_OUTPUT
 
       - name: Merge PR
         if: steps.check-pr.outputs.pr-available == 'true'
