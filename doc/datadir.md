@@ -30,4 +30,4 @@ The data directory structure will look like this:
 {#socket-path}
 ### Unix-domain socket path is too long
 
-unix socket length is limited to [about 100 chars](https://linux.die.net/man/7/unix). If your data directory is nested too deep, you will have to set `dataDir` option of the service to a shorter path as a workaround.
+Some services create unix domain socket files under the data directory. As the unix socket length is limited to [about 100 chars](https://linux.die.net/man/7/unix), if your data directory is nested too deep, you will have to set `dataDir` option of the service to a shorter path as a workaround.
