@@ -15,6 +15,31 @@
 
 - Run postgres server initialised with a sample database and graphically interact with it using [pgweb](https://github.com/sosedoff/pgweb): <https://github.com/juspay/services-flake/tree/main/example/simple>
 
+## Guide
+
+{#init}
+### Creating users & tables
+
+Assuming your initial schema is defined in `./scripts/db.sql`:
+
+```nix
+# In `perSystem.process-compose.<name>`
+{
+  services.postgres."pg1" = {
+    enable = true;
+    initialScript.before = ''
+      CREATE USER myuser WITH password 'mypasswd';
+    '';
+    initialDatabases = [
+      {
+        name = "mydb";
+        schemas = [ ./scripts/db.sql ];
+      }
+    ];
+  };
+}
+```
+
 ## Gotchas
 
 {#socket-path}
