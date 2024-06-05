@@ -1,12 +1,11 @@
 { config, pkgs, lib }:
 let
-  psqlUserArg = lib.optionalString (config.superuser != null) "-U ${config.superuser}";
   setupInitialSchema = dbName: schema: ''
     echo "Applying database schema on ${dbName}"
     if [ -f "${schema}" ]
     then
       echo "Running file ${schema}"
-      awk 'NF' "${schema}" | psql ${psqlUserArg} -d ${dbName}
+      awk 'NF' "${schema}" | psql_with_args -d ${dbName}
     elif [ -d "${schema}" ]
     then
       # Read sql files in version order. Apply one file
@@ -14,7 +13,7 @@ let
       # doesn't end in a ;.
       find "${schema}"/*.sql | while read -r f ; do
         echo "Applying sql file: $f"
-        awk 'NF' "$f" | psql ${psqlUserArg} -d ${dbName}
+        awk 'NF' "$f" | psql_with_args -d ${dbName}
       done
     else
       echo "ERROR: Could not determine how to apply schema with ${schema}"
@@ -29,13 +28,13 @@ let
           # Create initial databases
           dbAlreadyExists=$(
             echo "SELECT 1 as exists FROM pg_database WHERE datname = '${database.name}';" | \
-            psql ${psqlUserArg} -d postgres | \
+            psql_with_args -d postgres | \
             grep -c 'exists = "1"' || true
           )
           echo "$dbAlreadyExists"
           if [ 1 -ne "$dbAlreadyExists" ]; then
             echo "Creating database: ${database.name}"
-            echo 'create database "${database.name}";' | psql ${psqlUserArg} -d postgres
+            echo 'create database "${database.name}";' | psql_with_args -d postgres
             ${lib.optionalString (database.schemas != null)
               (lib.concatMapStrings (schema: setupInitialSchema (database.name) schema) database.schemas)}
           fi
@@ -43,13 +42,13 @@ let
         config.initialDatabases)
     else
       lib.optionalString config.createDatabase ''
-        echo "CREATE DATABASE ''${USER:-$(id -nu)};" | psql ${psqlUserArg} -d postgres '';
+        echo "CREATE DATABASE ''${USER:-$(id -nu)};" | psql_with_args -d postgres '';
 
 
   runInitialScript =
     let
       scriptCmd = sqlScript: ''
-        echo "${sqlScript}" | psql ${psqlUserArg} -d postgres
+        echo "${sqlScript}" | psql_with_args -d postgres
       '';
     in
     {
@@ -79,7 +78,11 @@ in
   name = "setup-postgres";
   runtimeInputs = with pkgs; [ config.package coreutils gnugrep gawk ];
   text = ''
-    set -euo pipefail
+    set -x
+    # Execute the `psql` command with default arguments
+    function psql_with_args() {
+      psql ${lib.optionalString (config.superuser != null) "-U ${config.superuser}"} -v "ON_ERROR_STOP=1" "$@"
+    }
     # Setup postgres ENVs
     export PGDATA="${config.dataDir}"
     export PGPORT="${toString config.port}"
