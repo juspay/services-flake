@@ -51,7 +51,11 @@ in
 
     datasources = lib.mkOption {
       type = types.listOf yamlFormat.type;
-      description = "List of data sources to configure.";
+      description = ''
+        List of data sources to configure.
+
+        See https://grafana.com/docs/grafana/latest/administration/provisioning/#data-sources for the schema.
+      '';
       default = [ ];
       example = ''
         [
@@ -71,6 +75,28 @@ in
       example = ''
         [
           { name = "Tempo"; }
+        ]
+      '';
+    };
+
+    providers = lib.mkOption {
+      type = types.listOf yamlFormat.type;
+      description = ''
+        List of dashboard providers to configure.
+
+        See https://grafana.com/docs/grafana/latest/administration/provisioning/#dashboards for the schema.
+      '';
+      default = [ ];
+      example = ''
+        [
+          {
+            name = "Databases";
+            type = "file";
+            options = {
+              path = ./dashboards;
+              foldersFromFilesStructure = true;
+            };
+          }
         ]
       '';
     };
@@ -97,10 +123,15 @@ in
                 deleteDatasources = config.deleteDatasources;
                 datasources = config.datasources;
               };
+              providersYaml = yamlFormat.generate "providers.yaml" {
+                apiVersion = 1;
+                providers = config.providers;
+              };
               buildCommand = ''
                 mkdir -p $out
                 mkdir -p $out/alerting
                 mkdir -p $out/dashboards
+                ln -s "$providersYaml" "$out/dashboards/providers.yaml"
                 mkdir -p $out/datasources
                 ln -s "$datasourcesYaml" "$out/datasources/datasources.yaml"
                 mkdir -p $out/notifiers
