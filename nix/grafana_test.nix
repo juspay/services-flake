@@ -43,7 +43,8 @@ let
       "weekStart": ""
     }
   '';
-in {
+in
+{
   services.grafana."gf1" =
     {
       enable = true;
@@ -81,7 +82,7 @@ in {
             curl -sSfN -u $ADMIN:$PASSWORD $ROOT_URL/api/org/users | grep admin\@localhost
             # The dashboard provisioner was used to create a dashboard.
             curl -sSfN -u $ADMIN:$PASSWORD $ROOT_URL/api/dashboards/uid/${dashboardUid} -i
-            curl -sSfN -u $ADMIN:$PASSWORD $ROOT_URL/api/dashboards/uid/${dashboardUid} | grep '"title”:"${dashboardTitle}"'
+            curl -sSfN -u $ADMIN:$PASSWORD $ROOT_URL/api/dashboards/uid/${dashboardUid} | grep '"title":"${dashboardTitle}"'
           '';
         name = "grafana-test";
       };
