@@ -4,11 +4,13 @@
 
 ### Feat
 
+- **grafana**: add providers configuration (#211)
 - Add Weaviate service (#195)
 - add tempo service (#192)
 
 ### Fix
 
+- **postgres**: stop init on error in `sql` scripts
 - **nginx**: link nginx.conf to dataDir (#173)
 
 ## 0.2.0 (Apr 30, 2024)
