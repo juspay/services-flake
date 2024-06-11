@@ -9,6 +9,7 @@ in
     ./elasticsearch.nix
     ./mysql
     ./nginx
+    ./ollama.nix
     ./postgres
     ./redis-cluster.nix
     ./redis.nix
