@@ -12,6 +12,7 @@ short-title: Services
 - [[elasticsearch]]#
 - [[mysql]]#
 - [[nginx]]#
+- [[ollama]]#
 - [[postgresql]]#
   - [[pgadmin]]
 - [[redis]]#
