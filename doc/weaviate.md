@@ -29,7 +29,7 @@ To see list of environment variables, see [this link](https://weaviate.io/develo
 {
   services.weaviate."weaviate1" = {
     enable = true;
-    envs = {
+    environment = {
       AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED = true;
       QUERY_DEFAULTS_LIMIT = 100;
       DISABLE_TELEMETRY = true;
