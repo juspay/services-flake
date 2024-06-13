@@ -10,6 +10,10 @@ changelog:
 ex-simple:
     cd ./example/simple && nix run . --override-input services-flake ../..
 
+# Run example/llm
+ex-llm:
+    cd ./example/llm && nix run . --override-input services-flake ../..
+
 # Run example/share-services
 ex-share-services:
     cd ./example/share-services/pgweb && \
