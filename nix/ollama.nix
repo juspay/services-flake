@@ -30,7 +30,7 @@ in
     };
     dataDir = lib.mkOption {
       type = types.str;
-      default = "./data/ollama";
+      default = "./data/${name}";
       description = ''
         The directory containing the Ollama models.
         Sets the `OLLAMA_MODELS` environment variable.
@@ -93,9 +93,9 @@ in
               startScript = pkgs.writeShellApplication {
                 name = "ollama-server";
                 text = ''
-                  if [ ! -d ${config.dataDir} ]; then
+                  if [ ! -d "${config.dataDir}" ]; then
                     echo "Creating directory ${config.dataDir}"
-                    mkdir -p ${config.dataDir}
+                    mkdir -p "${config.dataDir}"
                   fi
 
                   ${lib.getExe config.package} serve
