@@ -45,7 +45,7 @@ Want to compare with other tools? [Let us know](https://github.com/juspay/servic
 
 ## Service data directory
 
-See <https://community.flake.parts/services-flake/guide/datadir>
+See <https://community.flake.parts/services-flake/datadir>
 
 ## Discussions
 
