@@ -1,0 +1,16 @@
+name: "CI"
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+jobs:
+  checks:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        # TODO: Add rosetta & linux build; and then delete ci.yaml
+        os: [self-hosted]
+    steps:
+      - uses: actions/checkout@v4
+      - run: nixci build
