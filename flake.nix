@@ -17,6 +17,10 @@
         inherit overrideInputs;
         dir = "./example/simple";
       };
+      llm-example = {
+        inherit overrideInputs;
+        dir = "./example/llm";
+      };
       share-services-example = {
         overrideInputs = {
           inherit (overrideInputs) services-flake;
