@@ -11,6 +11,7 @@ in
     ./nginx
     ./ollama.nix
     ./postgres
+    ./open-webui.nix
     ./redis-cluster.nix
     ./redis.nix
     ./zookeeper.nix

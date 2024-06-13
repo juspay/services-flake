@@ -13,6 +13,7 @@ short-title: Services
 - [[mysql]]#
 - [[nginx]]#
 - [[ollama]]#
+- [[open-webui]]#
 - [[postgresql]]#
   - [[pgadmin]]
 - [[redis]]#
