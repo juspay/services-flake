@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - main
-  pull_request:
+  # pull_request:
 jobs:
   checks:
     runs-on: ${{ matrix.os }}
