@@ -1,6 +1,6 @@
 # Ollama
 
-[Ollama](https://github.com/ollama/ollama) enables you to get up and running with Llama 3, Mistral, Gemma, and other large language models.
+[Ollama](https://github.com/ollama/ollama) enables you to easily run large language models (LLMs) locally. It supports Llama 3, Mistral, Gemma and [many others](https://ollama.com/library).
 
 ## Getting Started
 
@@ -15,7 +15,9 @@
 
 By default Ollama uses the CPU for inference. To enable GPU acceleration:
 
-### Cuda
+### CUDA
+
+For NVIDIA GPUs.
 
 ```nix
 # In `perSystem.process-compose.<name>`
@@ -28,6 +30,8 @@ By default Ollama uses the CPU for inference. To enable GPU acceleration:
 ```
 
 ### ROCm
+
+For Radeon GPUs.
 
 ```nix
 # In `perSystem.process-compose.<name>`
