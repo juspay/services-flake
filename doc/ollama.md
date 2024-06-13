@@ -2,6 +2,10 @@
 
 [Ollama](https://github.com/ollama/ollama) enables you to easily run large language models (LLMs) locally. It supports Llama 3, Mistral, Gemma and [many others](https://ollama.com/library).
 
+<center>
+<blockquote class="twitter-tweet" data-media-max-width="560"><p lang="en" dir="ltr">❄️You can now perform LLM inference with Ollama in services-flake!<a href="https://t.co/rtHIYdnPfb">https://t.co/rtHIYdnPfb</a> <a href="https://t.co/1hBqMyViEm">pic.twitter.com/1hBqMyViEm</a></p>&mdash; NixOS Asia (@nixos_asia) <a href="https://twitter.com/nixos_asia/status/1800855562072322052?ref_src=twsrc%5Etfw">June 12, 2024</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+</center>
+
 ## Getting Started
 
 ```nix
