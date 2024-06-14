@@ -21,8 +21,11 @@
           # Backend service to perform inference on LLM models
           ollama."ollama1" = {
             enable = true;
-            # The models are usually huge, downloading them in every project directory can lead to a lot of duplication
-            dataDir = "$HOME/.services-flake/ollama1";
+            # The models are usually huge, downloading them in every project
+            # directory can lead to a lot of duplication. Change here to a
+            # directory where the Ollama models can be stored and shared across
+            # projects.
+            # dataDir = "$HOME/.services-flake/ollama1";
             models = [ "llama2-uncensored" ];
           };
           # Get ChatGPT like UI, but open-source, with Open WebUI
