@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         # TODO: Add rosetta & linux build; and then delete ci.yaml
-        os: [self-hosted]
+        os: [self-hosted, x86_64-linux]
     steps:
       - uses: actions/checkout@v4
       - run: nixci build
