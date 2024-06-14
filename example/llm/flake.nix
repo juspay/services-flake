@@ -13,7 +13,9 @@
       inputs.process-compose-flake.flakeModule
     ];
     perSystem = { self', pkgs, lib, ... }: {
-      process-compose."default" = pc: {
+      packages.default = self'.packages.services-flake-llm;
+
+      process-compose."services-flake-llm" = pc: {
         imports = [
           inputs.services-flake.processComposeModules.default
         ];
