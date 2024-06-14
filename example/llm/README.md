@@ -4,7 +4,7 @@ While `services-flake` is generally used for running services in a *development*
 
 ```sh
 # You can also use `nix profile install` on this URL, and run `services-flake-llm`
-nix run github:juspay/services-flake?dir=example/llm
+nix run "github:juspay/services-flake?dir=example/llm"
 ```
 
 ## Default configuration & models
