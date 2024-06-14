@@ -19,4 +19,4 @@ jobs:
         ]
     steps:
       - uses: actions/checkout@v4
-      - run: nixci build --extra-access-tokens ${{ secrets.GITHUB_TOKEN }} --systems "github:nix-systems/${{ matrix.system }}"
+      - run: nixci --extra-access-tokens ${{ secrets.GITHUB_TOKEN }} build --systems "github:nix-systems/${{ matrix.system }}"
