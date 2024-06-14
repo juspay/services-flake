@@ -19,7 +19,7 @@
         imports = [
           inputs.services-flake.processComposeModules.default
         ];
-        services = {
+        services = let dataDirBase = "$HOME/.services-flake/llm"; in {
           # Backend service to perform inference on LLM models
           ollama."ollama1" = {
             enable = true;
@@ -28,7 +28,7 @@
             # directory can lead to a lot of duplication. Change here to a
             # directory where the Ollama models can be stored and shared across
             # projects.
-            dataDir = "$HOME/.services-flake/ollama1";
+            dataDir = "${dataDirBase}/ollama1";
 
             # Define the models to download when our app starts
             # 
@@ -40,6 +40,7 @@
           # Get ChatGPT like UI, but open-source, with Open WebUI
           open-webui."open-webui1" = {
             enable = true;
+            dataDir = "${dataDirBase}/open-webui";
             environment =
               let
                 inherit (pc.config.services.ollama.ollama1) host port;
