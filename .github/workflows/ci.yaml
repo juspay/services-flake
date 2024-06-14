@@ -7,6 +7,8 @@ on:
 jobs:
   checks:
     runs-on: ${{ matrix.system }}
+    permissions:
+      contents: read
     strategy:
       matrix:
         system: [
@@ -17,4 +19,4 @@ jobs:
         ]
     steps:
       - uses: actions/checkout@v4
-      - run: nixci build --systems "github:nix-systems/${{ matrix.system }}"
+      - run: nixci build --extra-access-tokens ${{ secrets.GITHUB_TOKEN }} --systems "github:nix-systems/${{ matrix.system }}"
