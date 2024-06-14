@@ -9,8 +9,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        # TODO: Add rosetta & linux build; and then delete ci.yaml
-        os: [self-hosted, x86_64-linux]
+        os: [x86_64-linux, aarch64-darwin]
     steps:
       - uses: actions/checkout@v4
       - run: nixci build
