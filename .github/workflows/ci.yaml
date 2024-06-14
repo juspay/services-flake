@@ -9,7 +9,12 @@ jobs:
     runs-on: ${{ matrix.system }}
     strategy:
       matrix:
-        system: [x86_64-linux, aarch64-darwin, x86_64-darwin]
+        system: [
+          x86_64-linux, 
+          aarch64-darwin
+          # See https://github.com/juspay/services-flake/issues/231
+          # x86_64-darwin
+        ]
     steps:
       - uses: actions/checkout@v4
       - run: nixci build --systems "github:nix-systems/${{ matrix.system }}"
