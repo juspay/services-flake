@@ -6,10 +6,10 @@ on:
   pull_request:
 jobs:
   checks:
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.system }}
     strategy:
       matrix:
-        os: [x86_64-linux, aarch64-darwin, x86_64-darwin]
+        system: [x86_64-linux, aarch64-darwin, x86_64-darwin]
     steps:
       - uses: actions/checkout@v4
-      - run: nixci build
+      - run: nixci build --systems "github:nix-systems/${{ matrix.system }}"
