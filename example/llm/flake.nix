@@ -25,7 +25,7 @@
             # directory can lead to a lot of duplication. Change here to a
             # directory where the Ollama models can be stored and shared across
             # projects.
-            # dataDir = "$HOME/.services-flake/ollama1";
+            dataDir = "$HOME/.services-flake/ollama1";
           };
           # Get ChatGPT like UI, but open-source, with Open WebUI
           open-webui."open-webui1" = {
@@ -43,7 +43,8 @@
                 RAG_EMBEDDING_ENGINE = "ollama";
                 RAG_EMBEDDING_MODEL = "mxbai-embed-large:latest";
                 RAG_EMBEDDING_MODEL_AUTO_UPDATE = "True";
-                RAG_RERANKING_MODEL_AUTO_UPDATE = "True";              };
+                RAG_RERANKING_MODEL_AUTO_UPDATE = "True";
+              };
           };
         };
 
