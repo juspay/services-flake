@@ -26,7 +26,6 @@
             # directory where the Ollama models can be stored and shared across
             # projects.
             # dataDir = "$HOME/.services-flake/ollama1";
-            models = [ "llama2-uncensored" ];
           };
           # Get ChatGPT like UI, but open-source, with Open WebUI
           open-webui."open-webui1" = {
