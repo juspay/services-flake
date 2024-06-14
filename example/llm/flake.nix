@@ -33,9 +33,15 @@
                 inherit (pc.config.services.ollama.ollama1) host port;
               in
               {
-                OLLAMA_API_BASE_URL = "http://${host}:${toString port}";
+                ENABLE_OLLAMA_API = "True";
+                OLLAMA_BASE_URL = "http://${host}:${toString port}";
+                OLLAMA_API_BASE_URL = "http://${host}:${toString port}/api";
                 WEBUI_AUTH = "False";
-              };
+                DEVICE_TYPE = "cpu";
+                RAG_EMBEDDING_ENGINE = "ollama";
+                RAG_EMBEDDING_MODEL = "mxbai-embed-large:latest";
+                RAG_EMBEDDING_MODEL_AUTO_UPDATE = "True";
+                RAG_RERANKING_MODEL_AUTO_UPDATE = "True";              };
           };
         };
 
