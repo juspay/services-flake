@@ -38,11 +38,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1717774105,
-        "narHash": "sha256-HV97wqUQv9wvptiHCb3Y0/YH0lJ60uZ8FYfEOIzYEqI=",
+        "lastModified": 1718276985,
+        "narHash": "sha256-u1fA0DYQYdeG+5kDm1bOoGcHtX0rtC7qs2YA2N1X++I=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "d226935fd75012939397c83f6c385e4d6d832288",
+        "rev": "3f84a279f1a6290ce154c5531378acc827836fbb",
         "type": "github"
       },
       "original": {
@@ -78,11 +78,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1717774105,
-        "narHash": "sha256-HV97wqUQv9wvptiHCb3Y0/YH0lJ60uZ8FYfEOIzYEqI=",
+        "lastModified": 1718276985,
+        "narHash": "sha256-u1fA0DYQYdeG+5kDm1bOoGcHtX0rtC7qs2YA2N1X++I=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "d226935fd75012939397c83f6c385e4d6d832288",
+        "rev": "3f84a279f1a6290ce154c5531378acc827836fbb",
         "type": "github"
       },
       "original": {
@@ -103,11 +103,11 @@
       },
       "locked": {
         "dir": "example/share-services/northwind",
-        "lastModified": 1717891977,
-        "narHash": "sha256-J0hWG7EAhwujMvhbBfnIc3gMxzPWjj3s5yJNH+mV5cs=",
+        "lastModified": 1718496431,
+        "narHash": "sha256-rQssrTJ14E66zkB1GeGFpsHs4IU6P37/jJ/YQ0IE18w=",
         "owner": "juspay",
         "repo": "services-flake",
-        "rev": "b23fd8fc01985a994b38acc40bc512abefbbcc3f",
+        "rev": "9ca0fa6984c9d30dc4f316148c2d3342f6bf79d9",
         "type": "github"
       },
       "original": {
@@ -135,11 +135,11 @@
     },
     "process-compose-flake": {
       "locked": {
-        "lastModified": 1717682476,
-        "narHash": "sha256-EjmlQSBs6XxsOEk7KQSpk2m/mkRtUpH++jZQix2jFgE=",
+        "lastModified": 1718031437,
+        "narHash": "sha256-+RrlkAVZx0QhyeHAGFJnjST+/7Dc3zsDU3zAKXoDXaI=",
         "owner": "Platonic-Systems",
         "repo": "process-compose-flake",
-        "rev": "8a6fae467d4862f2be9aa2954ab2d1e324c399f4",
+        "rev": "9344fac44edced4c686721686a6ad904d067c546",
         "type": "github"
       },
       "original": {
@@ -150,11 +150,11 @@
     },
     "process-compose-flake_2": {
       "locked": {
-        "lastModified": 1717682476,
-        "narHash": "sha256-EjmlQSBs6XxsOEk7KQSpk2m/mkRtUpH++jZQix2jFgE=",
+        "lastModified": 1718031437,
+        "narHash": "sha256-+RrlkAVZx0QhyeHAGFJnjST+/7Dc3zsDU3zAKXoDXaI=",
         "owner": "Platonic-Systems",
         "repo": "process-compose-flake",
-        "rev": "8a6fae467d4862f2be9aa2954ab2d1e324c399f4",
+        "rev": "9344fac44edced4c686721686a6ad904d067c546",
         "type": "github"
       },
       "original": {
@@ -175,11 +175,11 @@
     },
     "services-flake": {
       "locked": {
-        "lastModified": 1717690185,
-        "narHash": "sha256-vqcKZxgBPhF7lGZdMGlzHKTMAboDK9D6SFrusME+6UY=",
+        "lastModified": 1718460605,
+        "narHash": "sha256-RpMH7512W+vI4/h+/TO+jEu0gXZ9mhdoLdu4pi8mtxs=",
         "owner": "juspay",
         "repo": "services-flake",
-        "rev": "eb3bac5543951d06f79424f6c619a966c8c3d671",
+        "rev": "107e8f43fb0453105d161e80fbc485d7b19eb401",
         "type": "github"
       },
       "original": {
@@ -190,11 +190,11 @@
     },
     "services-flake_2": {
       "locked": {
-        "lastModified": 1717891977,
-        "narHash": "sha256-J0hWG7EAhwujMvhbBfnIc3gMxzPWjj3s5yJNH+mV5cs=",
+        "lastModified": 1718496431,
+        "narHash": "sha256-rQssrTJ14E66zkB1GeGFpsHs4IU6P37/jJ/YQ0IE18w=",
         "owner": "juspay",
         "repo": "services-flake",
-        "rev": "b23fd8fc01985a994b38acc40bc512abefbbcc3f",
+        "rev": "9ca0fa6984c9d30dc4f316148c2d3342f6bf79d9",
         "type": "github"
       },
       "original": {
