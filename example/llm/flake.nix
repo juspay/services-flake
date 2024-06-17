@@ -46,15 +46,19 @@
                 inherit (pc.config.services.ollama.ollama1) host port;
               in
               {
-                ENABLE_OLLAMA_API = "True";
-                OLLAMA_BASE_URL = "http://${host}:${toString port}";
                 OLLAMA_API_BASE_URL = "http://${host}:${toString port}/api";
                 WEBUI_AUTH = "False";
-                DEVICE_TYPE = "cpu";
+                # Not required since `WEBUI_AUTH=False`
+                WEBUI_SECRET_KEY = "";
+                # If `RAG_EMBEDDING_ENGINE != "ollama"` Open WebUI will use
+                # [sentence-transformers](https://pypi.org/project/sentence-transformers/) to fetch the embedding models,
+                # which would require `DEVICE_TYPE` to choose the device that performs the embedding.
+                # If we rely on ollama instead, we can make use of [already documented configuration to use GPU acceleration](https://community.flake.parts/services-flake/ollama#acceleration).
                 RAG_EMBEDDING_ENGINE = "ollama";
                 RAG_EMBEDDING_MODEL = "mxbai-embed-large:latest";
-                RAG_EMBEDDING_MODEL_AUTO_UPDATE = "True";
-                RAG_RERANKING_MODEL_AUTO_UPDATE = "True";
+                # RAG_EMBEDDING_MODEL_AUTO_UPDATE = "True";
+                # RAG_RERANKING_MODEL_AUTO_UPDATE = "True";
+                # DEVICE_TYPE = "cpu";
               };
           };
         };
