@@ -11,12 +11,8 @@ jobs:
       contents: read
     strategy:
       matrix:
-        system: [
-          x86_64-linux, 
-          aarch64-darwin
-          # See https://github.com/juspay/services-flake/issues/231
-          # x86_64-darwin
-        ]
+        # Intel mac excluded; See https://github.com/juspay/services-flake/issues/231
+        system: [ x86_64-linux, aarch64-darwin ]
     steps:
       - uses: actions/checkout@v4
-      - run: nixci --extra-access-tokens ${{ secrets.GITHUB_TOKEN }} build --systems "github:nix-systems/${{ matrix.system }}"
+      - run: nixci --extra-access-tokens "github.com=${{ secrets.GITHUB_TOKEN }}" build --systems "github:nix-systems/${{ matrix.system }}"
