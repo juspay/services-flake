@@ -12,4 +12,4 @@ nix run "github:juspay/services-flake?dir=example/llm"
 `example/llm` runs two processes ollama and open-webui
 
 - The ollama data is stored under `$HOME/.services-flake/ollama`. You can change this path in `flake.nix` by setting the `dataDir` option.
-- A single model ([`deepseek-coder-v2`](https://ollama.com/library/deepseek-coder)) is automatically downloaded. You can modify this in `flake.nix` as well by setting the `models` option. You can also download models in the open-webui UI.
+- A single model ([`deepseek-coder-v2`](https://ollama.com/library/deepseek-coder-v2)) is automatically downloaded. You can modify this in `flake.nix` as well by setting the `models` option. You can also download models in the open-webui UI.
