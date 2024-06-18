@@ -34,7 +34,9 @@
             # 
             # You can also initialize this to empty list, and download the
             # models manually in the UI.
-            models = [ "llama2-uncensored" ];
+            #
+            # Search for the models here: https://ollama.com/library
+            models = [ "deepseek-coder-v2" ];
           };
 
           # Get ChatGPT like UI, but open-source, with Open WebUI
