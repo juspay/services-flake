@@ -1,6 +1,14 @@
 { pkgs, ... }:
 {
-  services.searxng."searxng1".enable = true;
+  services.searxng."searxng1" = {
+    enable = true;
+    use_default_settings = false;
+    settings = {
+      server.secret_key = "secret";
+      doi_resolvers."dummy" = "http://example.org";
+      default_doi_resolver = "dummy";
+    };
+  };
 
   settings.processes.test = {
     command = pkgs.writeShellApplication {

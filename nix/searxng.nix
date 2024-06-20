@@ -20,6 +20,12 @@ in
       type = types.port;
     };
 
+    use_default_settings = lib.mkOption {
+      description = "Use default Searxng settings";
+      default = true;
+      type = types.bool;
+    };
+
     settings = lib.mkOption {
       type = yamlFormat.type;
       default = {
@@ -47,9 +53,9 @@ in
             environment = {
               SEARXNG_SETTINGS_PATH = "${yamlFormat.generate "settings.yaml" (
                 lib.recursiveUpdate config.settings {
-                  use_default_settings = true;
                   server.bind_address = config.host;
                   server.port = config.port;
+                  use_default_settings = config.use_default_settings;
                 }
               )}";
             };
