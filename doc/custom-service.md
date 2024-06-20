@@ -1,3 +1,8 @@
+---
+page:
+  image: services-flake/multi-instance-hello.png
+---
+
 # Custom service
 
 When using `services-flake` you are not just limited to the [[services|builtin services]]. You can also define your own service.
