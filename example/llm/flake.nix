@@ -31,7 +31,7 @@
             dataDir = "${dataDirBase}/ollama1";
 
             # Define the models to download when our app starts
-            # 
+            #
             # You can also initialize this to empty list, and download the
             # models manually in the UI.
             #

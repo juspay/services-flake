@@ -21,5 +21,6 @@ in
     ./cassandra.nix
     ./tempo.nix
     ./weaviate.nix
+    ./searxng.nix
   ];
 }
