@@ -49,10 +49,11 @@
             "${inputs.services-flake}/nix/cassandra_test.nix"
             "${inputs.services-flake}/nix/tempo_test.nix"
             "${inputs.services-flake}/nix/weaviate_test.nix"
-            "${inputs.services-flake}/nix/searxng_test.nix"
           ] ++ lib.optionals pkgs.stdenv.isLinux [
             # Broken on Darwin: https://github.com/NixOS/nixpkgs/issues/316954
             "${inputs.services-flake}/nix/grafana_test.nix"
+            # Broken on Darwin: https://github.com/NixOS/nixpkgs/issues/321329
+            "${inputs.services-flake}/nix/searxng_test.nix"
           ]));
       };
     };
