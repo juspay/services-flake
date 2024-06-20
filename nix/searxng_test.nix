@@ -4,7 +4,6 @@
     enable = true;
     use_default_settings = false;
     settings = {
-      server.secret_key = "secret";
       doi_resolvers."dummy" = "http://example.org";
       default_doi_resolver = "dummy";
     };

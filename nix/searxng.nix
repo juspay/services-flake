@@ -26,16 +26,20 @@ in
       type = types.bool;
     };
 
+    secret_key = lib.mkOption {
+      description = "Searxng secret key";
+      default = "secret";
+      example = "secret-key";
+      type = types.str;
+    };
+
     settings = lib.mkOption {
       type = yamlFormat.type;
-      default = {
-        server.secret_key = "secret";
-        server.limiter = false;
-      };
+      default = { };
       example = lib.literalExpression ''
         {
-          server.secret_key = "secret";
-          server.limiter = false;
+        doi_resolvers."dummy" = "http://example.org";
+        default_doi_resolver = "dummy";
         }
       '';
       description = ''
@@ -55,6 +59,7 @@ in
                 lib.recursiveUpdate config.settings {
                   server.bind_address = config.host;
                   server.port = config.port;
+                  server.secret_key = config.secret_key;
                   use_default_settings = config.use_default_settings;
                 }
               )}";

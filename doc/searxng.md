@@ -9,11 +9,12 @@
 {
   services.searxng."instance-name" = {
     enable = true;
+    port = 1234;
+    host = "127.0.0.1";
+    secret_key = "my-secret-key";
     settings = {
-      use_default_settings = true;
-      server.port = 1234;
-      server.bind_address = "127.0.0.1";
-      server.secret_key = "foobar";
+      doi_resolvers."dummy" = "http://example.org";
+      default_doi_resolver = "dummy";
     };
   };
 }
