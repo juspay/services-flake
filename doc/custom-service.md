@@ -1,6 +1,6 @@
 # Custom service
 
-While using `services-flake` you are not just limited to the [[services|services supported here]]. You can define your own service, and use it in your flake.
+When using `services-flake` you are not just limited to the [[services|builtin services]]. You can also define your own service.
 
 By default, the services provided in `services-flake` support multiple instances, allowing you to run several instances of the same service simultaneously. However, you also have the option to create custom single-instance services. In the following sections, we’ll explore how to define custom services of both types.
 
