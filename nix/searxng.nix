@@ -38,8 +38,7 @@ in
         }
       '';
       description = ''
-        Searxng settings. These will be merged with (taking precedence over)
-        the default configuration.
+        Searxng settings
       '';
     };
 
