@@ -76,7 +76,7 @@ Finally, `nix run`:
 {#multi-instance}
 ## Multi-instance service
 
-For this purpose, `services-flake` exports a [multiService](https://github.com/juspay/services-flake/blob/647bff2c44b42529461f60a7fe07851ff93fb600/nix/lib.nix#L1-L34) library function. The aim is to provide an interface wherein the user just writes the configuration like they would for a single instance service, and the library takes care of creating multiple instances of the service.
+For this purpose, `services-flake` exports a [multiService](https://github.com/juspay/services-flake/blob/647bff2c44b42529461f60a7fe07851ff93fb600/nix/lib.nix#L1-L34) library function. It aims to provide an interface wherein the user just writes the configuration like they would for a single instance service, and the library takes care of creating multiple instances of the service.
 
 Let's write the same `hello` service as above, in `hello.nix`, but this time as a multi-instance service:
 
