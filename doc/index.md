@@ -20,7 +20,6 @@ See:
 - [[services]]#
 - [[contributing]]#
 - [[guide]]#
-- [[custom-service]]#
 
 ## Demo
 

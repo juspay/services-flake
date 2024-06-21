@@ -2,3 +2,4 @@
 # Guide
 
 - [[datadir]]#
+- [[custom-service]]#
