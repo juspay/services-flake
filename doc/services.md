@@ -18,6 +18,7 @@ short-title: Services
   - [[pgadmin]]
 - [[redis]]#
   - [[redis-cluster]]
+- [[searxng]]#
 - [[zookeeper]]#
 - [[grafana]]#
   - [[tempo]]
