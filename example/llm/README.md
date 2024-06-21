@@ -7,6 +7,9 @@ While `services-flake` is generally used for running services in a *development*
 nix run "github:juspay/services-flake?dir=example/llm"
 ```
 
+>[!NOTE]
+>This will download about 9GB of data before launching the Web UI. You can choose a different model or no model (see below) to minimize or avoid this delay.
+
 ## Default configuration & models
 
 `example/llm` runs two processes ollama and open-webui
