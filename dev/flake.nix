@@ -25,7 +25,9 @@
         treefmt = {
           projectRoot = inputs.services-flake;
           projectRootFile = "flake.nix";
-          flakeCheck = false; # pre-commit-hooks.nix checks this
+          # Even though pre-commit-hooks.nix checks it, let's have treefmt-nix
+          # check as well until #238 is fully resolved.
+          # flakeCheck = false; # pre-commit-hooks.nix checks this
           programs = {
             nixpkgs-fmt.enable = true;
           };
