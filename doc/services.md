@@ -4,7 +4,7 @@ short-title: Services
 
 # Supported services
 
->[!warning] WIP
+> [!warning] WIP
 > Documentation for the services is still in progress. Please refer to [this issue][gh] for progress.
 
 - [[apache-kafka]]#
@@ -25,5 +25,6 @@ short-title: Services
 - [[prometheus]]#
 - [[cassandra]]#
 - [[weaviate]]#
+- [[cargo-doc-live]]#
 
 [gh]: https://github.com/juspay/services-flake/issues/132
