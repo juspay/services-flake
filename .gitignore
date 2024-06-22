@@ -4,6 +4,8 @@
 # created when `just run <service>` is used
 /test/data
 
+/nix/cargo-doc-live/target
+
 # created when `just run ex-*` is used
 /example/share-services/pgweb/data/
 /example/simple/data/
