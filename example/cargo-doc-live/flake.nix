@@ -16,14 +16,14 @@
         # `process-compose.foo` will add a flake package output called "foo".
         # Therefore, this will add a default package that you can build using
         # `nix build` and run using `nix run`.
-        process-compose."default" = { ... }:
+        process-compose."cargo-doc-live" = _:
           {
             imports = [
               inputs.services-flake.processComposeModules.default
             ];
 
             services.cargo-doc-live."cargo-doc-live1" = {
-              src = inputs.self;
+              projectRoot = inputs.self;
               enable = true;
               port = 8009;
             };
