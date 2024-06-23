@@ -6,6 +6,11 @@ in
   options = {
     enable = lib.mkEnableOption name;
 
+    src = lib.mkOption {
+      type = types.path;
+      description = "The src of the cargo";
+    };
+
     port = lib.mkOption {
       type = types.port;
       description = "The port for 'cargo doc'";
@@ -16,7 +21,7 @@ in
       type = types.str;
       description = "The crate to use when opening docs in browser";
       default = builtins.replaceStrings [ "-" ] [ "_" ]
-        ((lib.trivial.importTOML ./Cargo.toml).package.name);
+        ((lib.trivial.importTOML "${config.src}/Cargo.toml").package.name);
       defaultText = "The crate name is derived from the Cargo.toml file";
     };
 
