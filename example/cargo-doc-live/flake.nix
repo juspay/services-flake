@@ -13,9 +13,6 @@
         inputs.process-compose-flake.flakeModule
       ];
       perSystem = { self', pkgs, lib, ... }: {
-        # `process-compose.foo` will add a flake package output called "foo".
-        # Therefore, this will add a default package that you can build using
-        # `nix build` and run using `nix run`.
         process-compose."cargo-doc-live" = _:
           {
             tui = false;
@@ -49,7 +46,7 @@
                   curl http://127.0.0.1:8009/test
                 '';
               };
-              depends_on."cargo-doc-live1".condition = "process_healthy";
+              depends_on."cargo-doc-live1-browser-sync".condition = "process_healthy";
             };
           };
       };

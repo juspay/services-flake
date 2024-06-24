@@ -68,6 +68,13 @@ in
                   --startPath /${config.crateName}/
                 '';
             };
+            readiness_probe = {
+              period_seconds = 1;
+              failure_threshold = 10;
+              exec.command = ''
+                ps aux | grep browser-sync
+              '';
+            };
             namespace = name;
             depends_on."${name}-cargo-doc".condition = "process_healthy";
           };
