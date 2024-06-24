@@ -29,7 +29,6 @@
               set -euo pipefail
 
               # Copy project root to a mutable area
-              # We expect "command" to mutate it.
               export HOME="$TMP"
               cp -r ${inputs.self} "$HOME"/project
               chmod -R a+w "$HOME"/project
