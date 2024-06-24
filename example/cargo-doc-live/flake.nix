@@ -18,9 +18,23 @@
         # `nix build` and run using `nix run`.
         process-compose."cargo-doc-live" = _:
           {
+            tui = false;
+
             imports = [
               inputs.services-flake.processComposeModules.default
             ];
+
+            preHook = ''
+              # Set pipefail option for safer bash
+              set -euo pipefail
+
+              # Copy project root to a mutable area
+              # We expect "command" to mutate it.
+              export HOME="$TMP"
+              cp -r ${inputs.self} "$HOME"/project
+              chmod -R a+w "$HOME"/project
+              cd "$HOME"/project
+            '';
 
             services.cargo-doc-live."cargo-doc-live1" = {
               projectRoot = inputs.self;
