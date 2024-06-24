@@ -4,9 +4,6 @@ let
   inherit (lib) types;
   ollamaPackage = pkgs.ollama.override {
     inherit (config) acceleration;
-    linuxPackages = config.boot.kernelPackages // {
-      nvidia_x11 = config.hardware.nvidia.package;
-    };
   };
 in
 {
