@@ -23,6 +23,24 @@ By default Ollama uses the CPU for inference. To enable GPU acceleration:
 
 For NVIDIA GPUs.
 
+Firstly, allow unfree packages:
+
+```nix
+# Inside perSystem = { system, ... }: { ...
+{
+  imports = [
+    "${inputs.nixpkgs}/nixos/modules/misc/nixpkgs.nix"
+  ];
+  nixpkgs = {
+    hostPlatform = system;
+    # Required for CUDA
+    config.allowUnfree = true;
+  };
+}
+```
+
+And then enable CUDA acceleration:
+
 ```nix
 # In `perSystem.process-compose.<name>`
 {
