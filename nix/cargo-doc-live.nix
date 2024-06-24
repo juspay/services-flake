@@ -69,11 +69,17 @@ in
                 '';
             };
             readiness_probe = {
-              period_seconds = 1;
-              failure_threshold = 10;
-              exec.command = ''
-                ps aux | grep browser-sync
-              '';
+              http_get = {
+                scheme = "http";
+                host = "localhost";
+                port = config.port;
+                path = config.crateName;
+              };
+              initial_delay_seconds = 15;
+              period_seconds = 10;
+              timeout_seconds = 2;
+              success_threshold = 1;
+              failure_threshold = 5;
             };
             namespace = name;
             depends_on."${name}-cargo-doc".condition = "process_healthy";
