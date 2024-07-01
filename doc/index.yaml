@@ -3,6 +3,7 @@
 
 page:
   siteTitle: services-flake
+  siteUrl: https://community.flake.parts/services-flake
   headHtml: |
     <snippet var="js.highlightjs" />
 

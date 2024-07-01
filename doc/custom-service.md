@@ -1,6 +1,6 @@
 ---
 page:
-  image: services-flake/multi-instance-hello.png
+  image: multi-instance-hello.png
 ---
 
 # Custom service
