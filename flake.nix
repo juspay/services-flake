@@ -28,6 +28,10 @@
         };
         dir = "./example/share-services/pgweb";
       };
+      cargo-doc-live-example = {
+        inherit overrideInputs;
+        dir = "./example/cargo-doc-live";
+      };
       test = {
         inherit overrideInputs;
         dir = "./test";

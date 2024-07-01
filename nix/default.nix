@@ -22,5 +22,6 @@ in
     ./tempo.nix
     ./weaviate.nix
     ./searxng.nix
+    ./cargo-doc-live.nix
   ];
 }
