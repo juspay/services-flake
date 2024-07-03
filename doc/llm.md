@@ -5,7 +5,9 @@ page:
 
 # Running local LLM using ollama and open-webui
 
-While `services-flake` is generally used for running services in a *development* project, typically under a source code checkout, you can also write flakes to derive an end-user app which runs a group of services, which then can be run using `nix run` (or installed using `nix profile install`):
+Imagine having the power to run sophisticated AI chatbots and other services right on your local machine, all with a single command and without relying on constant network access (beyond the initial model download).
+
+Typically used for running services in a *development* project under a source code checkout, `services-flake` also allows you to write flakes to derive an end-user app which runs a group of services, which then can be run using `nix run` (or installed using `nix profile install`):
 
 >[!note]
 >This will download about 2.4GB of data before launching the Web UI. You can choose a different model or no model (see [below](https://community.flake.parts/services-flake/llm#default-config)) to minimize or avoid this delay.
