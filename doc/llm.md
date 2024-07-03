@@ -10,6 +10,8 @@ template:
 
 The [`llm` example][source] allows you to run advanced AI chatbots and services on your own computer with just one command. Once you've downloaded the model, you can use it without needing a constant internet connection.
 
+![[llm.png]]
+
 > [!tip] On dev vs app mode
 >
 > **services-flake** provides two main uses:
