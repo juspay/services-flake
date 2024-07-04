@@ -89,11 +89,10 @@ in
         ]
       '';
     };
-    outputs.settings = lib.mkOption {
-      type = types.deferredModule;
-      internal = true;
-      readOnly = true;
-      default = {
+  };
+  config = {
+    outputs = {
+      settings = {
         processes =
           let
             clickhouseConfig = yamlFormat.generate "clickhouse-config.yaml" (
