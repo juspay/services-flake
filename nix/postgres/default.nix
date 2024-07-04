@@ -287,11 +287,10 @@ in
         SQL expressions separated by a semi-colon.
       '';
     };
-    outputs.settings = lib.mkOption {
-      type = types.deferredModule;
-      internal = true;
-      readOnly = true;
-      default =
+  };
+  config = {
+    outputs = {
+      settings =
         {
           processes = {
             # DB initialization
