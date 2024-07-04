@@ -163,11 +163,10 @@ in
         ]
       '';
     };
-    outputs.settings = lib.mkOption {
-      type = types.deferredModule;
-      internal = true;
-      readOnly = true;
-      default = {
+  };
+  config = {
+    outputs = {
+      settings = {
         processes =
           let
             isMariaDB = lib.getName config.package == lib.getName pkgs.mariadb;
