@@ -13,6 +13,40 @@
         (lib.strings.splitString ".")
         builtins.head
       ];
+      serviceModule = { config, name, ... }: {
+        options = {
+          namespace = lib.mkOption {
+            description = ''
+              Namespace for the ${service} service
+            '';
+            default = "${service}.${name}";
+            type = lib.types.str;
+          };
+          outputs.defaultSettings = lib.mkOption {
+            type = lib.types.deferredModule;
+            internal = true;
+            readOnly = true;
+            description = ''
+              Default settings for all processes under the ${service} service
+            '';
+            default = {
+              namespace = lib.mkDefault config.namespace;
+            };
+          };
+          outputs.settings = lib.mkOption {
+            type = lib.types.lazyAttrsOf lib.types.raw;
+            internal = true;
+            description = ''
+              process-compose settings for the processes under the ${service} service
+            '';
+            apply = v: v // {
+              processes = lib.flip lib.mapAttrs v.processes (_: cfg:
+                { imports = [ config.outputs.defaultSettings cfg ]; }
+              );
+            };
+          };
+        };
+      };
     in
     {
       options.services.${service} = lib.mkOption {
@@ -23,40 +57,7 @@
         type = lib.types.attrsOf (lib.types.submoduleWith {
           specialArgs = { inherit pkgs; };
           modules = [
-            ({ config, name, ... }: {
-              options = {
-                namespace = lib.mkOption {
-                  description = ''
-                    Namespace for the ${service} service
-                  '';
-                  default = "${service}.${name}";
-                  type = lib.types.str;
-                };
-                outputs.defaultSettings = lib.mkOption {
-                  type = lib.types.deferredModule;
-                  internal = true;
-                  readOnly = true;
-                  description = ''
-                    Default settings for all processes under the ${service} service
-                  '';
-                  default = {
-                    namespace = lib.mkDefault config.namespace;
-                  };
-                };
-                outputs.settings = lib.mkOption {
-                  type = lib.types.lazyAttrsOf lib.types.raw;
-                  internal = true;
-                  description = ''
-                    process-compose settings for the processes under the ${service} service
-                  '';
-                  apply = v: v // {
-                    processes = lib.flip lib.mapAttrs v.processes (_: cfg:
-                      { imports = [ config.outputs.defaultSettings cfg ]; }
-                    );
-                  };
-                };
-              };
-            })
+            serviceModule
             mod
           ];
         });
