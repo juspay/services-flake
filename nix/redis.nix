@@ -40,12 +40,11 @@ in
       default = "";
       description = "Additional text to be appended to `redis.conf`.";
     };
+  };
 
-    outputs.settings = lib.mkOption {
-      type = types.deferredModule;
-      internal = true;
-      readOnly = true;
-      default = {
+  config = {
+    outputs = {
+      settings = {
         processes = {
           "${name}" =
             let
