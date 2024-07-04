@@ -301,7 +301,7 @@ in
               in
               {
                 command = setupScript;
-                namespace = name;
+                inherit (config) namespace;
               };
 
             # DB process
@@ -329,6 +329,7 @@ in
                 ] ++ (lib.optional (config.superuser != null) "-U ${config.superuser}");
               in
               {
+                inherit (config) namespace;
                 command = startScript;
                 # SIGINT (= 2) for faster shutdown: https://www.postgresql.org/docs/current/server-shutdown.html
                 shutdown.signal = 2;
@@ -340,7 +341,6 @@ in
                   success_threshold = 1;
                   failure_threshold = 5;
                 };
-                namespace = name;
                 depends_on."${name}-init".condition = "process_completed_successfully";
                 # https://github.com/F1bonacc1/process-compose#-auto-restart-if-not-healthy
                 availability.restart = "on_failure";

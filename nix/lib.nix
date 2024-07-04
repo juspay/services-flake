@@ -8,25 +8,36 @@
     { config, pkgs, lib, ... }:
     let
       # Derive name from filename
-      name = lib.pipe mod [
+      service = lib.pipe mod [
         builtins.baseNameOf
         (lib.strings.splitString ".")
         builtins.head
       ];
     in
     {
-      options.services.${name} = lib.mkOption {
+      options.services.${service} = lib.mkOption {
         description = ''
-          ${name} service
+          ${service} service
         '';
         default = { };
         type = lib.types.attrsOf (lib.types.submoduleWith {
           specialArgs = { inherit pkgs; };
-          modules = [ mod ];
+          modules = [
+            ({ name, ... }: {
+              options.namespace = lib.mkOption {
+                description = ''
+                  Namespace for the ${service} service
+                '';
+                default = "${service}.${name}";
+                type = lib.types.str;
+              };
+            })
+            mod
+          ];
         });
       };
       config.settings.imports =
-        lib.pipe config.services.${name} [
+        lib.pipe config.services.${service} [
           (lib.filterAttrs (_: cfg: cfg.enable))
           (lib.mapAttrsToList (_: cfg: cfg.outputs.settings))
         ];
