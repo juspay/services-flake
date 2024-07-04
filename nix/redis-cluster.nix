@@ -67,12 +67,11 @@ in
         Number of replicas per Master node.
       '';
     };
+  };
 
-    outputs.settings = lib.mkOption {
-      type = types.deferredModule;
-      internal = true;
-      readOnly = true;
-      default =
+  config = {
+    outputs = {
+      settings =
         let
           mkNodeProcess = nodeName: cfg:
             let
