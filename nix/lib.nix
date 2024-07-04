@@ -22,7 +22,7 @@
             default = "${service}.${name}";
             type = lib.types.str;
           };
-          outputs.defaultSettings = lib.mkOption {
+          outputs.defaultProcessSettings = lib.mkOption {
             type = lib.types.deferredModule;
             internal = true;
             readOnly = true;
@@ -41,7 +41,7 @@
             '';
             apply = v: v // {
               processes = lib.flip lib.mapAttrs v.processes (_: cfg:
-                { imports = [ config.outputs.defaultSettings cfg ]; }
+                { imports = [ config.outputs.defaultProcessSettings cfg ]; }
               );
             };
           };
