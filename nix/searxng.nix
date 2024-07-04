@@ -64,7 +64,6 @@ in
               )}";
             };
             command = lib.getExe config.package;
-            namespace = name;
             availability.restart = "on_failure";
             readiness_probe = {
               exec.command = "${lib.getExe pkgs.curl} -f -k http://${config.host}:${toString config.port}";

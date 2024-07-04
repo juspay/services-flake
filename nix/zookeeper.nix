@@ -148,7 +148,6 @@ with lib;
                 success_threshold = 1;
                 failure_threshold = 5;
               };
-              namespace = name;
 
               availability.restart = "on_failure";
             };
