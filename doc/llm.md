@@ -56,7 +56,7 @@ Key points:
     -   To change this location, edit the `dataDir` option in `flake.nix`
 2.  **Model management**:
     -   By default, the [`phi3`] model is automatically downloaded
-    -   To change or add models: a. Edit the `models` option in `flake.nix` b. Use the open-webui interface to download additional models.
+    -   To change or add [more models](https://ollama.com/library): a. Edit the `models` option in `flake.nix`, or b. Use the open-webui interface to download additional models.
 
 [`phi3`]: https://ollama.com/library/phi3
 [source]: https://github.com/juspay/services-flake/tree/main/example/llm
