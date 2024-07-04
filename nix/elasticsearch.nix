@@ -105,9 +105,11 @@ in
       example =
         lib.literalExpression "[ pkgs.elasticsearchPlugins.discovery-ec2 ]";
     };
+  };
 
-    config = {
-      outputs.settings = {
+  config = {
+    outputs = {
+      settings = {
         processes."${name}" =
           let
             es7 = builtins.compareVersions config.package.version "7" >= 0;
@@ -202,4 +204,4 @@ in
       };
     };
   };
-}
+};
