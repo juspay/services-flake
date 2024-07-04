@@ -85,12 +85,11 @@ in
       default = { };
       description = "Additional config for pgadmin4";
     };
+  };
 
-    outputs.settings = lib.mkOption {
-      type = types.deferredModule;
-      internal = true;
-      readOnly = true;
-      default = {
+  config = {
+    outputs = {
+      settings = {
         processes =
           let
             pgadminConfig = pkgs.writeTextDir "config_local.py" (
