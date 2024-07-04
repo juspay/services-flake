@@ -86,11 +86,10 @@ in
       description = "The nginx configuration file.";
     };
 
-    outputs.settings = lib.mkOption {
-      type = lib.types.deferredModule;
-      internal = true;
-      readOnly = true;
-      default =
+  };
+  config = {
+    outputs = {
+      settings.processes =
         let
           startScript = pkgs.writeShellApplication {
             name = "start-nginx";
@@ -106,7 +105,7 @@ in
           };
         in
         {
-          processes."${name}" = {
+          "${name}" = {
             command = startScript;
             readiness_probe = {
               # FIXME need a better health check
