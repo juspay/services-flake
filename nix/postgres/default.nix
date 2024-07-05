@@ -300,7 +300,6 @@ in
               in
               {
                 command = setupScript;
-                inherit (config) namespace;
               };
 
             # DB process
