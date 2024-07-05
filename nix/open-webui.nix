@@ -5,7 +5,6 @@ let
 in
 {
   options = {
-    enable = lib.mkEnableOption "Open-WebUI server";
     package = lib.mkPackageOption pkgs "open-webui" { };
 
     host = lib.mkOption {

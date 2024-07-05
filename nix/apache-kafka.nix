@@ -20,8 +20,6 @@ in
 with lib;
 {
   options = {
-    enable = mkEnableOption (lib.mdDoc "Apache Kafka event streaming broker");
-
     port = mkOption {
       description = lib.mdDoc "Port number the broker should listen on.";
       default = 9092;

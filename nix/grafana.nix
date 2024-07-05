@@ -9,8 +9,6 @@ in
     description = ''
       Configure grafana.
     '';
-    enable = lib.mkEnableOption name;
-
     package = lib.mkPackageOption pkgs "grafana" { };
 
     http_port = lib.mkOption {

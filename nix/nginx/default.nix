@@ -32,8 +32,6 @@ in
 
 {
   options = {
-    enable = lib.mkEnableOption "nginx";
-
     package = lib.mkOption {
       type = lib.types.package;
       default = pkgs.nginx;

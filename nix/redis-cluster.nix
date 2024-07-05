@@ -4,8 +4,6 @@ let
 in
 {
   options = {
-    enable = lib.mkEnableOption name;
-
     package = lib.mkPackageOption pkgs "redis" { };
 
     nodes = lib.mkOption {

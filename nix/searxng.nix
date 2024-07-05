@@ -5,7 +5,6 @@ let
 in
 {
   options = {
-    enable = lib.mkEnableOption name;
     package = lib.mkPackageOption pkgs "searxng" { };
 
     host = lib.mkOption {

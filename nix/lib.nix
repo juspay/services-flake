@@ -15,6 +15,7 @@
       ];
       serviceModule = { config, name, ... }: {
         options = {
+          enable = lib.mkEnableOption "Enable the ${service}.<name> service";
           dataDir = lib.mkOption {
             type = lib.types.str;
             default = "./data/${name}";

@@ -25,8 +25,6 @@ let
 in
 {
   options = {
-    enable = lib.mkEnableOption name;
-
     package = lib.mkPackageOption pkgs "pgadmin4" { };
 
     host = lib.mkOption {

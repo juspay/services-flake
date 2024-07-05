@@ -8,8 +8,6 @@ let
 in
 {
   options = {
-    enable = lib.mkEnableOption name;
-
     package = lib.mkPackageOption pkgs "weaviate" { };
 
     host = lib.mkOption {

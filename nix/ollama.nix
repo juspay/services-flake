@@ -8,7 +8,6 @@ let
 in
 {
   options = {
-    enable = lib.mkEnableOption "Enable the Ollama service";
     package = lib.mkOption {
       type = types.package;
       default = ollamaPackage;

@@ -6,8 +6,6 @@ with lib.types; let
 in
 {
   options = {
-    enable = lib.mkEnableOption "MySQL process and expose utilities";
-
     package = lib.mkOption {
       type = types.package;
       description = "Which package of MySQL to use";
