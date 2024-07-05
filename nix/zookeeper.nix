@@ -4,8 +4,6 @@
 with lib;
 {
   options = {
-    enable = mkEnableOption (lib.mdDoc "Zookeeper");
-
     port = mkOption {
       description = lib.mdDoc "Zookeeper Client port.";
       default = 2181;

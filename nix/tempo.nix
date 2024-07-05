@@ -8,8 +8,6 @@ in
     description = ''
       Configure tempo.
     '';
-    enable = lib.mkEnableOption name;
-
     package = lib.mkPackageOption pkgs "tempo" { };
 
     httpAddress = lib.mkOption {

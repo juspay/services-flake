@@ -5,8 +5,6 @@ let
 in
 {
   options = {
-    enable = lib.mkEnableOption name;
-
     package = lib.mkPackageOption pkgs "prometheus" { };
 
     port = lib.mkOption {

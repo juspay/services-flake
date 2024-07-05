@@ -6,8 +6,6 @@ let
 in
 {
   options = {
-    enable = lib.mkEnableOption name;
-
     package = lib.mkOption {
       type = types.package;
       description = "Which package of clickhouse to use";

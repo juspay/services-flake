@@ -6,8 +6,6 @@ let
 in
 {
   options = {
-    enable = lib.mkEnableOption name;
-
     package = lib.mkPackageOption pkgs "cassandra" { };
 
     listenAddress = lib.mkOption {

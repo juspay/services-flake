@@ -17,8 +17,6 @@ in
           };
       } 
     '';
-    enable = lib.mkEnableOption name;
-
     package = lib.mkPackageOption pkgs "elasticsearch7" { };
 
     listenAddress = lib.mkOption {
