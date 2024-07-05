@@ -21,12 +21,6 @@ in
       description = lib.mdDoc "Address to listen on for the web interface, API, and telemetry";
     };
 
-    dataDir = lib.mkOption {
-      type = types.str;
-      default = "./data/${name}";
-      description = "The prometheus data directory";
-    };
-
     extraFlags = lib.mkOption {
       type = types.listOf types.str;
       default = [ ];

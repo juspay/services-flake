@@ -24,12 +24,6 @@ in
       default = 3200;
     };
 
-    dataDir = lib.mkOption {
-      type = types.str;
-      default = "./data/${name}";
-      description = "The tempo data directory";
-    };
-
     extraConfig = lib.mkOption {
       type = yamlFormat.type;
       default = { };

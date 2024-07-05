@@ -9,12 +9,6 @@ in
 
     package = lib.mkPackageOption pkgs "redis" { };
 
-    dataDir = lib.mkOption {
-      type = types.str;
-      default = "./data/${name}";
-      description = "The redis data directory";
-    };
-
     bind = lib.mkOption {
       type = types.nullOr types.str;
       default = "127.0.0.1";

@@ -12,14 +12,6 @@ with lib;
       type = types.port;
     };
 
-    dataDir = mkOption {
-      type = types.str;
-      default = "./data/${name}";
-      description = lib.mdDoc ''
-        Data directory for Zookeeper
-      '';
-    };
-
     id = mkOption {
       description = lib.mdDoc "Zookeeper ID.";
       default = 0;

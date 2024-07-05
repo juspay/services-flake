@@ -41,12 +41,6 @@ in
       description = "The nginx package to use.";
     };
 
-    dataDir = lib.mkOption {
-      type = types.str;
-      default = "./data/${name}";
-      description = "The nginx data directory";
-    };
-
     port = lib.mkOption {
       type = types.port;
       default = 8080;

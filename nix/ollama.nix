@@ -25,14 +25,7 @@ in
       example = "0.0.0.0";
       description = "The host on which the Ollama service's REST API will listen";
     };
-    dataDir = lib.mkOption {
-      type = types.str;
-      default = "./data/${name}";
-      description = ''
-        The directory containing the Ollama models.
-        Sets the `OLLAMA_MODELS` environment variable.
-      '';
-    };
+
     keepAlive = lib.mkOption {
       type = types.str;
       default = "5m";

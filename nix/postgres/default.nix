@@ -44,12 +44,6 @@ in
       '';
     };
 
-    dataDir = lib.mkOption {
-      type = lib.types.str;
-      default = "./data/${name}";
-      description = "The DB data directory";
-    };
-
     socketDir = lib.mkOption {
       type = lib.types.str;
       default = "";

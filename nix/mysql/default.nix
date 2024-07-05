@@ -15,12 +15,6 @@ in
       defaultText = lib.literalExpression "pkgs.mariadb";
     };
 
-    dataDir = lib.mkOption {
-      type = types.str;
-      default = "./data/${name}";
-      description = "The mysql data directory";
-    };
-
     socketDir = lib.mkOption {
       type = types.nullOr types.str;
       default = config.dataDir;

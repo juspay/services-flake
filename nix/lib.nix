@@ -15,6 +15,11 @@
       ];
       serviceModule = { config, name, ... }: {
         options = {
+          dataDir = lib.mkOption {
+            type = lib.types.str;
+            default = "./data/${name}";
+            description = "The directory where all data for `${service}.<name>` is stored";
+          };
           namespace = lib.mkOption {
             description = ''
               Namespace for the ${service} service
