@@ -31,12 +31,6 @@ in
       default = "http";
     };
 
-    dataDir = lib.mkOption {
-      type = types.str;
-      description = "Directory where grafana stores its logs and data.";
-      default = "./data/${name}";
-    };
-
     extraConf = lib.mkOption {
       type = iniFormat.type;
       description = "Extra configuration for grafana.";

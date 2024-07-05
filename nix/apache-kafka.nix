@@ -28,12 +28,6 @@ with lib;
       type = types.port;
     };
 
-    dataDir = lib.mkOption {
-      type = types.str;
-      default = "./data/${name}";
-      description = lib.mdDoc "The apache-kafka data directory";
-    };
-
     settings = mkOption {
       description = lib.mdDoc ''
         [Kafka broker configuration](https://kafka.apache.org/documentation.html#brokerconfigs)

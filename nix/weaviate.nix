@@ -12,12 +12,6 @@ in
 
     package = lib.mkPackageOption pkgs "weaviate" { };
 
-    dataDir = lib.mkOption {
-      type = types.str;
-      default = "./data/${name}";
-      description = "Path to the Weaviate data store";
-    };
-
     host = lib.mkOption {
       type = types.str;
       default = "127.0.0.1";

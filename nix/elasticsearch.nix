@@ -21,12 +21,6 @@ in
 
     package = lib.mkPackageOption pkgs "elasticsearch7" { };
 
-    dataDir = lib.mkOption {
-      type = types.str;
-      default = "./data/${name}";
-      description = "Directory where elasticsearch stores its data.";
-    };
-
     listenAddress = lib.mkOption {
       description = "Elasticsearch listen address.";
       default = "127.0.0.1";

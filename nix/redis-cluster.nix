@@ -8,12 +8,6 @@ in
 
     package = lib.mkPackageOption pkgs "redis" { };
 
-    dataDir = lib.mkOption {
-      type = types.str;
-      default = "./data/${name}";
-      description = "The redis-cluster data directory (common for all nodes).";
-    };
-
     nodes = lib.mkOption {
       type = types.attrsOf (types.submodule {
         options = {

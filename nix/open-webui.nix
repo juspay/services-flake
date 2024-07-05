@@ -8,12 +8,6 @@ in
     enable = lib.mkEnableOption "Open-WebUI server";
     package = lib.mkPackageOption pkgs "open-webui" { };
 
-    dataDir = lib.mkOption {
-      type = types.str;
-      default = "./data/${name}";
-      description = "The Open-WebUI data directory";
-    };
-
     host = lib.mkOption {
       type = types.str;
       default = "127.0.0.1";

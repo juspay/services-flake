@@ -21,12 +21,6 @@ in
       default = 9000;
     };
 
-    dataDir = lib.mkOption {
-      type = types.str;
-      default = "./data/${name}";
-      description = "The clickhouse data directory";
-    };
-
     defaultExtraConfig = lib.mkOption {
       type = yamlFormat.type;
       internal = true;

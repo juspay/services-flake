@@ -10,12 +10,6 @@ in
 
     package = lib.mkPackageOption pkgs "cassandra" { };
 
-    dataDir = lib.mkOption {
-      type = types.str;
-      default = "./data/${name}";
-      description = "The cassandra data directory";
-    };
-
     listenAddress = lib.mkOption {
       type = types.str;
       description = "Listen address";

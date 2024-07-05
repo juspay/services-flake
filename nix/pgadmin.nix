@@ -58,12 +58,6 @@ in
       default = 6;
     };
 
-    dataDir = lib.mkOption {
-      type = types.str;
-      default = "./data/${name}";
-      description = "The pgadmin4 data directory";
-    };
-
     extraDefaultConfig = lib.mkOption {
       type = pyType;
       internal = true;
