@@ -51,12 +51,11 @@ in
         Additional flags to pass to tempo.
       '';
     };
+  };
 
-    outputs.settings = lib.mkOption {
-      type = types.deferredModule;
-      internal = true;
-      readOnly = true;
-      default = {
+  config = {
+    outputs = {
+      settings = {
         processes."${name}" =
           let
             tempoConfig = lib.recursiveUpdate
@@ -126,7 +125,6 @@ in
               success_threshold = 1;
               failure_threshold = 5;
             };
-            namespace = name;
             availability.restart = "on_failure";
           };
       };

@@ -152,12 +152,10 @@ with lib;
       defaultText = literalExpression "pkgs.apacheKafka.passthru.jre";
       type = types.package;
     };
-
-    outputs.settings = lib.mkOption {
-      type = types.deferredModule;
-      internal = true;
-      readOnly = true;
-      default = {
+  };
+  config = {
+    outputs = {
+      settings = {
         processes = {
           "${name}" =
             let
@@ -186,7 +184,6 @@ with lib;
                 success_threshold = 1;
                 failure_threshold = 5;
               };
-              namespace = name;
 
               availability.restart = "on_failure";
             };

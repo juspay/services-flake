@@ -46,12 +46,11 @@ in
         Searxng settings
       '';
     };
+  };
 
-    outputs.settings = lib.mkOption {
-      type = types.deferredModule;
-      internal = true;
-      readOnly = true;
-      default = {
+  config = {
+    outputs = {
+      settings = {
         processes = {
           "${name}" = {
             environment = {
@@ -65,7 +64,6 @@ in
               )}";
             };
             command = lib.getExe config.package;
-            namespace = name;
             availability.restart = "on_failure";
             readiness_probe = {
               exec.command = "${lib.getExe pkgs.curl} -f -k http://${config.host}:${toString config.port}";

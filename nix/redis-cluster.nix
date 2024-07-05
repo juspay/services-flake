@@ -67,12 +67,11 @@ in
         Number of replicas per Master node.
       '';
     };
+  };
 
-    outputs.settings = lib.mkOption {
-      type = types.deferredModule;
-      internal = true;
-      readOnly = true;
-      default =
+  config = {
+    outputs = {
+      settings =
         let
           mkNodeProcess = nodeName: cfg:
             let
@@ -118,7 +117,6 @@ in
                 success_threshold = 1;
                 failure_threshold = 5;
               };
-              namespace = name;
 
               # https://github.com/F1bonacc1/process-compose#-auto-restart-if-not-healthy
               availability.restart = "on_failure";
@@ -147,7 +145,6 @@ in
             "${name}-cluster-create" = {
               depends_on = lib.mapAttrs' (nodeName: cfg: lib.nameValuePair "${name}-${nodeName}" { condition = "process_healthy"; }) config.nodes;
               command = lib.getExe clusterCreateScript;
-              namespace = name;
             };
           };
         };

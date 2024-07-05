@@ -78,12 +78,11 @@ in
         Extra environment variables passed to the `ollama-server` process.
       '';
     };
+  };
 
-    outputs.settings = lib.mkOption {
-      type = types.deferredModule;
-      internal = true;
-      readOnly = true;
-      default = {
+  config = {
+    outputs = {
+      settings = {
         processes = {
           "${name}" =
             let
@@ -119,7 +118,6 @@ in
                 success_threshold = 1;
                 failure_threshold = 5;
               };
-              namespace = name;
               availability.restart = "on_failure";
             };
 
@@ -137,7 +135,6 @@ in
                 done
               '';
             };
-            namespace = name;
             depends_on."${name}".condition = "process_healthy";
           };
         };

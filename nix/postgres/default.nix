@@ -289,11 +289,10 @@ in
         SQL expressions separated by a semi-colon.
       '';
     };
-    outputs.settings = lib.mkOption {
-      type = types.deferredModule;
-      internal = true;
-      readOnly = true;
-      default =
+  };
+  config = {
+    outputs = {
+      settings =
         {
           processes = {
             # DB initialization
@@ -303,7 +302,6 @@ in
               in
               {
                 command = setupScript;
-                namespace = name;
               };
 
             # DB process
@@ -342,7 +340,6 @@ in
                   success_threshold = 1;
                   failure_threshold = 5;
                 };
-                namespace = name;
                 depends_on."${name}-init".condition = "process_completed_successfully";
                 # https://github.com/F1bonacc1/process-compose#-auto-restart-if-not-healthy
                 availability.restart = "on_failure";

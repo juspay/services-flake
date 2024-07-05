@@ -86,11 +86,10 @@ in
       description = "The nginx configuration file.";
     };
 
-    outputs.settings = lib.mkOption {
-      type = lib.types.deferredModule;
-      internal = true;
-      readOnly = true;
-      default =
+  };
+  config = {
+    outputs = {
+      settings.processes =
         let
           startScript = pkgs.writeShellApplication {
             name = "start-nginx";
@@ -106,7 +105,7 @@ in
           };
         in
         {
-          processes."${name}" = {
+          "${name}" = {
             command = startScript;
             readiness_probe = {
               # FIXME need a better health check
@@ -117,7 +116,6 @@ in
               success_threshold = 1;
               failure_threshold = 5;
             };
-            namespace = name;
             # https://github.com/F1bonacc1/process-compose#-auto-restart-if-not-healthy
             availability.restart = "on_failure";
           };

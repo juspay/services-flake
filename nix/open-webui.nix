@@ -48,12 +48,11 @@ in
       '';
       description = "Extra environment variables for Open-WebUI";
     };
+  };
 
-    outputs.settings = lib.mkOption {
-      type = types.deferredModule;
-      internal = true;
-      readOnly = true;
-      default = {
+  config = {
+    outputs = {
+      settings = {
         processes = {
           "${name}" =
             let
@@ -97,7 +96,6 @@ in
                 success_threshold = 1;
                 failure_threshold = 5;
               };
-              namespace = name;
               availability.restart = "on_failure";
             };
         };
