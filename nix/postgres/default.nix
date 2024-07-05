@@ -327,7 +327,6 @@ in
                 ] ++ (lib.optional (config.superuser != null) "-U ${config.superuser}");
               in
               {
-                inherit (config) namespace;
                 command = startScript;
                 # SIGINT (= 2) for faster shutdown: https://www.postgresql.org/docs/current/server-shutdown.html
                 shutdown.signal = 2;
