@@ -8,5 +8,6 @@
 /example/share-services/pgweb/data/
 /example/simple/data/
 /example/grafana-tempo/data/
+/example/cargo-doc-live/target
 
 /.pre-commit-config.yaml
