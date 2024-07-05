@@ -231,6 +231,8 @@ in
             description = ''
               The initial list of schemas for the database; if null (the default),
               an empty database is created.
+
+              If path is a directory, use `*.sql` files in name order.
             '';
           };
         };
