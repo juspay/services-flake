@@ -1,6 +1,5 @@
-{ pkgs, lib, ... }:
 let
-  inherit (import ./lib.nix) multiService;
+  inherit (import ../lib.nix) multiService;
 in
 {
   imports = builtins.map multiService [

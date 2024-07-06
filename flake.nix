@@ -1,7 +1,7 @@
 {
   description = "declarative, composable, and reproducible services for Nix development environment";
   outputs = _: {
-    processComposeModules.default = ./nix;
+    processComposeModules.default = ./nix/services;
 
     templates.default = {
       description = "Example flake using process-compose-flake";
