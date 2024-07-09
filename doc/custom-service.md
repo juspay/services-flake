@@ -98,7 +98,7 @@ Let's write the same `hello` service as above, in `hello.nix`, but this time as 
     };
   };
   config = {
-    settings = {
+    outputs.settings = {
       processes.${name} = {
         command = "${lib.getExe config.package} --greeting='${config.message}'";
       };
