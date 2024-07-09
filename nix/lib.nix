@@ -55,23 +55,29 @@
       };
     in
     {
-      options.services.${service} = lib.mkOption {
-        description = ''
-          ${service} service
-        '';
-        default = { };
-        type = lib.types.attrsOf (lib.types.submoduleWith {
-          specialArgs = { inherit pkgs; };
-          modules = [
-            serviceModule
-            mod
-          ];
-        });
+      options = {
+        services.${service} = lib.mkOption {
+          description = ''
+            ${service} service
+          '';
+          default = { };
+          type = lib.types.attrsOf (lib.types.submoduleWith {
+            specialArgs = { inherit pkgs; };
+            modules = [
+              serviceModule
+              mod
+            ];
+          });
+        };
       };
-      config.settings.imports =
-        lib.pipe config.services.${service} [
-          (lib.filterAttrs (_: cfg: cfg.enable))
-          (lib.mapAttrsToList (_: cfg: cfg.outputs.settings))
-        ];
+      config = {
+        settings = {
+          imports =
+            lib.pipe config.services.${service} [
+              (lib.filterAttrs (_: cfg: cfg.enable))
+              (lib.mapAttrsToList (_: cfg: cfg.outputs.settings))
+            ];
+        };
+      };
     };
 }
