@@ -11,7 +11,7 @@
     lib = import ./nix/lib.nix;
 
     # Config for https://github.com/srid/nixci
-    # To run this, `nix run github:srid/nixci`
+    # To run this, `nix run github:srid/nixci build`
     nixci.default = let overrideInputs = { "services-flake" = ./.; }; in {
       simple-example = {
         inherit overrideInputs;
