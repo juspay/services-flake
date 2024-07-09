@@ -3,4 +3,4 @@
 >[!warning] 🚧 WIP
 
 Usage example:
-<https://github.com/juspay/services-flake/blob/main/nix/apache-kafka_test.nix>
+<https://github.com/juspay/services-flake/blob/main/nix/services/apache-kafka_test.nix>
