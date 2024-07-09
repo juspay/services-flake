@@ -28,27 +28,29 @@
             default = "${service}.${name}";
             type = lib.types.str;
           };
-          outputs.defaultProcessSettings = lib.mkOption {
-            type = lib.types.deferredModule;
-            internal = true;
-            readOnly = true;
-            description = ''
-              Default settings for all processes under the ${service} service
-            '';
-            default = {
-              namespace = lib.mkDefault config.namespace;
+          outputs = {
+            defaultProcessSettings = lib.mkOption {
+              type = lib.types.deferredModule;
+              internal = true;
+              readOnly = true;
+              description = ''
+                Default settings for all processes under the ${service} service
+              '';
+              default = {
+                namespace = lib.mkDefault config.namespace;
+              };
             };
-          };
-          outputs.settings = lib.mkOption {
-            type = lib.types.lazyAttrsOf lib.types.raw;
-            internal = true;
-            description = ''
-              process-compose settings for the processes under the ${service} service
-            '';
-            apply = v: v // {
-              processes = lib.flip lib.mapAttrs v.processes (_: cfg:
-                { imports = [ config.outputs.defaultProcessSettings cfg ]; }
-              );
+            settings = lib.mkOption {
+              type = lib.types.lazyAttrsOf lib.types.raw;
+              internal = true;
+              description = ''
+                process-compose settings for the processes under the ${service} service
+              '';
+              apply = v: v // {
+                processes = lib.flip lib.mapAttrs v.processes (_: cfg:
+                  { imports = [ config.outputs.defaultProcessSettings cfg ]; }
+                );
+              };
             };
           };
         };
