@@ -96,14 +96,11 @@ Let's write the same `hello` service as above, in `hello.nix`, but this time as 
       default = "Hello, world!";
       description = "The message to be displayed";
     };
-    outputs.settings = lib.mkOption {
-      type = lib.types.deferredModule;
-      internal = true;
-      readOnly = true;
-      default = {
-        processes.${name} = {
-          command = "${lib.getExe config.package} --greeting='${config.message}'";
-        };
+  };
+  config = {
+    settings = {
+      processes.${name} = {
+        command = "${lib.getExe config.package} --greeting='${config.message}'";
       };
     };
   };
