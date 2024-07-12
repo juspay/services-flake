@@ -21,5 +21,6 @@ in
     ./tempo.nix
     ./weaviate.nix
     ./searxng.nix
+    ./tika.nix
   ];
 }
