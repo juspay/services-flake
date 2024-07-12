@@ -65,10 +65,13 @@ in
             command = lib.getExe config.package;
             availability.restart = "on_failure";
             readiness_probe = {
-              exec.command = "${lib.getExe pkgs.curl} -f -k http://${config.host}:${toString config.port}";
-              initial_delay_seconds = 5;
+              http_get = {
+                host = config.host;
+                port = config.port;
+              };
+              initial_delay_seconds = 2;
               period_seconds = 10;
-              timeout_seconds = 2;
+              timeout_seconds = 4;
               success_threshold = 1;
               failure_threshold = 5;
             };
