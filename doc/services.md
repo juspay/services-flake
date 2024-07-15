@@ -19,6 +19,7 @@ short-title: Services
 - [[redis]]#
   - [[redis-cluster]]
 - [[searxng]]#
+- [[tika]]#
 - [[zookeeper]]#
 - [[grafana]]#
   - [[tempo]]
