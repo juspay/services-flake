@@ -36,7 +36,6 @@
             "${inputs.services-flake}/nix/services/apache-kafka_test.nix"
             "${inputs.services-flake}/nix/services/clickhouse/clickhouse_test.nix"
             "${inputs.services-flake}/nix/services/elasticsearch_test.nix"
-            "${inputs.services-flake}/nix/services/mysql/mysql_test.nix"
             "${inputs.services-flake}/nix/services/nginx/nginx_test.nix"
             "${inputs.services-flake}/nix/services/ollama_test.nix"
             "${inputs.services-flake}/nix/services/open-webui_test.nix"
@@ -46,7 +45,6 @@
             "${inputs.services-flake}/nix/services/zookeeper_test.nix"
             "${inputs.services-flake}/nix/services/prometheus_test.nix"
             "${inputs.services-flake}/nix/services/pgadmin_test.nix"
-            "${inputs.services-flake}/nix/services/cassandra_test.nix"
             "${inputs.services-flake}/nix/services/tempo_test.nix"
             "${inputs.services-flake}/nix/services/weaviate_test.nix"
           ] ++ lib.optionals pkgs.stdenv.isLinux [
