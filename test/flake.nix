@@ -36,22 +36,19 @@
             "${inputs.services-flake}/nix/services/apache-kafka_test.nix"
             "${inputs.services-flake}/nix/services/clickhouse/clickhouse_test.nix"
             "${inputs.services-flake}/nix/services/elasticsearch_test.nix"
+            "${inputs.services-flake}/nix/services/grafana_test.nix"
             "${inputs.services-flake}/nix/services/nginx/nginx_test.nix"
             "${inputs.services-flake}/nix/services/ollama_test.nix"
             "${inputs.services-flake}/nix/services/open-webui_test.nix"
             "${inputs.services-flake}/nix/services/postgres/postgres_test.nix"
             "${inputs.services-flake}/nix/services/redis_test.nix"
             "${inputs.services-flake}/nix/services/redis-cluster_test.nix"
+            "${inputs.services-flake}/nix/services/searxng_test.nix"
             "${inputs.services-flake}/nix/services/zookeeper_test.nix"
             "${inputs.services-flake}/nix/services/prometheus_test.nix"
             "${inputs.services-flake}/nix/services/pgadmin_test.nix"
             "${inputs.services-flake}/nix/services/tempo_test.nix"
             "${inputs.services-flake}/nix/services/weaviate_test.nix"
-          ] ++ lib.optionals pkgs.stdenv.isLinux [
-            # Broken on Darwin: https://github.com/NixOS/nixpkgs/issues/316954
-            "${inputs.services-flake}/nix/services/grafana_test.nix"
-            # Broken on Darwin: https://github.com/NixOS/nixpkgs/issues/321329
-            "${inputs.services-flake}/nix/services/searxng_test.nix"
           ]));
       };
     };
