@@ -19,6 +19,14 @@ in
       type = types.port;
     };
 
+    enableOcr = lib.mkOption {
+      default = true;
+      description = ''
+        Whether to enable OCR support by adding the `tesseract` package as a dependency.
+      '';
+      type = types.bool;
+    };
+
     configFile = lib.mkOption {
       type = types.nullOr types.path;
       default = null;
@@ -33,21 +41,27 @@ in
     outputs = {
       settings = {
         processes = {
-          "${name}" = {
-            command = "${lib.getExe config.package} --host ${config.host} --port ${toString config.port} ${lib.optionalString (config.configFile != null) "--config ${config.configFile}"}";
-            availability.restart = "on_failure";
-            readiness_probe = {
-              http_get = {
-                host = config.host;
-                port = config.port;
+          "${name}" =
+            let
+              tikaPackage = config.package.override {
+                enableOcr = config.enableOcr;
               };
-              initial_delay_seconds = 2;
-              period_seconds = 10;
-              timeout_seconds = 4;
-              success_threshold = 1;
-              failure_threshold = 5;
+            in
+            {
+              command = "${lib.getExe tikaPackage} --host ${config.host} --port ${toString config.port} ${lib.optionalString (config.configFile != null) "--config ${config.configFile}"}";
+              availability.restart = "on_failure";
+              readiness_probe = {
+                http_get = {
+                  host = config.host;
+                  port = config.port;
+                };
+                initial_delay_seconds = 2;
+                period_seconds = 10;
+                timeout_seconds = 4;
+                success_threshold = 1;
+                failure_threshold = 5;
+              };
             };
-          };
         };
       };
     };
