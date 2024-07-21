@@ -44,7 +44,7 @@ in
           "${name}" =
             let
               tikaPackage = config.package.override {
-                enableOcr = config.enableOcr;
+                inherit (config) enableOcr;
               };
             in
             {
