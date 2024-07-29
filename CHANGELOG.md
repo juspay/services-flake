@@ -1,17 +1,33 @@
 # Changelog for services-flake
 
-## Unreleased
+## 0.3.0 (Jul 29, 2024)
 
 ### Feat
 
+- **tika**: add `enableOcr` option (#275)
+- **tika**: init
+- Allow overriding namespace + make default namespace fully qualified (#258)
+- **searxng**: init (#241)
+- **open-webui**: init
+- **ollama**: init
 - **grafana**: add providers configuration (#211)
 - Add Weaviate service (#195)
 - add tempo service (#192)
 
 ### Fix
 
+- **ollama**: `kernelPackages` are irrelevant on non-NixOS distributions
+- **ollama**: Broken `dataDir` convention; Allow ENVs in `dataDir`
 - **postgres**: stop init on error in `sql` scripts
 - **nginx**: link nginx.conf to dataDir (#173)
+
+### Refactor
+
+- **fmt**: group outputs options
+- keep options/config top-level
+- Move services under `./nix/services` (#262)
+- Do not repeat `enable` option
+- Do not repeat `dataDir`
 
 ## 0.2.0 (Apr 30, 2024)
 
