@@ -1,11 +1,14 @@
-name: update-flake-lock-ex-simple
+name: update-flake-lock
 on:
   workflow_dispatch: # allows manual triggering
   schedule:
     - cron: '0 0 * * 0' # runs weekly on Sunday at 00:00
 
 jobs:
-  update-ex-simple-lock:
+  update-flake-lock:
+    strategy:
+      matrix:
+        lock-file-dir: [ "test", "example/simple", "example/share-services/pgweb", "example/share-services/northwind" , "example/llm" ] 
     runs-on: ubuntu-latest
     steps:
       - name: Generate Github App Token
@@ -22,8 +25,8 @@ jobs:
         uses: DeterminateSystems/update-flake-lock@main
         id: update-flake-lock
         with:
-          commit-msg: "chore(example): Update simple/flake.lock"
-          pr-title: "Update example/simple/flake.lock"
+          commit-msg: "chore(${{ matrix.lock-file-dir }}): Update flake.lock"
+          pr-title: "Update ${{ matrix.lock-file-dir }}/flake.lock"
           pr-body: |
             Automated changes by the [update-flake-lock](https://github.com/DeterminateSystems/update-flake-lock) GitHub Action.
 
@@ -32,9 +35,10 @@ jobs:
             ```
           pr-labels: |
             automated
-          path-to-flake-dir: 'example/simple'
-          branch: "update_flake_lock_ex_simple"
+          path-to-flake-dir: '${{ matrix.lock-file-dir }}'
+          branch: "update_flake_lock_${{ martix.lock-file-dir }}"
           token: ${{ steps.github-app-token.outputs.token }}
       - run: "gh pr merge --auto --rebase --delete-branch ${{ steps.update-flake-lock.outputs.pull-request-number }}"
         env:
           GH_TOKEN: ${{ github.token }}
+
