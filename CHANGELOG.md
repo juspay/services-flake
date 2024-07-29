@@ -2,32 +2,33 @@
 
 ## 0.3.0 (Jul 29, 2024)
 
-### Feat
+This release introduces new services, primarily focused on [running AI chatbots locally](https://community.flake.parts/services-flake/llm) 🤖. It also includes a few non-breaking fixes and refactors 🔄 to promote DRY (Don’t Repeat Yourself) principles when adding new services.
 
-- **tika**: add `enableOcr` option (#275)
-- **tika**: init
-- Allow overriding namespace + make default namespace fully qualified (#258)
-- **searxng**: init (#241)
-- **open-webui**: init
-- **ollama**: init
-- **grafana**: add providers configuration (#211)
-- Add Weaviate service (#195)
-- add tempo service (#192)
+### 🚀 New Services
 
-### Fix
 
-- **ollama**: `kernelPackages` are irrelevant on non-NixOS distributions
-- **ollama**: Broken `dataDir` convention; Allow ENVs in `dataDir`
-- **postgres**: stop init on error in `sql` scripts
-- **nginx**: link nginx.conf to dataDir (#173)
+- **Tika** (by @drupol in https://github.com/juspay/services-flake/commit/f041f87b27cdcb70af2030ee16516356c16691f2)
+- **Searxng** (by @drupol in #241)
+- **Open WebUI** (by @shivaraj-bh in https://github.com/juspay/services-flake/commit/e7eb9dec416765b09261f699c84988cfc0e02079)
+- **Ollama** (by @shivaraj-bh in https://github.com/juspay/services-flake/commit/d84efa4788d285eab44ce1b1e6422e06694420ab)
+- **Weaviate** (by @jedimahdi in #195)
+- **Tempo** (by @tim-smart in #192)
 
-### Refactor
+### 🛠️ Miscellaneous features & fixes
 
-- **fmt**: group outputs options
-- keep options/config top-level
-- Move services under `./nix/services` (#262)
-- Do not repeat `enable` option
-- Do not repeat `dataDir`
+- **tika**: add `enableOcr` option (by @drupol in #275)
+- Allow overriding namespace + make default namespace fully qualified (by @srid in #258)
+- **grafana**: add providers configuration (by @alexpearce in #211)
+- **ollama**: `kernelPackages` are irrelevant on non-NixOS distributions (by @shivaraj-bh in https://github.com/juspay/services-flake/commit/8145ba10cb02dc0a843bba371fc2d42cea7fd226)
+- **ollama**: Broken `dataDir` convention; Allow ENVs in `dataDir` (by @shivaraj-bh in https://github.com/juspay/services-flake/commit/db7ab711d9a6cefd28dbcfe58409d3a968a3b713)
+- **postgres**: stop init on error in `sql` scripts (by @shivaraj-bh in https://github.com/juspay/services-flake/commit/12e74823f4f316530c05453df572cddc88a04b1d)
+- **nginx**: link nginx.conf to dataDir (by @szucsitg in #173)
+
+### 🔄 Refactors
+
+- Move services under `./nix/services` (by @srid in #262)
+- Do not repeat `enable` option (by @shivaraj-bh in https://github.com/juspay/services-flake/commit/ea3a18a991fd5e0df3543f17c9209a6942068c4a)
+- Do not repeat `dataDir` (by @shivaraj-bh in https://github.com/juspay/services-flake/commit/dfcdbbca0213cb0b7d4839145c3466f73073c207)
 
 ## 0.2.0 (Apr 30, 2024)
 
