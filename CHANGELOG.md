@@ -34,28 +34,28 @@ This release introduces new services, primarily focused on [running AI chatbots 
 
 ### Feat
 
-- **mysql**: allow configuring socketDir on mysql. if not provided, uses dataDir as default. solves #171
-- **dev**: add `just changelog` (#162)
-- **postgres**: add connectionURI option (#143)
-- add pre-commit-hooks.nix, enforcing conventional commits
+- **mysql**: allow configuring socketDir on mysql. if not provided, uses dataDir as default (by @attilaersek in #172)
+- **dev**: add `just changelog` (by @shivaraj-bh in #162)
+- **postgres**: add connectionURI option (by @shivaraj-bh in #143)
+- add pre-commit-hooks.nix, enforcing conventional commits (by @shivaraj-bh in #121)
 
 ### Fix
 
-- **mysql**: use absolute socket path in configureTimezones. this fixes #169
-- **postgres**: fix pg_isready issue with empty listen_addresses
-- **grafana**: add `coreutils` as runtimeInput for the startScript (#164)
-- **pgadmin**: Fix pgadmin scripts on MacOS (#163)
-- **test**: grafana on darwin is no longer broken in upstream (#161)
-- **postgres**: empty `socketDir` by default (#160)
-- **mysql**: look for `*.sql` files in the top-level schema directory (#154)
-- **template**: Was broken in previous PR merge
+- **mysql**: use absolute socket path in configureTimezones (by @attilaersek in #170)
+- **postgres**: fix pg_isready issue with empty listen_addresses (by @johnhampton in #165)
+- **grafana**: add `coreutils` as runtimeInput for the startScript (by @shivaraj-bh in #164)
+- **pgadmin**: Fix pgadmin scripts on MacOS (by @Javyre in #163)
+- **test**: grafana on darwin is no longer broken in upstream (by @shivaraj-bh in #161)
+- **postgres**: empty `socketDir` by default (by @shivaraj-bh in #160)
+- **mysql**: look for `*.sql` files in the top-level schema directory (by @shivaraj-bh in #154)
+- **template**: Was broken in previous PR merge (by @srid in https://github.com/juspay/services-flake/commit/1c6e8fc86792e31abe719968f3a50e43f2508854)
 
 ### Refactor
 
-- **deprecation**: replace types.string with types.str
-- writeShellScriptBin -> writeShellApplication (#155)
-- **postgres**: replace string argument with attrset for `connectionURI` (#146)
-- **example**: remove unused pg2 service (#142)
+- **deprecation**: replace types.string with types.str (by @shivaraj-bh in https://github.com/juspay/services-flake/commit/423b85482dc193fecd6d49f777ee57b344cf2b72)
+- writeShellScriptBin -> writeShellApplication (by @shivaraj-bh in #155)
+- **postgres**: replace string argument with attrset for `connectionURI` (by @shivaraj-bh in #146)
+- **example**: remove unused pg2 service (by @shivaraj-bh in #142)
 
 ## 0.1.0 (Mar 6, 2024)
 
