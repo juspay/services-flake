@@ -36,7 +36,7 @@ jobs:
           pr-labels: |
             automated
           path-to-flake-dir: '${{ matrix.lock-file-dir }}'
-          branch: "update_flake_lock_${{ martix.lock-file-dir }}"
+          branch: "update_flake_lock_${{ matrix.lock-file-dir }}"
           token: ${{ steps.github-app-token.outputs.token }}
       - run: "gh pr merge --auto --rebase --delete-branch ${{ steps.update-flake-lock.outputs.pull-request-number }}"
         env:
