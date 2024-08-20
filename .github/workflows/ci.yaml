@@ -15,5 +15,5 @@ jobs:
         system: [ x86_64-linux, aarch64-darwin ]
     steps:
       - uses: actions/checkout@v4
-      - name: nixci build
-        run: nixci --extra-access-tokens "github.com=${{ secrets.GITHUB_TOKEN }}" build --systems "${{ matrix.system }}"
+      - name: om ci
+        run: om ci --extra-access-tokens "github.com=${{ secrets.GITHUB_TOKEN }}" run --systems "${{ matrix.system }}"
