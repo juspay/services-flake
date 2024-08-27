@@ -10,9 +10,8 @@
 
     lib = import ./nix/lib.nix;
 
-    # Config for https://github.com/srid/nixci
-    # To run this, `nix run github:srid/nixci build`
-    nixci.default = let overrideInputs = { "services-flake" = ./.; }; in {
+    # CI configuration; to run locally, `nix --accept-flake-config github:juspay/omnix ci`
+    om.ci.default = let overrideInputs = { "services-flake" = ./.; }; in {
       simple-example = {
         inherit overrideInputs;
         dir = "./example/simple";
