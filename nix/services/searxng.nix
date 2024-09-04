@@ -63,7 +63,10 @@ in
               )}";
             };
             command = lib.getExe config.package;
-            availability.restart = "on_failure";
+            availability = {
+              restart = "on_failure";
+              max_restarts = 5;
+            };
             readiness_probe = {
               http_get = {
                 host = config.host;

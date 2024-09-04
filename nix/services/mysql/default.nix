@@ -292,7 +292,10 @@ in
                 };
 
                 # https://github.com/F1bonacc1/process-compose#-auto-restart-if-not-healthy
-                availability.restart = "on_failure";
+                availability = {
+                  restart = "on_failure";
+                  max_restarts = 5;
+                };
               };
             "${name}-configure" = {
               command = configureScript;

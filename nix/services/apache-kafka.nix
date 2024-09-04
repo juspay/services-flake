@@ -177,7 +177,10 @@ with lib;
                 failure_threshold = 5;
               };
 
-              availability.restart = "on_failure";
+              availability = {
+                restart = "on_failure";
+                max_restarts = 5;
+              };
             };
         };
       };
