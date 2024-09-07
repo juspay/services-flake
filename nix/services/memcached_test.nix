@@ -14,7 +14,7 @@
           pkgs.netcat
         ];
         text = ''
-          echo -e "stats\nquit" | nc 127.0.0.1 11211 | grep -q "STAT version"
+          echo -e "stats\nquit" | nc 127.0.0.1 11211 | grep "STAT version"
         '';
         name = "memcached-test";
       };
