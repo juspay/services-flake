@@ -5,4 +5,4 @@
 Cluster of #[[redis]] nodes.
 
 Usage example:
-<https://github.com/juspay/services-flake/blob/main/nix/redis-cluster_test.nix>
+<https://github.com/juspay/services-flake/blob/main/nix/services/redis-cluster_test.nix>
