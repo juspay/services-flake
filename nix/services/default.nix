@@ -15,6 +15,7 @@ in
     ./redis.nix
     ./zookeeper.nix
     ./grafana.nix
+    ./memcached.nix
     ./prometheus.nix
     ./pgadmin.nix
     ./cassandra.nix
