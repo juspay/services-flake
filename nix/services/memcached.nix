@@ -1,10 +1,5 @@
 # Based on https://github.com/cachix/devenv/blob/main/src/modules/services/memcached.nix
-{ pkgs
-, lib
-, name
-, config
-, ...
-}:
+{ pkgs, lib, name, config, ... }:
 let
   inherit (lib) types;
 in
