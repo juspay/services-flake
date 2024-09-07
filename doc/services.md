@@ -4,9 +4,6 @@ short-title: Services
 
 # Supported services
 
->[!warning] WIP
-> Documentation for the services is still in progress. Please refer to [this issue][gh] for progress.
-
 - [[apache-kafka]]#
 - [[cassandra]]#
 - [[clickhouse]]#
@@ -27,5 +24,3 @@ short-title: Services
 - [[tika]]#
 - [[weaviate]]#
 - [[zookeeper]]#
-
-[gh]: https://github.com/juspay/services-flake/issues/132
