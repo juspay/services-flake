@@ -34,10 +34,12 @@
           in
           builtins.listToAttrs (builtins.map mkPackageFor ([
             "${inputs.services-flake}/nix/services/apache-kafka_test.nix"
+            "${inputs.services-flake}/nix/services/cassandra_test.nix"
             "${inputs.services-flake}/nix/services/clickhouse/clickhouse_test.nix"
             "${inputs.services-flake}/nix/services/elasticsearch_test.nix"
             "${inputs.services-flake}/nix/services/grafana_test.nix"
             "${inputs.services-flake}/nix/services/memcached_test.nix"
+            "${inputs.services-flake}/nix/services/mysql/mysql_test.nix"
             "${inputs.services-flake}/nix/services/nginx/nginx_test.nix"
             "${inputs.services-flake}/nix/services/ollama_test.nix"
             "${inputs.services-flake}/nix/services/open-webui_test.nix"
