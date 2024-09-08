@@ -50,6 +50,7 @@
             "${inputs.services-flake}/nix/services/tempo_test.nix"
             "${inputs.services-flake}/nix/services/weaviate_test.nix"
             "${inputs.services-flake}/nix/services/tika_test.nix"
+            "${inputs.services-flake}/nix/services/memcached_test.nix"
           ]));
       };
     };
