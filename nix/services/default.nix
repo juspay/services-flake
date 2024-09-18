@@ -23,5 +23,6 @@ in
     ./weaviate.nix
     ./searxng.nix
     ./tika.nix
+    ./mongodb.nix
   ];
 }
