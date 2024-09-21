@@ -149,7 +149,7 @@ in
                 # Install plugins
                 rm -rf "${config.dataDir}/plugins"
                 cp -rL ${esPlugins}/plugins "${config.dataDir}/plugins"
-                find "${config.dataDir}/plugins" -type d -exec chmod u+x {} \;
+                find "${config.dataDir}/plugins" -type d -exec chmod u+w {} \;
 
                 rm -f "${config.dataDir}/lib"
                 ln -sf ${config.package}/lib "${config.dataDir}/lib"
