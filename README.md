@@ -49,7 +49,7 @@ See <https://community.flake.parts/services-flake/datadir>
 
 ## Discussions
 
-To discuss the project, please [join our Zulip](https://nixos.zulipchat.com/#narrow/stream/414011-services-flake).
+To discuss the project, please [join our Zulip](https://nixos.zulipchat.com/#narrow/stream/414011-services-flake) or post in [Github Discussions](https://github.com/juspay/services-flake/discussions).
 
 ## Contributing & Development
 
