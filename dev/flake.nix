@@ -2,6 +2,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
+    flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
     flake-root.url = "github:srid/flake-root";
     treefmt-nix.url = "github:numtide/treefmt-nix";
     pre-commit-hooks-nix = {
@@ -30,6 +31,32 @@
           # flakeCheck = false; # pre-commit-hooks.nix checks this
           programs = {
             nixpkgs-fmt.enable = true;
+          };
+        };
+
+        # TODO: Move this under `CIApps` once `omnix` supports running them automatically
+        # CONSIDER: Generalise the script, see: https://github.com/juspay/services-flake/pull/338/files#r1773042527
+        apps.cz-check = rec {
+          meta.description = program.meta.description;
+          program = pkgs.writeShellApplication {
+            name = "cz-check";
+            runtimeInputs = with pkgs; [ config.pre-commit.settings.tools.commitizen git gnugrep coreutils ];
+            meta.description = "Verify commit messages from the default branch to HEAD follow conventional commit format";
+            text = ''
+              default_branch=$(git remote show origin | grep 'HEAD branch' | cut -d' ' -f5)
+
+              # Get the latest commit on the default branch
+              # rev range using the `default_branch` branch name (e.g. main..HEAD), doesn't work in Github Actions
+              latest_default_commit=$(git rev-parse origin/"$default_branch")
+
+              current_commit=$(git rev-parse HEAD)
+
+              if [ "$latest_default_commit" = "$current_commit" ]; then
+                  echo "No commits to check between $default_branch and HEAD."
+              else
+                  cz check --rev-range "$latest_default_commit"..HEAD
+              fi
+            '';
           };
         };
         devShells.default = pkgs.mkShell {
