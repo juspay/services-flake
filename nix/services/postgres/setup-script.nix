@@ -76,7 +76,7 @@ let
 in
 (pkgs.writeShellApplication {
   name = "setup-postgres";
-  runtimeInputs = with pkgs; [ config.package coreutils gnugrep gawk ];
+  runtimeInputs = with pkgs; [ config.package coreutils gnugrep gawk findutils ];
   text = ''
     set -x
     # Execute the `psql` command with default arguments
