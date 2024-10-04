@@ -170,11 +170,6 @@ with lib;
               readiness_probe = {
                 # TODO: need to find a better way to check if kafka is ready. Maybe use one of the scripts in bin?
                 exec.command = "${pkgs.netcat.nc}/bin/nc -z localhost ${builtins.toString config.port}";
-                initial_delay_seconds = 2;
-                period_seconds = 10;
-                timeout_seconds = 4;
-                success_threshold = 1;
-                failure_threshold = 5;
               };
 
               availability = {
