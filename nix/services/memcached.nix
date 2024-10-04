@@ -45,11 +45,6 @@ in
         exec.command = ''
           echo -e "stats\nquit" | ${pkgs.netcat}/bin/nc ${config.bind} ${toString config.port} > /dev/null 2>&1
         '';
-        initial_delay_seconds = 2;
-        period_seconds = 10;
-        timeout_seconds = 4;
-        success_threshold = 1;
-        failure_threshold = 5;
       };
 
       # https://github.com/F1bonacc1/process-compose#-auto-restart-if-not-healthy
