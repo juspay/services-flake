@@ -15,7 +15,7 @@
       imports = [
         inputs.process-compose-flake.flakeModule
       ];
-      perSystem = { self', pkgs, lib, ... }: {
+      perSystem = { self', pkgs, config, lib, ... }: {
         process-compose."default" = { config, ... }: {
           imports = [
             inputs.services-flake.processComposeModules.default
@@ -32,6 +32,7 @@
             environment.PGWEB_DATABASE_URL = config.services.postgres.northwind.connectionURI { dbName = "sample"; };
           };
         };
+        devShells.default = config.process-compose."default".services.outputs.devShell;
       };
     };
 }

@@ -18,13 +18,14 @@
       ];
       flake.processComposeModules.default =
         import ./services.nix { inherit inputs; };
-      perSystem = { self', pkgs, lib, ... }: {
+      perSystem = { self', pkgs, config, lib, ... }: {
         process-compose."default" = { config, ... }: {
           imports = [
             inputs.services-flake.processComposeModules.default
             inputs.self.processComposeModules.default
           ];
         };
+        devShells.default = config.process-compose."default".services.outputs.devShell;
       };
     };
 }
