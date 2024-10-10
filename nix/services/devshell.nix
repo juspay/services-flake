@@ -5,7 +5,7 @@ in
 {
   options.services.outputs = {
     enabledServices = lib.mkOption {
-      type = types.listOf types.raw;
+      type = types.listOf (types.listOf types.str);
       readOnly = true;
       description = ''
         List of names of enabled services.
