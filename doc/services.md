@@ -11,6 +11,7 @@ short-title: Services
 - [[grafana]]#
   - [[tempo]]
 - [[memcached]]#
+- [[mongodb]]#
 - [[mysql]]#
 - [[nginx]]#
 - [[ollama]]#

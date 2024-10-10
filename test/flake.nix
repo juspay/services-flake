@@ -51,6 +51,10 @@
             "${inputs.services-flake}/nix/services/tika_test.nix"
             "${inputs.services-flake}/nix/services/weaviate_test.nix"
             "${inputs.services-flake}/nix/services/zookeeper_test.nix"
+          ] ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+            # Due to a dependency problem, MongoDB does not build on Darwin,
+            # See https://github.com/NixOS/nixpkgs/issues/346003
+            "${inputs.services-flake}/nix/services/mongodb_test.nix"
           ]));
       };
     };
