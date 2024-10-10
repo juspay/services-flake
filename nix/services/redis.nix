@@ -25,6 +25,28 @@ in
 
         If port is set to `0`, redis will not listen on a TCP socket.
       '';
+      apply = v:
+        lib.warnIf ((config.unixSocket != null) && (v != 0)) ''
+          `${name}` is listening on both the TCP port and Unix socket, set `port = 0;` to listen on only the Unix socket
+        ''
+          v;
+    };
+
+    unixSocket = lib.mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = ''
+        The path to the socket to bind to.
+
+        If a relative path is used, it will be relative to `dataDir`.
+      '';
+    };
+
+    unixSocketPerm = lib.mkOption {
+      type = types.int;
+      default = 660;
+      description = "Change permissions for the socket";
+      example = 600;
     };
 
     extraConfig = lib.mkOption {
@@ -43,6 +65,8 @@ in
               redisConfig = pkgs.writeText "redis.conf" ''
                 port ${toString config.port}
                 ${lib.optionalString (config.bind != null) "bind ${config.bind}"}
+                ${lib.optionalString (config.unixSocket != null) "unixsocket ${config.unixSocket}"}
+                ${lib.optionalString (config.unixSocket != null) "unixsocketperm ${builtins.toString config.unixSocketPerm}"}
                 ${config.extraConfig}
               '';
 
@@ -65,9 +89,22 @@ in
             {
               command = startScript;
 
-              readiness_probe = {
-                exec.command = "${config.package}/bin/redis-cli -p ${toString config.port} ping";
-              };
+              readiness_probe =
+                let
+                  # Transform `unixSocket` by prefixing `config.dataDir` if a relative path is used
+                  transformedSocketPath =
+                    if (config.unixSocket != null && (lib.hasPrefix "./" config.unixSocket)) then
+                      "${config.dataDir}/${config.unixSocket}"
+                    else
+                      config.unixSocket;
+                in
+                {
+                  exec.command =
+                    if (transformedSocketPath != null && config.port == 0) then
+                      "${config.package}/bin/redis-cli -s ${transformedSocketPath} ${toString config.port} ping"
+                    else
+                      "${config.package}/bin/redis-cli -p ${toString config.port} ping";
+                };
             };
         };
       };
