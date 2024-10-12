@@ -4,7 +4,7 @@ let
 in
 {
   options = {
-    package = lib.mkPackageOption pkgs "mongodb" { };
+    package = lib.mkPackageOption pkgs "mongodb-ce" { };
 
     bind = lib.mkOption {
       type = types.nullOr types.str;
