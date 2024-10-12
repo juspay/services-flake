@@ -147,8 +147,10 @@ in
                 export ES_HOME ES_JAVA_OPTS ES_PATH_CONF
 
                 # Install plugins
-                rm -f "${config.dataDir}/plugins"
-                ln -sf ${esPlugins}/plugins "${config.dataDir}/plugins"
+                rm -rf "${config.dataDir}/plugins"
+                cp -rL ${esPlugins}/plugins "${config.dataDir}/plugins"
+                find "${config.dataDir}/plugins" -type d -exec chmod u+w {} \;
+
                 rm -f "${config.dataDir}/lib"
                 ln -sf ${config.package}/lib "${config.dataDir}/lib"
                 rm -f "${config.dataDir}/modules"
@@ -183,17 +185,9 @@ in
             readiness_probe = {
               exec.command = "${pkgs.curl}/bin/curl -f -k http://${config.listenAddress}:${toString config.port}";
               initial_delay_seconds = 15;
-              period_seconds = 10;
               timeout_seconds = 2;
-              success_threshold = 1;
-              failure_threshold = 5;
             };
 
-            # https://github.com/F1bonacc1/process-compose#-auto-restart-if-not-healthy
-            availability = {
-              restart = "on_failure";
-              max_restarts = 5;
-            };
           };
       };
     };

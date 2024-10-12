@@ -16,7 +16,7 @@
       imports = [
         inputs.process-compose-flake.flakeModule
       ];
-      perSystem = { self', pkgs, lib, ... }: {
+      perSystem = { self', pkgs, config, lib, ... }: {
         # `process-compose.foo` will add a flake package output called "foo".
         # Therefore, this will add a default package that you can build using
         # `nix build` and run using `nix run`.
@@ -61,6 +61,9 @@
           };
 
         devShells.default = pkgs.mkShell {
+          inputsFrom = [
+            config.process-compose."default".services.outputs.devShell
+          ];
           nativeBuildInputs = [ pkgs.just ];
         };
       };

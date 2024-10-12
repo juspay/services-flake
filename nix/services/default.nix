@@ -2,10 +2,11 @@ let
   inherit (import ../lib.nix) multiService;
 in
 {
-  imports = builtins.map multiService [
+  imports = (builtins.map multiService [
     ./apache-kafka.nix
     ./clickhouse
     ./elasticsearch.nix
+    ./mongodb.nix
     ./mysql
     ./nginx
     ./ollama.nix
@@ -23,5 +24,8 @@ in
     ./weaviate.nix
     ./searxng.nix
     ./tika.nix
+  ]) ++ [
+    ./devshell.nix
   ];
+
 }

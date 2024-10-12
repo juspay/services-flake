@@ -2,7 +2,7 @@
 
 # services-flake
 
-`services-flake` provides declarative, composable, and reproducible services for Nix development environment, as a [process-compose-flake](https://github.com/Platonic-Systems/process-compose-flake) module (based on [flake-parts](https://flake.parts)). It enables users to have NixOS-like services on MacOS and Linux.
+`services-flake` provides declarative, composable and reproducible services for Nix development environment, as a [process-compose-flake](https://github.com/Platonic-Systems/process-compose-flake) module (based on [flake-parts](https://flake.parts)). It enables users to have NixOS-like services on MacOS and Linux.
 
 ![Demo](./doc/demo.gif)
 
@@ -49,7 +49,7 @@ See <https://community.flake.parts/services-flake/datadir>
 
 ## Discussions
 
-To discuss the project, please [join our Zulip](https://nixos.zulipchat.com/#narrow/stream/414011-services-flake).
+To discuss the project, please [join our Zulip](https://nixos.zulipchat.com/#narrow/stream/414011-services-flake) or post in [Github Discussions](https://github.com/juspay/services-flake/discussions).
 
 ## Contributing & Development
 

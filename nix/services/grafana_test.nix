@@ -62,6 +62,7 @@ in
           };
         }
       ];
+      declarativePlugins = with pkgs.grafanaPlugins; [ grafana-clickhouse-datasource ];
     };
 
   settings.processes.test =
@@ -71,7 +72,7 @@ in
     {
       # Tests based on: https://github.com/NixOS/nixpkgs/blob/master/nixos/tests/grafana/basic.nix
       command = pkgs.writeShellApplication {
-        runtimeInputs = [ cfg.package pkgs.gnugrep pkgs.curl pkgs.uutils-coreutils-noprefix ];
+        runtimeInputs = [ cfg.package pkgs.gnugrep pkgs.curl pkgs.uutils-coreutils-noprefix pkgs.jq ];
         text =
           ''
             ADMIN=${cfg.extraConf.security.admin_user}
@@ -83,6 +84,8 @@ in
             # The dashboard provisioner was used to create a dashboard.
             curl -sSfN -u $ADMIN:$PASSWORD $ROOT_URL/api/dashboards/uid/${dashboardUid} -i
             curl -sSfN -u $ADMIN:$PASSWORD $ROOT_URL/api/dashboards/uid/${dashboardUid} | grep '"title":"${dashboardTitle}"'
+            # Test for extra plugins added to grafana.
+            curl -sSfN -u $ADMIN:$PASSWORD $ROOT_URL/api/plugins | jq '.[] | select(.id == "grafana-clickhouse-datasource") | .enabled' | grep "true"
           '';
         name = "grafana-test";
       };

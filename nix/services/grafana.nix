@@ -71,6 +71,17 @@ in
       '';
     };
 
+    declarativePlugins = lib.mkOption {
+      type = with types; nullOr (listOf path);
+      default = null;
+      description = "If non-null, then a list of packages containing Grafana plugins to install. If set, plugins cannot be manually installed.";
+      example = "with pkgs.grafanaPlugins; [ grafana-piechart-panel ]";
+      # Make sure each plugin is added only once; otherwise building
+      # the link farm fails, since the same path is added multiple
+      # times.
+      apply = x: if lib.isList x then lib.unique x else x;
+    };
+
     providers = lib.mkOption {
       type = types.listOf yamlFormat.type;
       description = ''
@@ -129,6 +140,7 @@ in
                 mkdir -p $out/plugins
               '';
             };
+            declarativePlugins = pkgs.linkFarm "grafana-plugins" (builtins.map (pkg: { name = pkg.pname; path = pkg; }) config.declarativePlugins);
             startScript = pkgs.writeShellApplication {
               name = "start-grafana";
               runtimeInputs =
@@ -140,6 +152,7 @@ in
                 grafana server --config ${grafanaConfigIni} \
                                --homepath ${config.package}/share/grafana \
                                cfg:paths.data="$(readlink -m ${config.dataDir})" \
+                               ${lib.optionalString (config.declarativePlugins != null) "cfg:paths.plugins=${declarativePlugins}"} \
                                cfg:paths.provisioning="${provisioningConfig}"
               '';
             };
@@ -154,17 +167,9 @@ in
                 path = "/api/health";
               };
               initial_delay_seconds = 15;
-              period_seconds = 10;
               timeout_seconds = 2;
-              success_threshold = 1;
-              failure_threshold = 5;
             };
 
-            # https://github.com/F1bonacc1/process-compose#-auto-restart-if-not-healthy
-            availability = {
-              restart = "on_failure";
-              max_restarts = 5;
-            };
           };
       };
     };
