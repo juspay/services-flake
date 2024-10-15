@@ -34,6 +34,14 @@
       dev = {
         inherit overrideInputs;
         dir = "./dev";
+        steps = {
+          custom = {
+            cz-check = {
+              type = "app";
+              name = "cz-check";
+            };
+          };
+        };
       };
       doc = {
         dir = "./doc";
