@@ -27,6 +27,10 @@
         };
         dir = "./example/share-services/pgweb";
       };
+      without-flake-parts-example = {
+        inherit overrideInputs;
+        dir = "./example/without-flake-parts";
+      };
       test = {
         inherit overrideInputs;
         dir = "./test";
