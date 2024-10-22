@@ -7,7 +7,7 @@ order: -10
 
 ## New project
 
-Use the [template flake](https://github.com/juspay/services-flake/blob/main/example/flake.nix) provided by `services-flake`:
+Use the [template flake](https://github.com/juspay/services-flake/blob/main/example/simple/flake.nix) provided by `services-flake`:
 ```sh
 mkdir example && cd ./example
 nix flake init -t github:juspay/services-flake
