@@ -58,3 +58,10 @@ See <https://community.flake.parts/services-flake/contributing>
 ## Credits
 
 Thanks to [the devenv project](https://github.com/cachix/devenv/tree/main/src/modules/services), which originally inspired this project to provide the same for Nix flake users.
+
+### Thanks to all the contributors!
+
+<a href="https://github.com/juspay/services-flake/graphs/contributors">
+  <img src="https://contributors-img.web.app/image?repo=juspay/services-flake" alt="Contributors"/>
+</a>
+
