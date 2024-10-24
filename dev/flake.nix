@@ -9,6 +9,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.nixpkgs-stable.follows = "nixpkgs";
     };
+    cachix-push.url = "github:juspay/cachix-push";
+
     # CI will override `services-flake` to run checks on the latest source
     services-flake.url = "github:juspay/services-flake";
   };
@@ -19,9 +21,10 @@
         inputs.flake-root.flakeModule
         inputs.treefmt-nix.flakeModule
         inputs.pre-commit-hooks-nix.flakeModule
+        inputs.cachix-push.flakeModule
         ./nix/pre-commit.nix
       ];
-      perSystem = { pkgs, lib, config, ... }: {
+      perSystem = { self', pkgs, config, ... }: {
         treefmt = {
           projectRoot = inputs.services-flake;
           projectRootFile = "flake.nix";
@@ -30,6 +33,12 @@
           # flakeCheck = false; # pre-commit-hooks.nix checks this
           programs = {
             nixpkgs-fmt.enable = true;
+          };
+        };
+        cachix-push = {
+          cacheName = "services-flake";
+          pathsToCache = {
+            devshell = self'.devShells.default;
           };
         };
         devShells.default = pkgs.mkShell {

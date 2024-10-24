@@ -12,8 +12,17 @@ jobs:
     strategy:
       matrix:
         # Intel mac excluded; See https://github.com/juspay/services-flake/issues/231
-        system: [ x86_64-linux, aarch64-darwin ]
+        system: [x86_64-linux, aarch64-darwin]
     steps:
       - uses: actions/checkout@v4
+      - uses: cachix/cachix-action@v14
+        with:
+          name: services-flake
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+          skipPush: true
       - name: om ci
         run: om ci --extra-access-tokens "github.com=${{ secrets.GITHUB_TOKEN }}" run --systems "${{ matrix.system }}"
+      # Push the Nix cache
+      - name: Push to cachix
+        if: github.ref == 'refs/heads/main'
+        run: nix --option system "${{ matrix.system }}" run ./dev#cachix-push
