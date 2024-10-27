@@ -30,6 +30,12 @@
                   inputs.services-flake.processComposeModules.default
                   mod
                 ];
+                cli = {
+                  options = {
+                    use-uds = true;
+                    unix-socket = "pc-${name}.sock";
+                  };
+                };
               };
           in
           builtins.listToAttrs (builtins.map mkPackageFor ([
