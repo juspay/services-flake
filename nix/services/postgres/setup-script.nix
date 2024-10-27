@@ -127,12 +127,13 @@ in
       }
       trap 'remove_tmp_pg_init_sock_dir "$PGHOST"' EXIT
 
+      trap 'pg_ctl -D "$PGDATA" -m fast -w stop' EXIT
+
       pg_ctl -D "$PGDATA" -w start -o "-c unix_socket_directories=$PGHOST -c listen_addresses= -p ${toString config.port}"
+
       ${runInitialScript.before}
       ${setupInitialDatabases}
       ${runInitialScript.after}
-      pg_ctl -D "$PGDATA" -m fast -w stop
-      remove_tmp_pg_init_sock_dir "$PGHOST"
     else
       echo
       echo "PostgreSQL database directory appears to contain a database; Skipping initialization"
