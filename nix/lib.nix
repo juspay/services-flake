@@ -38,18 +38,6 @@
               '';
               default = {
                 namespace = lib.mkDefault config.namespace;
-                # https://github.com/F1bonacc1/process-compose#-auto-restart-if-not-healthy
-                availability = {
-                  restart = lib.mkDefault "on_failure";
-                  max_restarts = lib.mkDefault 5;
-                };
-                readiness_probe = {
-                  initial_delay_seconds = lib.mkDefault 2;
-                  period_seconds = lib.mkDefault 10;
-                  timeout_seconds = lib.mkDefault 4;
-                  success_threshold = lib.mkDefault 1;
-                  failure_threshold = lib.mkDefault 5;
-                };
               };
             };
             settings = lib.mkOption {

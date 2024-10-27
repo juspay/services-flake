@@ -284,8 +284,18 @@ in
                   # Turns out using `--defaults-file` alone doesn't make the readiness_probe work unless `MYSQL_UNIX_PORT` is set.
                   # Hence the use of `--socket`.
                   exec.command = "${config.package}/bin/mysqladmin --socket=${config.socketDir}/mysql.sock ping -h localhost";
+                  initial_delay_seconds = 2;
+                  period_seconds = 10;
+                  timeout_seconds = 4;
+                  success_threshold = 1;
+                  failure_threshold = 5;
                 };
 
+                # https://github.com/F1bonacc1/process-compose#-auto-restart-if-not-healthy
+                availability = {
+                  restart = "on_failure";
+                  max_restarts = 5;
+                };
               };
             "${name}-configure" = {
               command = configureScript;
