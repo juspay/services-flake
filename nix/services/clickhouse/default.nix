@@ -118,12 +118,14 @@ in
                         echo "Clickhouse is setting up the initial database."
                         set -m
                         clickhouse-server --config-file=${clickhouseConfig} &
+
+                        job_pid=$!
+                        trap 'kill $job_pid' EXIT
+
                         sleep 5s
                         echo "Clickhouse server started."
                         ${setupInitialDatabases}
                         echo "Clickhouse db setting is done."
-                        kill %1
-                        echo "Clickhouse server stopped."
                     fi
                   '';
                 };
