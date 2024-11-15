@@ -93,7 +93,7 @@ in
                 let
                   # Transform `unixSocket` by prefixing `config.dataDir` if a relative path is used
                   transformedSocketPath =
-                    if (config.unixSocket != null && (lib.hasPrefix "./" config.unixSocket)) then
+                    if (config.unixSocket != null && (! lib.hasPrefix "/" config.unixSocket)) then
                       "${config.dataDir}/${config.unixSocket}"
                     else
                       config.unixSocket;
