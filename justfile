@@ -26,7 +26,7 @@ ex-share-services:
 
 # Auto-format the project tree
 fmt:
-    treefmt
+    pre-commit run -a
 
 # Run native tests for all the services
 [group('test')]
