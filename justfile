@@ -24,10 +24,6 @@ ex-share-services:
             --override-input services-flake ../../.. \
             --override-input northwind ../northwind \
 
-# Auto-format the project tree
-fmt:
-    pre-commit run -a
-
 # Run native tests for all the services
 [group('test')]
 test-all:
