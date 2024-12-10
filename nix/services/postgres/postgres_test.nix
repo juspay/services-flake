@@ -81,6 +81,7 @@
         "pg1".condition = "process_healthy";
         "pg2".condition = "process_healthy";
         "pg3".condition = "process_healthy";
+        "pg4-init".condition = "process_completed";
       };
     };
 }
