@@ -1,5 +1,26 @@
 # Changelog for services-flake
 
+## 0.4.0 (Dec 10, 2024)
+
+✨ This release introduces two new services and includes bug fixes for existing ones.
+
+### 🚀 New Services
+
+- **mongodb** (by @greg-hellings in https://github.com/juspay/services-flake/pull/339)
+- **memcached** (by @secobarbital in https://github.com/juspay/services-flake/pull/314)
+
+### 🛠️ Miscellaneous features & fixes
+
+- **devShell**: Export packages of enabled services (by @shivaraj-bh in https://github.com/juspay/services-flake/pull/355). See [documentation](https://community.flake.parts/services-flake/devshell) for usage.
+- **redis**: Support using Unix socket (by @shivaraj-bh in https://github.com/juspay/services-flake/pull/353 and https://github.com/juspay/services-flake/issues/365). See [documentation](https://community.flake.parts/services-flake/redis#unix-socket).
+- Add `max_restarts` to all services to avoid restarting indefinitely (by @shivaraj-bh in https://github.com/juspay/services-flake/pull/311)
+- **grafana**: Add `declarativePlugins` option (by @conscious-puppet in https://github.com/juspay/services-flake/pull/356)
+- **clickhouse-init**: kill `clickhouse-server` on EXIT (by @shivaraj-bh in https://github.com/juspay/services-flake/pull/385)
+- **postgres**: Move `pg_ctl stop` to trap during init (by @shivaraj-bh in https://github.com/juspay/services-flake/commit/eb239b01894f58fd3f578ff2623e6d7b3509f783)
+- **postgres**: include `find` in `runtimeInputs` of setup script  (by @dzmitry-lahoda in https://github.com/juspay/services-flake/pull/340)
+- **elasticsearch**: Fixed permission to add to directories in elasticsearch plugins (by @secobarbital in https://github.com/juspay/services-flake/pull/332)
+
+
 ## 0.3.0 (Jul 29, 2024)
 
 This release introduces new services, primarily focused on [running AI chatbots locally](https://community.flake.parts/services-flake/llm) 🤖. It also includes a few non-breaking fixes and refactors 🔄 to promote DRY (Don’t Repeat Yourself) principles when adding new services.
