@@ -5,7 +5,7 @@
       check.enable = true;
       settings = {
         hooks = {
-          treefmt.enable = true;
+          nixpkgs-fmt.enable = true;
           commitizen.enable = true;
         };
       };

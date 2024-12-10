@@ -118,12 +118,14 @@ in
                         echo "Clickhouse is setting up the initial database."
                         set -m
                         clickhouse-server --config-file=${clickhouseConfig} &
+
+                        job_pid=$!
+                        trap 'kill $job_pid' EXIT
+
                         sleep 5s
                         echo "Clickhouse server started."
                         ${setupInitialDatabases}
                         echo "Clickhouse db setting is done."
-                        kill %1
-                        echo "Clickhouse server stopped."
                     fi
                   '';
                 };
@@ -154,8 +156,18 @@ in
                     host = "localhost";
                     port = if (lib.hasAttr "http_port" config.extraConfig) then config.extraConfig.http_port else 8123;
                   };
+                  initial_delay_seconds = 2;
+                  period_seconds = 10;
+                  timeout_seconds = 4;
+                  success_threshold = 1;
+                  failure_threshold = 5;
                 };
                 depends_on."${name}-init".condition = "process_completed_successfully";
+                # https://github.com/F1bonacc1/process-compose#-auto-restart-if-not-healthy
+                availability = {
+                  restart = "on_failure";
+                  max_restarts = 5;
+                };
               };
           };
       };
