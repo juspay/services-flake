@@ -93,7 +93,7 @@ in
       description = "Enable or disable access to web UI.";
     };
 
-    package = lib.mkPackageOption pkgs “minio” { };
+    package = lib.mkPackageOption pkgs "minio" { };
 
     buckets = lib.mkOption {
       default = [ ];
