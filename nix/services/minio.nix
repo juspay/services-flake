@@ -32,7 +32,7 @@ let
   };
 
   serverCommand = lib.escapeShellArgs [
-    "${config.package}/bin/minio"
+    (lib.getExe config.package)
     "server"
     "--json"
     "--address"
@@ -48,13 +48,13 @@ in
     host = lib.mkOption {
       default = "127.0.0.1";
       type = types.str;
-      description = "Host for minio to run on.";
+      description = "Host for minio to listen on.";
     };
 
     port = lib.mkOption {
       type = types.port;
       default = 9000;
-      description = "Port for minio to run on.";
+      description = "Port for minio to listen on.";
     };
 
     consoleAddress = lib.mkOption {
@@ -93,12 +93,7 @@ in
       description = "Enable or disable access to web UI.";
     };
 
-    package = lib.mkOption {
-      default = pkgs.minio;
-      defaultText = lib.literalExpression "pkgs.minio";
-      type = types.package;
-      description = "MinIO package to use.";
-    };
+    package = lib.mkPackageOption pkgs “minio” { };
 
     buckets = lib.mkOption {
       default = [ ];
