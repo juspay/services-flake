@@ -17,6 +17,7 @@ in
     ./zookeeper.nix
     ./grafana.nix
     ./memcached.nix
+    ./minio.nix
     ./prometheus.nix
     ./pgadmin.nix
     ./cassandra.nix
