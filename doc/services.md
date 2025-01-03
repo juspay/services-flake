@@ -14,6 +14,7 @@ short-title: Services
 - [[minio]]#
 - [[mongodb]]#
 - [[mysql]]#
+- [[nats-server]]#
 - [[nginx]]#
 - [[ollama]]#
 - [[open-webui]]#
