@@ -48,6 +48,7 @@
             "${inputs.services-flake}/nix/services/minio_test.nix"
             "${inputs.services-flake}/nix/services/mongodb_test.nix"
             "${inputs.services-flake}/nix/services/mysql/mysql_test.nix"
+            "${inputs.services-flake}/nix/services/nats-server_test.nix"
             "${inputs.services-flake}/nix/services/nginx/nginx_test.nix"
             "${inputs.services-flake}/nix/services/ollama_test.nix"
             "${inputs.services-flake}/nix/services/open-webui_test.nix"

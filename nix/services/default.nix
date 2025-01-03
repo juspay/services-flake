@@ -18,6 +18,7 @@ in
     ./grafana.nix
     ./memcached.nix
     ./minio.nix
+    ./nats-server.nix
     ./prometheus.nix
     ./pgadmin.nix
     ./cassandra.nix
