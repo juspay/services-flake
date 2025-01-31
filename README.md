@@ -1,5 +1,5 @@
 [![project chat](https://img.shields.io/badge/zulip-join_chat-brightgreen.svg)](https://nixos.zulipchat.com/#narrow/stream/414011-services-flake)
-[![Naiveté Compass of Mood](https://img.shields.io/badge/naïve-FF10F0)](https://srid.ca/coc "This project follows the 'Naiveté Compass of Mood'")
+[![Naiveté Compass of Mood](https://img.shields.io/badge/naïve-FF10F0)](https://compass.naivete.me/ "This project follows the 'Naiveté Compass of Mood'")
 
 # services-flake
 
