@@ -5,26 +5,32 @@
     process-compose-flake.url = "github:Platonic-Systems/process-compose-flake";
     services-flake.url = "github:juspay/services-flake";
   };
-  outputs = inputs:
+  outputs = { nixpkgs, process-compose-flake, services-flake, ... }:
     let
       supportedSystems = [ "x86_64-linux" "aarch64-darwin" ];
-      forAllSystems = inputs.nixpkgs.lib.genAttrs supportedSystems;
+      forAllSystems = f: nixpkgs.lib.genAttrs supportedSystems (system: f rec {
+        pkgs = import nixpkgs { inherit system; };
+        servicesMod = (import process-compose-flake.lib { inherit pkgs; }).evalModules {
+          modules = [
+            services-flake.processComposeModules.default
+            {
+              services.redis."r1".enable = true;
+            }
+          ];
+        };
+      });
     in
     {
-      packages = forAllSystems (system: (
-        let
-          pkgs = inputs.nixpkgs.legacyPackages.${system};
-        in
-        {
-          redis = (import inputs.process-compose-flake.lib { inherit pkgs; }).makeProcessCompose {
-            modules = [
-              inputs.services-flake.processComposeModules.default
-              {
-                services.redis."r1".enable = true;
-              }
-            ];
-          };
-        }
-      ));
+      packages = forAllSystems ({ servicesMod, ... }: {
+        default = servicesMod.config.outputs.package;
+      });
+
+      devShells = forAllSystems ({ pkgs, servicesMod }: {
+        default = pkgs.mkShell {
+          inputsFrom = [
+            servicesMod.config.services.outputs.devShell
+          ];
+        };
+      });
     };
 }
