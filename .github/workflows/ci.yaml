@@ -21,7 +21,7 @@ jobs:
           authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
           skipPush: true
       - name: om ci
-        run: om ci --extra-access-tokens "github.com=${{ secrets.GITHUB_TOKEN }}" run --systems "${{ matrix.system }}"
+        run: om ci run --extra-access-tokens "github.com=${{ secrets.GITHUB_TOKEN }}" --systems "${{ matrix.system }}"
       # Push the Nix cache
       - name: Push to cachix
         if: github.ref == 'refs/heads/main'
