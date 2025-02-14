@@ -1,8 +1,6 @@
 let
   inherit (import ../lib.nix) multiService;
-in
-{
-  imports = (builtins.map multiService [
+  services = [
     ./apache-kafka.nix
     ./clickhouse
     ./elasticsearch.nix
@@ -26,8 +24,14 @@ in
     ./weaviate.nix
     ./searxng.nix
     ./tika.nix
-  ]) ++ [
-    ./devshell.nix
   ];
+in
+{
+  processComposeModules = {
+    imports = (builtins.map (multiService "process-compose") services) ++ [ ./devShell.nix ];
+  };
 
+  homeModules = {
+    imports = (builtins.map (multiService "systemd") services) ++ (builtins.map (multiService "launchd") services);
+  };
 }

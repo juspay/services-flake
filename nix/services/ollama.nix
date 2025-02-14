@@ -74,6 +74,24 @@ in
 
   config = {
     outputs = {
+      launchd = {
+        "${name}" = lib.mkIf pkgs.stdenv.isDarwin {
+          config = {
+            enable = config.enable;
+            config = {
+              ProgramArguments = [ (lib.getExe config.package) "serve" ];
+              EnvironmentVariables = config.environment // {
+                OLLAMA_HOST = "${config.host}:${toString config.port}";
+              };
+              KeepAlive = {
+                Crashed = true;
+                SuccessfulExit = false;
+              };
+              ProcessType = "Background";
+            };
+          };
+        };
+      };
       settings = {
         processes = {
           "${name}" =

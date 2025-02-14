@@ -4,7 +4,7 @@
   # where module filename is of form `${name}.nix`. The submodule takes this
   # 'name' parameter, and is expected to set the final process-compose config in
   # its `outputs.settings` option.
-  multiService = mod:
+  multiService = process-manager-name: mod:
     { config, pkgs, lib, ... }:
     let
       # Derive name from filename
@@ -16,11 +16,13 @@
       serviceModule = { config, name, ... }: {
         options = {
           enable = lib.mkEnableOption "Enable the ${service}.<name> service";
+          # FIXME: process-compose option
           dataDir = lib.mkOption {
             type = lib.types.str;
             default = "./data/${name}";
             description = "The directory where all data for `${service}.<name>` is stored";
           };
+          # FIXME: process-compose option
           namespace = lib.mkOption {
             description = ''
               Namespace for the ${service} service
@@ -29,6 +31,8 @@
             type = lib.types.str;
           };
           outputs = {
+            # FIXME: Need better distinction for process-manager specific options.
+            # I also don't think this option should be under `outputs`.
             defaultProcessSettings = lib.mkOption {
               type = lib.types.deferredModule;
               internal = true;
@@ -40,6 +44,7 @@
                 namespace = lib.mkDefault config.namespace;
               };
             };
+            # FIXME: rename to `process-compose`
             settings = lib.mkOption {
               type = lib.types.lazyAttrsOf lib.types.raw;
               internal = true;
@@ -51,6 +56,16 @@
                   { imports = [ config.outputs.defaultProcessSettings cfg ]; }
                 );
               };
+            };
+            systemd = lib.mkOption {
+              type = lib.types.lazyAttrsOf lib.types.deferredModule;
+              internal = true;
+              default = { };
+            };
+            launchd = lib.mkOption {
+              type = lib.types.lazyAttrsOf lib.types.deferredModule;
+              internal = true;
+              default = { };
             };
           };
         };
@@ -72,7 +87,19 @@
           });
         };
       };
-      config = {
+      config = lib.optionalAttrs (process-manager-name == "launchd")
+        {
+          launchd.agents = lib.pipe config.services.${service} [
+            (lib.concatMapAttrs (_: cfg: lib.mapAttrs (_: cf: { ... }: { imports = [ cf ]; }) cfg.outputs.launchd))
+          ];
+        }
+      // lib.optionalAttrs (process-manager-name == "systemd") {
+        systemd.user.services = lib.pipe config.services.${service} [
+          (lib.filterAttrs (_: cfg: cfg.enable))
+          (lib.concatMapAttrs (_: cfg: cfg.outputs.systemd))
+        ];
+      }
+      // lib.optionalAttrs (process-manager-name == "process-compose") {
         settings = {
           imports =
             lib.pipe config.services.${service} [
