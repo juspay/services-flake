@@ -74,6 +74,38 @@ in
 
   config = {
     outputs = {
+      # systemd and launchd config based on https://github.com/nix-community/home-manager/blob/5031c6d2978109336637977c165f82aa49fa16a7/modules/services/ollama.nix#L78-L108
+      # TODO: refactor to reuse between all three outputs and also set sane defaults for `systemd` and `launchd`, just like `defaultProcessSettings`.
+      systemd."${name}" = lib.mkIf pkgs.stdenv.isLinux {
+        Unit = {
+          After = [ "network.target" ];
+        };
+        Service = {
+          ExecStart = "${lib.getExe ollamaPackage} serve";
+          Environment =
+            (lib.mapAttrsToList (n: v: "${n}=${v}") config.environment)
+            ++ [ "OLLAMA_HOST=${config.host}:${toString config.port}" ];
+        };
+        Install = { WantedBy = [ "default.target" ]; };
+      };
+      launchd = {
+        "${name}" = lib.mkIf pkgs.stdenv.isDarwin {
+          config = {
+            enable = config.enable;
+            config = {
+              ProgramArguments = [ (lib.getExe config.package) "serve" ];
+              EnvironmentVariables = config.environment // {
+                OLLAMA_HOST = "${config.host}:${toString config.port}";
+              };
+              KeepAlive = {
+                Crashed = true;
+                SuccessfulExit = false;
+              };
+              ProcessType = "Background";
+            };
+          };
+        };
+      };
       settings = {
         processes = {
           "${name}" =
