@@ -16,13 +16,13 @@
       serviceModule = { config, name, ... }: {
         options = {
           enable = lib.mkEnableOption "Enable the ${service}.<name> service";
-          # FIXME: process-compose option
+          # FIXME: `multiService` lib should be devoid of process-compose specific options
           dataDir = lib.mkOption {
             type = lib.types.str;
             default = "./data/${name}";
             description = "The directory where all data for `${service}.<name>` is stored";
           };
-          # FIXME: process-compose option
+          # FIXME: `multiService` lib should be devoid of process-compose specific options
           namespace = lib.mkOption {
             description = ''
               Namespace for the ${service} service
@@ -31,8 +31,7 @@
             type = lib.types.str;
           };
           outputs = {
-            # FIXME: Need better distinction for process-manager specific options.
-            # I also don't think this option should be under `outputs`.
+            # FIXME: `multiService` lib should be devoid of process-compose specific options
             defaultProcessSettings = lib.mkOption {
               type = lib.types.deferredModule;
               internal = true;
