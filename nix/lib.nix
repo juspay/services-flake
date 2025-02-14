@@ -4,7 +4,7 @@
   # where module filename is of form `${name}.nix`. The submodule takes this
   # 'name' parameter, and is expected to set the final process-compose config in
   # its `outputs.settings` option.
-  multiService = process-manager-name: mod:
+  multiService = name: mod:
     { config, pkgs, lib, ... }:
     let
       # Derive name from filename
@@ -87,19 +87,17 @@
           });
         };
       };
-      config = lib.optionalAttrs (process-manager-name == "launchd")
+      config = lib.optionalAttrs (name == "homeModules")
         {
+          systemd.user.services = lib.pipe config.services.${service} [
+            (lib.filterAttrs (_: cfg: cfg.enable))
+            (lib.concatMapAttrs (_: cfg: cfg.outputs.systemd))
+          ];
           launchd.agents = lib.pipe config.services.${service} [
             (lib.concatMapAttrs (_: cfg: lib.mapAttrs (_: cf: { ... }: { imports = [ cf ]; }) cfg.outputs.launchd))
           ];
         }
-      // lib.optionalAttrs (process-manager-name == "systemd") {
-        systemd.user.services = lib.pipe config.services.${service} [
-          (lib.filterAttrs (_: cfg: cfg.enable))
-          (lib.concatMapAttrs (_: cfg: cfg.outputs.systemd))
-        ];
-      }
-      // lib.optionalAttrs (process-manager-name == "process-compose") {
+      // lib.optionalAttrs (name == "processComposeModules") {
         settings = {
           imports =
             lib.pipe config.services.${service} [

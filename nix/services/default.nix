@@ -28,10 +28,15 @@ let
 in
 {
   processComposeModules = {
-    imports = (builtins.map (multiService "process-compose") services) ++ [ ./devShell.nix ];
+    imports = (builtins.map (multiService "processComposeModules") services) ++ [ ./devShell.nix ];
   };
 
   homeModules = {
-    imports = (builtins.map (multiService "systemd") services) ++ (builtins.map (multiService "launchd") services);
+    imports = (builtins.map (multiService "homeModules") services);
+    # imports = lib.pipe services [
+    #   (map (multiService "systemd"))
+    #   (map (multiService "launchd"))
+    # ];
+    # imports = (builtins.map (multiService "systemd") services) ++ (builtins.map (multiService "launchd") services);
   };
 }
