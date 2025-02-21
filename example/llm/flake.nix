@@ -19,6 +19,10 @@
         imports = [
           inputs.services-flake.processComposeModules.default
         ];
+        cli = {
+          # Disable the process-compose HTTP server
+          options.no-server = true;
+        };
         services = let dataDirBase = "$HOME/.services-flake/llm"; in {
           # Backend service to perform inference on LLM models
           ollama."ollama1" = {
