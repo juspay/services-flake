@@ -32,6 +32,8 @@
                 ];
                 cli = {
                   options = {
+                    # HTTP server disabled by default but we need it here for tests
+                    no-server = false;
                     use-uds = true;
                     unix-socket = "pc-${name}.sock";
                   };
