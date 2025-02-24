@@ -16,6 +16,21 @@
       imports = [
         inputs.process-compose-flake.flakeModule
       ];
+      flake = {
+        nixosConfigurations.container = inputs.nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules =
+            [ ({ pkgs, ... }: {
+                boot.isContainer = true;
+                environment.systemPackages = [ inputs.self.packages.x86_64-linux.default ];
+                system.stateVersion = "24.11";
+                users.users."user" = { isNormalUser = true; initialPassword = ""; };
+              })
+            ];
+        };
+      };
+
+
       perSystem = { self', pkgs, config, lib, ... }: {
         # `process-compose.foo` will add a flake package output called "foo".
         # Therefore, this will add a default package that you can build using

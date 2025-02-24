@@ -10,3 +10,4 @@
 /example/grafana-tempo/data/
 
 /.pre-commit-config.yaml
+/.tmp

@@ -1,3 +1,6 @@
+UID := `id -u`
+CONT := ("test" + UID)
+
 # List all the just commands
 default:
     @just --list
@@ -10,6 +13,13 @@ changelog:
 [group('example')]
 ex-simple:
     cd ./example/simple && nix run . --override-input services-flake ../..
+
+ex-simple-container:
+    set -x
+    sudo nixos-container destroy {{CONT}}
+    sudo nixos-container create {{CONT}} --flake ./example/simple
+    sudo nixos-container start {{CONT}}
+    sudo nixos-container run {{CONT}} -- su - user -c sh -c "default --tui=false"
 
 # Run example/llm
 [group('example')]
