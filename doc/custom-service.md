@@ -89,7 +89,6 @@ Let's write the same `hello` service as above, in `hello.nix`, but this time as 
 { config, lib, name, pkgs, ... }:
 {
   options = {
-    enable = lib.mkEnableOption "Enable ${name} service";
     package = lib.mkPackageOption pkgs "hello" { };
     message = lib.mkOption {
       type = lib.types.str;
@@ -111,7 +110,7 @@ The primary differences from the single instance service are:
 
 - The module now takes an additional argument `name`, which is the name of the instance of the service.
 - We no longer have to write the `config` block, as it is now handled by the library by importing the `outputs.settings` option.
-- And we don't have to write `options.services."${name}"`, as that is abstracted away by the library.
+- And we don't have to write `options.services."${name}"` or define `enable` and `dataDir` options, as that is abstracted away by the library.
 
 Now that we have defined the multi-instance service, we can import it in our flake:
 
