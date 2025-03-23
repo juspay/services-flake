@@ -38,11 +38,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1741865919,
-        "narHash": "sha256-4thdbnP6dlbdq+qZWTsm4ffAwoS8Tiq1YResB+RP6WE=",
+        "lastModified": 1742578646,
+        "narHash": "sha256-GiQ40ndXRnmmbDZvuv762vS+gew1uDpFwOfgJ8tLiEs=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "573c650e8a14b2faa0041645ab18aed7e60f0c9a",
+        "rev": "94c4dbe77c0740ebba36c173672ca15a7926c993",
         "type": "github"
       },
       "original": {
@@ -84,11 +84,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1741310760,
-        "narHash": "sha256-aizILFrPgq/W53Jw8i0a1h1GZAAKtlYOrG/A5r46gVM=",
+        "lastModified": 1741865919,
+        "narHash": "sha256-4thdbnP6dlbdq+qZWTsm4ffAwoS8Tiq1YResB+RP6WE=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "de0fe301211c267807afd11b12613f5511ff7433",
+        "rev": "573c650e8a14b2faa0041645ab18aed7e60f0c9a",
         "type": "github"
       },
       "original": {
@@ -109,11 +109,11 @@
       },
       "locked": {
         "dir": "example/share-services/northwind",
-        "lastModified": 1741480296,
-        "narHash": "sha256-VPuFdtQr5EdaulCh2a7gs/M0fnRKu+la21HqF220apE=",
+        "lastModified": 1742085531,
+        "narHash": "sha256-Hm3IEWrWm5Tkaj+in+unJMpVG6n/W8RGiPs9qC2qe3o=",
         "owner": "juspay",
         "repo": "services-flake",
-        "rev": "9e4b76c053400e58cee49e5cca4d10b0b10f73ab",
+        "rev": "4eef5c526f72dfa2cae102eba3237c24b44e13cc",
         "type": "github"
       },
       "original": {
@@ -181,11 +181,11 @@
     },
     "services-flake": {
       "locked": {
-        "lastModified": 1740875886,
-        "narHash": "sha256-jdY2BdRw6RDYCSuuM/P27Fe46Z5FsZ44AoTb6LAIueY=",
+        "lastModified": 1741480296,
+        "narHash": "sha256-VPuFdtQr5EdaulCh2a7gs/M0fnRKu+la21HqF220apE=",
         "owner": "juspay",
         "repo": "services-flake",
-        "rev": "c0860f08e38f858448eafbfd2641f45150de1485",
+        "rev": "9e4b76c053400e58cee49e5cca4d10b0b10f73ab",
         "type": "github"
       },
       "original": {
@@ -196,11 +196,11 @@
     },
     "services-flake_2": {
       "locked": {
-        "lastModified": 1741480296,
-        "narHash": "sha256-VPuFdtQr5EdaulCh2a7gs/M0fnRKu+la21HqF220apE=",
+        "lastModified": 1742085531,
+        "narHash": "sha256-Hm3IEWrWm5Tkaj+in+unJMpVG6n/W8RGiPs9qC2qe3o=",
         "owner": "juspay",
         "repo": "services-flake",
-        "rev": "9e4b76c053400e58cee49e5cca4d10b0b10f73ab",
+        "rev": "4eef5c526f72dfa2cae102eba3237c24b44e13cc",
         "type": "github"
       },
       "original": {
