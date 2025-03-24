@@ -221,7 +221,9 @@ in
               '';
             };
 
-            runInitialScript = lib.optionalString (config.initialScript != null) ''echo ${lib.escapeShellArg config.initialScript} | MYSQL_PWD="" mysql -u root -N
+            mysqlCommand = "mysql ${mysqlOptions} -u root";
+
+            runInitialScript = lib.optionalString (config.initialScript != null) ''echo ${lib.escapeShellArg config.initialScript} | MYSQL_PWD="" ${mysqlCommand} -N
 '';
 
             configureScript = pkgs.writeShellApplication {
@@ -233,7 +235,7 @@ in
                 ${lib.concatMapStrings (database: ''
                     # Create initial databases
                     exists="$(
-                      MYSQL_PWD="" mysql -u root -sB information_schema \
+                      MYSQL_PWD="" ${mysqlCommand} -sB information_schema \
                         <<< 'select count(*) from schemata where schema_name = "${database.name}"'
                     )"
                     if [[ "$exists" -eq 0 ]]; then
@@ -252,7 +254,7 @@ in
                           find ${database.schema} -type f -name '*.sql' -print0 | xargs -0 cat
                       fi
                     ''}
-                      ) | MYSQL_PWD="" mysql -u root -N
+                      ) | MYSQL_PWD="" ${mysqlCommand} -N
                     else
                       echo "Database ${database.name} exists, skipping creation."
                     fi
@@ -267,7 +269,7 @@ in
                         echo "GRANT ${permission} ON ${database} TO '${user.name}'@'localhost';"
                       '')
                       user.ensurePermissions)}
-                    ) | MYSQL_PWD="" mysql -u root -N
+                    ) | MYSQL_PWD="" ${mysqlCommand} -N
                   '')
                   config.ensureUsers}
 
