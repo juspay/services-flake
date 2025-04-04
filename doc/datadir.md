@@ -25,6 +25,13 @@ The data directory structure will look like this:
 |   |-- rd
 ```
 
+## Reset state
+
+`dataDir` of a service is where the service persists its state. Resetting the state will not only give the service a fresh start but in some cases, like [[clickhouse]] or other database services, it loads the updated schema/database-init-scripts. To reset the state of an instance of a service, `x`, where `x` is declared in your configuration like `services.<name>.x`, follow:
+- Close the `process-compose` process
+- `rm -rf $PWD/data/x`
+- Start the `process-compose` process
+
 ## Gotchas
 
 {#socket-path}
