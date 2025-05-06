@@ -24,6 +24,8 @@
     };
   services.mysql.m3 = {
     enable = true;
+    # Test whether `-` is allowed in a database name. See https://github.com/juspay/services-flake/issues/513
+    initialDatabases = [{ name = "test-database"; }];
     importTimeZones = true;
     package = pkgs.mysql80;
     settings.mysqld.port = 3309;
@@ -88,6 +90,12 @@
             echo "success! baz table not found"
           else
             echo "baz table shoudn't exist"
+            exit 1
+          fi
+
+          databases_count=$(echo "SHOW DATABASES LIKE 'test-database';" | MYSQL_PWD="" mysql -h 127.0.0.1 -P 3309 -u root | wc -l)
+          if [ "$databases_count" -eq 0 ]; then
+            echo "test-database doesn't exist in m3"
             exit 1
           fi
         '';
