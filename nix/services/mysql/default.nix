@@ -238,9 +238,9 @@ in
                     )"
                     if [[ "$exists" -eq 0 ]]; then
                       echo "Creating initial database: ${database.name}"
-                      ( echo "create database ${database.name};"
+                      ( echo "create database \`${database.name}\`;"
                         ${lib.optionalString (database.schema != null) ''
-                      echo "use ${database.name};"
+                      echo "use \`${database.name}\`;"
                       # TODO: this silently falls through if database.schema does not exist,
                       # we should catch this somehow and exit, but can't do it here because we're in a subshell.
                       if [ -f "${database.schema}" ]
