@@ -26,6 +26,7 @@ in
     ./weaviate.nix
     ./searxng.nix
     ./tika.nix
+    ./phpfpm.nix
   ]) ++ [
     ./devshell.nix
   ];
