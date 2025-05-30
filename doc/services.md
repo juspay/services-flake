@@ -18,6 +18,7 @@ short-title: Services
 - [[nginx]]#
 - [[ollama]]#
 - [[open-webui]]#
+- [[phpfpm]]#
 - [[postgresql]]#
   - [[pgadmin]]
 - [[prometheus]]#
