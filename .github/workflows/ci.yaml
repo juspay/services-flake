@@ -6,7 +6,7 @@ on:
   pull_request:
 jobs:
   checks:
-    runs-on: ${{ matrix.system }}
+    runs-on: ${{ matrix.runner }}
     permissions:
       contents: read
     strategy:
@@ -30,14 +30,16 @@ jobs:
           nix profile install nixpkgs#omnix
       # ⤴️
 
-      - uses: cachix/cachix-action@v14
+      - name: "Cachix: Configure"
+        uses: cachix/cachix-action@v14
         with:
           name: services-flake
           authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
           skipPush: true
-      - name: om ci
+
+      - name: Build all flake outputs
         run: om ci run --extra-access-tokens "github.com=${{ secrets.GITHUB_TOKEN }}" --systems "${{ matrix.system }}"
-      # Push the Nix cache
-      - name: Push to cachix
+
+      - name: "Cachix: Push"
         if: github.ref == 'refs/heads/main'
         run: nix --option system "${{ matrix.system }}" run ./dev#cachix-push
