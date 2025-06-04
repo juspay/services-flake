@@ -31,11 +31,17 @@ jobs:
       # ⤴️
 
       - name: "Cachix: Configure"
-        uses: cachix/cachix-action@v16
+        uses: cachix/cachix-action@v14
         with:
           name: services-flake
           authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
           skipPush: true
+          # The default `installCommand` fails with:
+          # ```
+          # /bin/bash -c nix-env --quiet -j8 -iA cachix -f https://cachix.org/api/v1/install
+          # error: profile '/Users/runner/.local/state/nix/profiles/profile' is incompatible with 'nix-env'; please use 'nix profile' instead
+          # ```
+          installCommand: "nix profile install nixpkgs#cachix"
 
       - name: Build all flake outputs
         run: om ci run --extra-access-tokens "github.com=${{ secrets.GITHUB_TOKEN }}" --systems "${{ matrix.system }}"
