@@ -6,23 +6,46 @@ on:
   pull_request:
 jobs:
   checks:
-    runs-on: ${{ matrix.system }}
+    runs-on: ${{ matrix.runner }}
     permissions:
       contents: read
     strategy:
       matrix:
-        # Intel mac excluded; See https://github.com/juspay/services-flake/issues/231
-        system: [x86_64-linux, aarch64-darwin]
+        include:
+          - runner: x86_64-linux
+            system: x86_64-linux
+            # Our Mac Studios are b0rked, so we use GitHub mac runner.
+          - runner: macos-latest
+            system: aarch64-darwin
     steps:
       - uses: actions/checkout@v4
-      - uses: cachix/cachix-action@v14
+
+      # ⤵️ The steps are run only on GitHub runners
+      - name: "Install Nix"
+        if: matrix.runner == 'macos-latest'
+        uses: DeterminateSystems/nix-installer-action@main
+      - name: "Install attic and omnix"
+        if: matrix.runner == 'macos-latest'
+        run: |
+          nix profile install nixpkgs#omnix
+      # ⤴️
+
+      - name: "Cachix: Configure"
+        uses: cachix/cachix-action@v14
         with:
           name: services-flake
           authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
           skipPush: true
-      - name: om ci
+          # The default `installCommand` fails with:
+          # ```
+          # /bin/bash -c nix-env --quiet -j8 -iA cachix -f https://cachix.org/api/v1/install
+          # error: profile '/Users/runner/.local/state/nix/profiles/profile' is incompatible with 'nix-env'; please use 'nix profile' instead
+          # ```
+          installCommand: "nix profile install nixpkgs#cachix"
+
+      - name: Build all flake outputs
         run: om ci run --extra-access-tokens "github.com=${{ secrets.GITHUB_TOKEN }}" --systems "${{ matrix.system }}"
-      # Push the Nix cache
-      - name: Push to cachix
+
+      - name: "Cachix: Push"
         if: github.ref == 'refs/heads/main'
         run: nix --option system "${{ matrix.system }}" run ./dev#cachix-push
