@@ -129,7 +129,7 @@ in
 
       trap 'pg_ctl -D "$PGDATA" -m fast -w stop' EXIT
 
-      pg_ctl -D "$PGDATA" -w start -o "-c unix_socket_directories=$PGHOST -c listen_addresses= -p ${toString config.port}"
+      pg_ctl -D "$PGDATA" -w start -o "-c unix_socket_directories=\"$PGHOST\" -c listen_addresses= -p ${toString config.port}"
 
       ${runInitialScript.before}
       ${setupInitialDatabases}
