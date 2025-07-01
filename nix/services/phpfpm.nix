@@ -83,6 +83,24 @@ in
         }
       '';
     };
+
+    globalSettings = lib.mkOption {
+      type = configType;
+      default = { };
+      description = ''
+        PHP-FPM global directives. Refer to the "List of global php-fpm.conf directives" section of
+        <https://www.php.net/manual/en/install.fpm.configuration.php>
+        for details. Note that settings names must be enclosed in quotes (e.g.
+        `"pm.max_children"` instead of `pm.max_children`).
+        Do not specify the options `error_log` or
+        `daemonize` here, since they are generated.
+      '';
+      example = lib.literalExpression ''
+        {
+          "log_level" = "debug";
+        }
+      '';
+    };
   };
   config = {
     extraConfig.listen = lib.mkDefault config.listen;
@@ -94,6 +112,7 @@ in
             [global]
             daemonize = no
             error_log = /proc/self/fd/2
+            ${lib.concatStringsSep "\n" (lib.mapAttrsToList (n: v: "${n} = ${toStr v}") config.globalSettings)}
 
             [${name}]
             ${lib.concatStringsSep "\n" (lib.mapAttrsToList (n: v: "${n} = ${toStr v}") config.extraConfig)}
