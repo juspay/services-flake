@@ -108,11 +108,13 @@ in
     outputs.settings = {
       processes.${name} =
         let
+          mergedGlobalSettings = {
+            "daemonize" = false;
+            "error_log" = "/proc/self/fd/2";
+          } // config.globalSettings;
           cfgFile = pkgs.writeText "phpfpm-${name}.conf" ''
             [global]
-            daemonize = no
-            error_log = /proc/self/fd/2
-            ${lib.concatStringsSep "\n" (lib.mapAttrsToList (n: v: "${n} = ${toStr v}") config.globalSettings)}
+            ${lib.concatStringsSep "\n" (lib.mapAttrsToList (n: v: "${n} = ${toStr v}") mergedGlobalSettings)}
 
             [${name}]
             ${lib.concatStringsSep "\n" (lib.mapAttrsToList (n: v: "${n} = ${toStr v}") config.extraConfig)}
