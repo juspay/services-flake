@@ -12,6 +12,9 @@
     phpEnv = {
       TMPDIR = "/tmp";
     };
+    globalSettings = {
+      "log_level" = "debug";
+    };
   };
 
   services.phpfpm."phpfpm2" = {
