@@ -156,9 +156,9 @@ in
             {
               exec.command =
                 if (builtins.isInt config.listen) then
-                  "${pkgs.fcgi}/bin/cgi-fcgi -bind -connect 127.0.0.1:${toString config.listen}"
+                  "env -i ${pkgs.fcgi}/bin/cgi-fcgi -bind -connect 127.0.0.1:${toString config.listen}"
                 else
-                  "${pkgs.fcgi}/bin/cgi-fcgi -bind -connect ${transformedListen}";
+                  "env -i ${pkgs.fcgi}/bin/cgi-fcgi -bind -connect ${transformedListen}";
 
               initial_delay_seconds = 2;
               period_seconds = 10;
