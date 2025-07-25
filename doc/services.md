@@ -19,6 +19,7 @@ short-title: Services
 - [[ollama]]#
 - [[open-webui]]#
 - [[phpfpm]]#
+- [[plantuml]]#
 - [[postgresql]]#
   - [[pgadmin]]
 - [[prometheus]]#

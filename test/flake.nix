@@ -54,6 +54,7 @@
             "${inputs.services-flake}/nix/services/ollama_test.nix"
             "${inputs.services-flake}/nix/services/open-webui_test.nix"
             "${inputs.services-flake}/nix/services/pgadmin_test.nix"
+            "${inputs.services-flake}/nix/services/plantuml_test.nix"
             "${inputs.services-flake}/nix/services/phpfpm_test.nix"
             "${inputs.services-flake}/nix/services/postgres/postgres_test.nix"
             "${inputs.services-flake}/nix/services/prometheus_test.nix"
