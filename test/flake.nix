@@ -47,7 +47,6 @@
             "${inputs.services-flake}/nix/services/grafana_test.nix"
             "${inputs.services-flake}/nix/services/memcached_test.nix"
             "${inputs.services-flake}/nix/services/minio_test.nix"
-            "${inputs.services-flake}/nix/services/mongodb_test.nix"
             "${inputs.services-flake}/nix/services/mysql/mysql_test.nix"
             "${inputs.services-flake}/nix/services/nats-server_test.nix"
             "${inputs.services-flake}/nix/services/nginx/nginx_test.nix"
@@ -69,6 +68,11 @@
             # Fails on macOS with: `error: chmod '"/nix/store/rcx3n94ygmd61rrv2p22sykhk0yx49n4-elasticsearch-7.17.16/modules/x-pack-ml/platform/darwin-aarch64/controller.app"': Operation not permitted`
             # Related: https://github.com/NixOS/nix/issues/6765
             "${inputs.services-flake}/nix/services/elasticsearch_test.nix"
+          ]
+          # Tests on non-linux host only
+          ++ lib.optionals (!pkgs.stdenv.hostPlatform.isLinux) [
+            # Fails on Linux due to Nix's build sandbox constraints, see https://github.com/NixOS/nixpkgs/issues/377016#issuecomment-2614610914
+            "${inputs.services-flake}/nix/services/mongodb_test.nix"
           ]));
       };
     };
