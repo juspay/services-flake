@@ -12,7 +12,13 @@
     imports = [
       inputs.process-compose-flake.flakeModule
     ];
-    perSystem = { self', pkgs, lib, ... }: {
+    perSystem = { self', pkgs, lib, system, ... }: {
+      _module.args.pkgs = import inputs.nixpkgs {
+        inherit system;
+        config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
+          "open-webui"
+        ];
+      };
       packages.default = self'.packages.services-flake-llm;
 
       process-compose."services-flake-llm" = pc: {
