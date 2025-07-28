@@ -52,7 +52,6 @@
             "${inputs.services-flake}/nix/services/open-webui_test.nix"
             "${inputs.services-flake}/nix/services/pgadmin_test.nix"
             "${inputs.services-flake}/nix/services/plantuml_test.nix"
-            "${inputs.services-flake}/nix/services/phpfpm_test.nix"
             "${inputs.services-flake}/nix/services/postgres/postgres_test.nix"
             "${inputs.services-flake}/nix/services/prometheus_test.nix"
             "${inputs.services-flake}/nix/services/redis_test.nix"
@@ -63,6 +62,15 @@
             "${inputs.services-flake}/nix/services/weaviate_test.nix"
             "${inputs.services-flake}/nix/services/zookeeper_test.nix"
           ] ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+            # `phpfpm` test fails on aarch64-darwin:
+            # [phpfpm1        ] [28-Jul-2025 13:05:47.512506] DEBUG: pid 90757, fpm_stdio_save_original_stderr(), line 81: saving original STDERR fd: dup()
+            # [phpfpm1        ] [28-Jul-2025 13:05:47.512606] ERROR: pid 90757, fpm_stdio_open_error_log(), line 386: failed to open error_log (/proc/self/fd/2): No such file or directory (2)
+            # [phpfpm1        ] [28-Jul-2025 13:05:47.512647] ERROR: pid 90757, fpm_conf_init_main(), line 1882: failed to post process the configuration
+            # [phpfpm1        ] [28-Jul-2025 13:05:47.512661] ERROR: pid 90757, fpm_init(), line 72: FPM initialization failed
+            # [phpfpm2        ] [28-Jul-2025 13:05:47] ERROR: failed to open error_log (/proc/self/fd/2): No such file or directory (2)
+            # [phpfpm2        ] [28-Jul-2025 13:05:47] ERROR: failed to post process the configuration
+            # [phpfpm2        ] [28-Jul-2025 13:05:47] ERROR: FPM initialization failed
+            "${inputs.services-flake}/nix/services/phpfpm_test.nix"
             # `mysql80` package fails to build on aarch64-darwin with:
             # libc++abi: terminating due to uncaught exception of type std::runtime_error: opening input file: No such file or directory
             # /nix/store/w3q1nvfb44cmc0a3pdky0654ll7nca7n-signing-utils: line 24: 75907 Abort trap: 6           /nix/store/dqrpsqnanf3cr9nalcnl7pvbdwrqrwfk-sigtool-0.1.3/bin/sigtool --file "$file" check-requires-signature
