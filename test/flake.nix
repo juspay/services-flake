@@ -61,6 +61,7 @@
             "${inputs.services-flake}/nix/services/tika_test.nix"
             "${inputs.services-flake}/nix/services/weaviate_test.nix"
             "${inputs.services-flake}/nix/services/zookeeper_test.nix"
+            "${inputs.services-flake}/nix/services/pubsub-emulator_test.nix"
           ] ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
             # `phpfpm` test fails on aarch64-darwin:
             # [phpfpm1        ] [28-Jul-2025 13:05:47.512506] DEBUG: pid 90757, fpm_stdio_save_original_stderr(), line 81: saving original STDERR fd: dup()

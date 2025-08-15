@@ -28,6 +28,7 @@ in
     ./searxng.nix
     ./tika.nix
     ./phpfpm.nix
+    ./pubsub-emulator.nix
   ]) ++ [
     ./devshell.nix
   ];

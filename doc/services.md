@@ -29,3 +29,4 @@ short-title: Services
 - [[tika]]#
 - [[weaviate]]#
 - [[zookeeper]]#
+- [[pubsub-emulator]]#
