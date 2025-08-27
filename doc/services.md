@@ -5,6 +5,7 @@ short-title: Services
 # Supported services
 
 - [[apache-kafka]]#
+- [[azurite]]#
 - [[cassandra]]#
 - [[clickhouse]]#
 - [[elasticsearch]]#

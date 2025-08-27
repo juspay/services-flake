@@ -4,6 +4,7 @@ in
 {
   imports = (builtins.map multiService [
     ./apache-kafka.nix
+    ./azurite.nix
     ./clickhouse
     ./elasticsearch.nix
     ./mongodb.nix
