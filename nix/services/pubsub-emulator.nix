@@ -6,11 +6,11 @@ in
   options = {
     google-cloud-sdk = lib.mkOption {
       type = types.package;
-      description = ‘'
+      description = ''
         Which package of google-cloud-sdk to use
         
         Note: google-cloud-sdk used must include the `pubsub-emulator` component
-       '';
+      '';
       default = pkgs.google-cloud-sdk.withExtraComponents [ pkgs.google-cloud-sdk.components.pubsub-emulator ];
       defaultText = lib.literalExpression "pkgs.google-cloud-sdk.withExtraComponents [ pkgs.google-cloud-sdk.components.pubsub-emulator ]";
     };
@@ -45,7 +45,7 @@ in
             {
               command = pkgs.writeShellApplication {
                 name = "start-pubsub-emulator";
-                runtimeInputs = [ config.package config.jre ];
+                runtimeInputs = [ config.google-cloud-sdk config.jre ];
                 text = ''
                   mkdir -p "${config.dataDir}"
                   export JAVA_HOME=${config.jre}
