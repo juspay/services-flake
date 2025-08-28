@@ -54,6 +54,7 @@
             "${inputs.services-flake}/nix/services/plantuml_test.nix"
             "${inputs.services-flake}/nix/services/postgres/postgres_test.nix"
             "${inputs.services-flake}/nix/services/prometheus_test.nix"
+            "${inputs.services-flake}/nix/services/pubsub-emulator_test.nix"
             "${inputs.services-flake}/nix/services/redis_test.nix"
             "${inputs.services-flake}/nix/services/redis-cluster_test.nix"
             "${inputs.services-flake}/nix/services/searxng_test.nix"

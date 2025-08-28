@@ -23,6 +23,7 @@ short-title: Services
 - [[postgresql]]#
   - [[pgadmin]]
 - [[prometheus]]#
+- [[pubsub-emulator]]#
 - [[redis]]#
   - [[redis-cluster]]
 - [[searxng]]#
