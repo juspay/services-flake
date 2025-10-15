@@ -16,16 +16,5 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: "Cachix: Configure"
-        uses: cachix/cachix-action@v14
-        with:
-          name: services-flake
-          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
-          skipPush: true
-
       - name: Build all flake outputs
         run: om ci run --extra-access-tokens "github.com=${{ secrets.GITHUB_TOKEN }}" --systems "${{ matrix.system }}"
-
-      - name: "Cachix: Push"
-        if: github.ref == 'refs/heads/main'
-        run: nix --option system "${{ matrix.system }}" run ./dev#cachix-push

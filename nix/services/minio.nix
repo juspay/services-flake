@@ -12,9 +12,9 @@ let
       export MINIO_DATA_DIR="${MINIO_DATA_DIR}"
       export MINIO_CONFIG_DIR="${MINIO_CONFIG_DIR}"
       mkdir -p "$MINIO_DATA_DIR" "$MINIO_CONFIG_DIR"
-      for bucket in ${lib.escapeShellArgs config.buckets}; do
-        mkdir -p "$MINIO_DATA_DIR/$bucket"
-      done
+      ${lib.concatMapStringsSep "\n" (bucket: ''
+        mkdir -p "$MINIO_DATA_DIR/${lib.escapeShellArg bucket}"
+      '') config.buckets}
     '';
   };
 
