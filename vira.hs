@@ -2,7 +2,6 @@
 \ctx pipeline ->
   let
     isMaster = ctx.branch == "main"
-    hf = [("haskell-flake", ".")]
   in pipeline
      { build.systems =
         [ "x86_64-linux"
