@@ -72,7 +72,7 @@ let
   initdbArgs =
     config.initdbArgs
     ++ (lib.optionals (config.superuser != null) [ "-U" config.superuser ])
-    ++ [ "-D" config.dataDir ];
+    ++ [ "-D" "\"${config.dataDir}\"" ];
 in
 (pkgs.writeShellApplication {
   name = "setup-postgres";
