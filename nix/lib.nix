@@ -21,7 +21,7 @@
             default = "./data/${name}";
             description = "The directory where all data for `${service}.<name>` is stored";
           };
-          settings.processes = lib.mkOption {
+          processSettings = lib.mkOption {
             type = lib.types.lazyAttrsOf lib.types.deferredModule;
             description = "Settings for a process-compose process defined in this service";
             default = { };
@@ -51,7 +51,7 @@
                       config.processSettings
                       config.outputs.defaultProcessSettings
                       cfg
-                    ] ++ lib.optional (lib.hasAttr pName config.settings.processes) config.settings.processes.${pName};
+                    ] ++ lib.optional (lib.hasAttr pName config.processSettings) config.processSettings.${pName};
                   }
                 );
               };
