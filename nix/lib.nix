@@ -48,7 +48,6 @@
                 processes = lib.flip lib.mapAttrs v.processes (pName: cfg:
                   {
                     imports = [
-                      config.processSettings
                       config.outputs.defaultProcessSettings
                       cfg
                     ] ++ lib.optional (lib.hasAttr pName config.processSettings) config.processSettings.${pName};
