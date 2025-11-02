@@ -163,51 +163,50 @@ And finally, `nix run`:
 
 > [!TIP]
 > Do not introduce new options to configure underlying process-compose settings of a process, use the default `processSettings.<name>` option.
->
-> ```nix
-> # Bad
->
-> # Definition
-> { config, ... }:
-> {
->   options = {
->     ...
->     extraEnvironment = lib.mkOption {
->       type = lib.types.attrs;
->       default = { };
->     };
->   };
->   config = {
->     outputs.settings = {
->       processes.<name> = {
->         environment = <defaults> // config.extraEnvironment;
+> Examples:
+>   - Bad:
+>     ```nix
+>     # Definition
+>     { config, ... }:
+>     {
+>       options = {
+>         ...
+>         extraEnvironment = lib.mkOption {
+>           type = lib.types.attrs;
+>           default = { };
+>         };
 >       };
->     };
->   };
+>       config = {
+>         outputs.settings = {
+>           processes.<name> = {
+>             environment = <defaults> // config.extraEnvironment;
+>           };
+>         };
+>       };
 >
-> }
+>     }
 >
-> # Usage
-> {
->   services.<name>.<name> = {
->     extraEnvironment = ...
->   };
-> }
-> ```
-> ```nix
-> # Good
+>     # Usage
+>     {
+>       services.<name>.<name> = {
+>         extraEnvironment = ...
+>       };
+>     }
+>     ```
+>  - Good:
+>    ```nix
 >
-> # No change in definition
+>    # No change in definition
 >
-> # Usage
-> {
->   services.<name>.<name> = {
->     processSettings.<name> = {
->       environment = ...;
->     };
->   };
-> }
-> ```
+>    # Usage
+>    {
+>      services.<name>.<name> = {
+>        processSettings.<name> = {
+>          environment = ...;
+>        };
+>      };
+>    }
+>    ```
 
 
 ## See also
