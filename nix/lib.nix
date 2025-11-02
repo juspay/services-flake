@@ -50,7 +50,8 @@
                     imports = [
                       config.outputs.defaultProcessSettings
                       cfg
-                    ] ++ lib.optional (lib.hasAttr pName config.processSettings) config.processSettings.${pName};
+                      config.processSettings.${pName}
+                    ];
                   }
                 );
               };
