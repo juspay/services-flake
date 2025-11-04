@@ -25,6 +25,9 @@
             type = lib.types.lazyAttrsOf lib.types.deferredModule;
             description = "Settings for a process-compose process defined in this service";
             default = { };
+            apply = v: {
+              processes = v;
+            };
           };
           outputs = {
             defaultProcessSettings = lib.mkOption {
@@ -45,12 +48,11 @@
                 process-compose settings for the processes under the ${service} service
               '';
               apply = v: v // {
-                processes = lib.flip lib.mapAttrs v.processes (pName: cfg:
+                processes = lib.flip lib.mapAttrs v.processes (_: cfg:
                   {
                     imports = [
                       config.outputs.defaultProcessSettings
                       cfg
-                      config.processSettings.${pName}
                     ];
                   }
                 );
@@ -81,7 +83,8 @@
           imports =
             lib.pipe config.services.${service} [
               (lib.filterAttrs (_: cfg: cfg.enable))
-              (lib.mapAttrsToList (_: cfg: cfg.outputs.settings))
+              (lib.mapAttrsToList (_: cfg: [ cfg.outputs.settings cfg.processSettings ]))
+              lib.concatLists
             ];
         };
       };
