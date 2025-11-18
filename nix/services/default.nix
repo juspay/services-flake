@@ -28,6 +28,7 @@ in
     ./weaviate.nix
     ./searxng.nix
     ./tika.nix
+    ./loki.nix
     ./phpfpm.nix
     ./pubsub-emulator.nix
   ]) ++ [
