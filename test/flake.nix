@@ -60,6 +60,7 @@
             "${inputs.services-flake}/nix/services/redis-cluster_test.nix"
             "${inputs.services-flake}/nix/services/searxng_test.nix"
             "${inputs.services-flake}/nix/services/tempo_test.nix"
+            "${inputs.services-flake}/nix/services/loki_test.nix"
             "${inputs.services-flake}/nix/services/tika_test.nix"
             "${inputs.services-flake}/nix/services/weaviate_test.nix"
             "${inputs.services-flake}/nix/services/zookeeper_test.nix"

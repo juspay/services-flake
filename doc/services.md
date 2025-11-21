@@ -11,6 +11,7 @@ short-title: Services
 - [[elasticsearch]]#
 - [[grafana]]#
   - [[tempo]]
+  - [[loki]]
 - [[memcached]]#
 - [[minio]]#
 - [[mongodb]]#
