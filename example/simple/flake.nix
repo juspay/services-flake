@@ -66,7 +66,7 @@
             # Add the packages of the enabled services in the devShell
             #
             # For example: `psql` to interact with `postgres` server or `redis-cli` with `redis-server`
-            config.process-compose."default".services.outputs.devShell
+            config.process-compose."simple-example".services.outputs.devShell
           ];
           packages = [
             # Add the process-compose app in the devShell
