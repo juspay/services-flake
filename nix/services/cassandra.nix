@@ -21,6 +21,12 @@ in
       default = 9042;
     };
 
+    storagePort = lib.mkOption {
+      type = types.port;
+      description = "port for the storage engine to listen for clients on";
+      default = 7000;
+    };
+
     seedAddresses = lib.mkOption {
       type = types.listOf types.str;
       default = [ "127.0.0.1" ];
@@ -67,6 +73,7 @@ in
         start_native_transport = config.allowClients;
         listen_address = config.listenAddress;
         native_transport_port = config.nativeTransportPort;
+        storage_port = config.storagePort;
         commitlog_sync = "batch";
         commitlog_sync_batch_window_in_ms = 2;
         cluster_name = config.clusterName;
