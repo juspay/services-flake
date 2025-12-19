@@ -42,7 +42,7 @@ let
         config.initialDatabases)
     else
       lib.optionalString config.createDatabase ''
-        echo "CREATE DATABASE ''${USER:-$(id -nu)};" | psql_with_args -d postgres '';
+        echo "CREATE DATABASE "''${USER:-$(id -nu)}";" | psql_with_args -d postgres '';
 
 
   runInitialScript =
