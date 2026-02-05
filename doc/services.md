@@ -8,6 +8,7 @@ short-title: Services
 - [[azurite]]#
 - [[cassandra]]#
 - [[clickhouse]]#
+- [[dynamodb-local]]#
 - [[elasticsearch]]#
 - [[grafana]]#
   - [[tempo]]
