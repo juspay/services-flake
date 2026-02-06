@@ -1,4 +1,10 @@
-{ pkgs, lib, name, config, ... }: {
+{ pkgs
+, lib
+, name
+, config
+, ...
+}:
+{
   options = {
     package = lib.mkPackageOption pkgs "dynamodb-local" { };
 
@@ -26,7 +32,8 @@
         DynamoDB runs in memory instead of using a database file. When you stop DynamoDB, none of the
         data is saved.
       '';
-      apply = v:
+      apply =
+        v:
         lib.throwIf (config.dbPath != null) ''
           You can't specify both -dbPath and -inMemory at once.
         ''
@@ -57,11 +64,11 @@
         runtimeInputs = [ config.package ];
         text = ''
           ${lib.optionalString (config.dbPath != null) ''
-            mkdir -p ${config.dbPath}
+            mkdir -p ${lib.escapeShellArg config.dbPath}
           ''}
            exec dynamodb-local \
              -port ${toString config.port} \
-             ${lib.optionalString (config.dbPath != null) "-dbPath ${config.dbPath}"} \
+             ${lib.optionalString (config.dbPath != null) "-dbPath ${lib.escapeShellArg config.dbPath}"} \
              ${lib.optionalString config.inMemory "-inMemory"} \
              ${lib.optionalString config.disableTelemetry "-disableTelemetry"} \
              ${lib.escapeShellArgs config.extraArgs}
