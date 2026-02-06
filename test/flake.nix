@@ -44,6 +44,7 @@
             "${inputs.services-flake}/nix/services/azurite_test.nix"
             "${inputs.services-flake}/nix/services/cassandra_test.nix"
             "${inputs.services-flake}/nix/services/clickhouse/clickhouse_test.nix"
+            "${inputs.services-flake}/nix/services/dynamodb-local_test.nix"
             "${inputs.services-flake}/nix/services/grafana_test.nix"
             "${inputs.services-flake}/nix/services/memcached_test.nix"
             "${inputs.services-flake}/nix/services/minio_test.nix"
