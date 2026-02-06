@@ -9,6 +9,7 @@ short-title: Services
 - [[cassandra]]#
 - [[clickhouse]]#
 - [[dynamodb-local]]#
+- [[elasticmq]]#
 - [[elasticsearch]]#
 - [[grafana]]#
   - [[tempo]]
