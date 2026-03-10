@@ -7,9 +7,16 @@
     inMemory = true;
   };
 
+  services.dynamodb-local."dynamodb2" = {
+    enable = true;
+    port = 8001;
+    dbPath = "/tmp/dynamodb2";
+  };
+
   settings.processes.test =
     let
-      cfg = config.services.dynamodb-local."dynamodb1";
+      cfg1 = config.services.dynamodb-local."dynamodb1";
+      cfg2 = config.services.dynamodb-local."dynamodb2";
     in
     {
       command = pkgs.writeShellApplication {
@@ -21,10 +28,13 @@
           AWS_DEFAULT_REGION = "us-east-1";
         };
         text = ''
-          aws dynamodb list-tables --endpoint-url "http://127.0.0.1:${toString cfg.port}" \
+          aws dynamodb list-tables --endpoint-url "http://127.0.0.1:${toString cfg1.port}" \
+          | jq '.TableNames'
+          aws dynamodb list-tables --endpoint-url "http://127.0.0.1:${toString cfg2.port}" \
           | jq '.TableNames'
         '';
       };
       depends_on."dynamodb1".condition = "process_healthy";
+      depends_on."dynamodb2".condition = "process_healthy";
     };
 }
