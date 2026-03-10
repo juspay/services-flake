@@ -34,8 +34,8 @@
       '';
       apply =
         v:
-        lib.throwIf (config.dbPath != null) ''
-          You can't specify both -dbPath and -inMemory at once.
+        lib.throwIf (config.dbPath != null && v) ''
+          You can't specify both dbPath and set inMemory to true at once.
         ''
           v;
     };
