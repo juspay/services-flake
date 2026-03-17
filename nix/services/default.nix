@@ -6,6 +6,8 @@ in
     ./apache-kafka.nix
     ./azurite.nix
     ./clickhouse
+    ./dynamodb-local.nix
+    ./elasticmq.nix
     ./elasticsearch.nix
     ./mongodb.nix
     ./mysql
