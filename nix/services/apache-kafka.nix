@@ -151,10 +151,25 @@ with lib;
         processes = {
           "${name}" =
             let
+              formatScript = lib.optionalString config.formatLogDirs (
+                if config.formatLogDirsIgnoreFormatted then
+                  ''
+                    ${config.package}/bin/kafka-storage.sh format -t "${config.clusterId}" -c ${config.configFiles.serverProperties} --ignore-formatted
+                  ''
+                else
+                  ''
+                    if ${
+                      lib.concatMapStringsSep " && " (l: ''[ ! -f "${l}/meta.properties" ]'') config.settings."log.dirs"
+                    }; then
+                      ${config.package}/bin/kafka-storage.sh format -t "${config.clusterId}" -c ${config.configFiles.serverProperties}
+                    fi
+                  ''
+              );
               startScript = pkgs.writeShellApplication {
                 name = "start-kafka";
                 runtimeInputs = [ config.jre ];
                 text = ''
+                  ${formatScript}
                   java \
                     -cp "${config.package}/libs/*" \
                     -Dlog4j.configuration=file:${config.configFiles.log4jProperties} \
