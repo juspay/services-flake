@@ -7,6 +7,7 @@ short-title: Services
 - [[apache-kafka]]#
 - [[azurite]]#
 - [[cassandra]]#
+- [[chromadb]]#
 - [[clickhouse]]#
 - [[dynamodb-local]]#
 - [[elasticmq]]#

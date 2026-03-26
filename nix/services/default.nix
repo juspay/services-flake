@@ -34,6 +34,7 @@ in
     ./phpfpm.nix
     ./pubsub-emulator.nix
     ./qdrant.nix
+    ./chromadb.nix
   ]) ++ [
     ./devshell.nix
   ];
