@@ -33,6 +33,7 @@ in
     ./loki.nix
     ./phpfpm.nix
     ./pubsub-emulator.nix
+    ./qdrant.nix
   ]) ++ [
     ./devshell.nix
   ];
