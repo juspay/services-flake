@@ -108,6 +108,7 @@ in
                   inStore = false;
                   absolute = false;
                 }
+                # types.path
               );
               default = null;
               example = "./realms/a.json";
@@ -342,12 +343,12 @@ in
                 f = config.dataDir + "/" + e.path;
               in
               ''
-                    echo "Symlinking realm file '${f}' to import path '$KC_HOME_DIR/data/import'."
+                echo "Symlinking realm file '${f}' to import path '$KC_HOME_DIR/data/import'."
                 if [ ! -f "${f}" ]; then
                   echo "Realm file '${f}' does not exist!" >&2
                   exit 1
                 fi
-                ln -fs "${f}" "$KC_HOME_DIR/data/import/"
+                ln -fs $(readlink -f "${f}") "$KC_HOME_DIR/data/import/"
               ''
           )
           (lib.filterAttrs (_: v: v.import && v.path != null) config.realms);
