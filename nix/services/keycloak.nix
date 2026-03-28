@@ -316,11 +316,12 @@ in
           ))
           config.settings;
 
-        final-config = filtered-config // {
+        final-config = {
           http-enabled = true;
           db = config.database.type;
           health-enabled = true;
           http-management-relative-path = "/";
+          http-management-port = "9000";
           log-console-level = "info";
           log-level = "info";
 
@@ -328,7 +329,7 @@ in
             if provided-ssl-certs then config.sslCertificate else "${dummy-certificates}/ssl-cert.crt";
           https-certificate-key-file =
             if provided-ssl-certs then config.sslCertificateKey else "${dummy-certificates}/ssl-cert.key";
-        };
+        } // filtered-config;
 
         # Write the keycloak config file.
         conf-file = pkgs.writeText "keycloak.conf" (keycloak-config final-config);
@@ -397,14 +398,12 @@ in
 
         readiness_probe =
           let
-            # FIXME: Figure out where to add this in config
-            http-management-port = 9000;
             admin-ready = pkgs.writeShellApplication {
               name = "keycloak-admin-ready";
               runtimeInputs = [ pkgs.curl ];
               text = ''
                 curl -k --head -fsS \
-                  "https://localhost:${toString http-management-port}${lib.removeSuffix "/" final-config.http-management-relative-path}/health/ready";
+                  "https://localhost:${toString final-config.http-management-port}${lib.removeSuffix "/" final-config.http-management-relative-path}/health/ready";
               '';
             };
           in
