@@ -75,7 +75,7 @@ in
         name = "start-qdrant";
         runtimeInputs = [ config.package ];
         text = ''
-          mkdir -p "${config.dataDir}/storage" "${config.dataDir}/snapshots"
+          mkdir -p ${lib.escapeShellArg "${config.dataDir}/storage"} ${lib.escapeShellArg "${config.dataDir}/snapshots"}
           exec qdrant --config-path "${configFile}" \
             ${lib.escapeShellArgs config.extraArgs}
         '';
