@@ -7,6 +7,7 @@ short-title: Services
 - [[apache-kafka]]#
 - [[azurite]]#
 - [[cassandra]]#
+- [[chromadb]]#
 - [[clickhouse]]#
 - [[dynamodb-local]]#
 - [[elasticmq]]#
@@ -19,6 +20,7 @@ short-title: Services
 - [[mongodb]]#
 - [[mysql]]#
 - [[nats-server]]#
+- [[neo4j]]#
 - [[nginx]]#
 - [[ollama]]#
 - [[open-webui]]#
@@ -28,6 +30,7 @@ short-title: Services
   - [[pgadmin]]
 - [[prometheus]]#
 - [[pubsub-emulator]]#
+- [[qdrant]]#
 - [[redis]]#
   - [[redis-cluster]]
 - [[searxng]]#

@@ -43,6 +43,7 @@
           builtins.listToAttrs (builtins.map mkPackageFor ([
             "${inputs.services-flake}/nix/services/azurite_test.nix"
             "${inputs.services-flake}/nix/services/cassandra_test.nix"
+            "${inputs.services-flake}/nix/services/chromadb_test.nix"
             "${inputs.services-flake}/nix/services/clickhouse/clickhouse_test.nix"
             "${inputs.services-flake}/nix/services/dynamodb-local_test.nix"
             "${inputs.services-flake}/nix/services/elasticmq_test.nix"
@@ -59,6 +60,8 @@
             "${inputs.services-flake}/nix/services/postgres/postgres_test.nix"
             "${inputs.services-flake}/nix/services/prometheus_test.nix"
             "${inputs.services-flake}/nix/services/pubsub-emulator_test.nix"
+            "${inputs.services-flake}/nix/services/qdrant_test.nix"
+            "${inputs.services-flake}/nix/services/neo4j_test.nix"
             "${inputs.services-flake}/nix/services/redis_test.nix"
             "${inputs.services-flake}/nix/services/redis-cluster_test.nix"
             "${inputs.services-flake}/nix/services/searxng_test.nix"
