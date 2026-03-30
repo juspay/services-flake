@@ -28,6 +28,7 @@ short-title: Services
   - [[pgadmin]]
 - [[prometheus]]#
 - [[pubsub-emulator]]#
+- [[qdrant]]#
 - [[redis]]#
   - [[redis-cluster]]
 - [[searxng]]#
