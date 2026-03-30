@@ -35,6 +35,7 @@ in
     ./pubsub-emulator.nix
     ./qdrant.nix
     ./chromadb.nix
+    ./neo4j.nix
   ]) ++ [
     ./devshell.nix
   ];
