@@ -43,6 +43,7 @@
           builtins.listToAttrs (builtins.map mkPackageFor ([
             "${inputs.services-flake}/nix/services/azurite_test.nix"
             "${inputs.services-flake}/nix/services/cassandra_test.nix"
+            "${inputs.services-flake}/nix/services/chromadb_test.nix"
             "${inputs.services-flake}/nix/services/clickhouse/clickhouse_test.nix"
             "${inputs.services-flake}/nix/services/dynamodb-local_test.nix"
             "${inputs.services-flake}/nix/services/elasticmq_test.nix"
