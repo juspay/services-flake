@@ -19,6 +19,7 @@ short-title: Services
 - [[mongodb]]#
 - [[mysql]]#
 - [[nats-server]]#
+- [[neo4j]]#
 - [[nginx]]#
 - [[ollama]]#
 - [[open-webui]]#
