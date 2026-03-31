@@ -73,7 +73,7 @@
  
           # OpenAPI documentation from the swagger URL:
           # /process/logs/{name}/{endOffset}/{limit}
-          curl --unix-socket pc-${name}.sock http://localhost/process/logs/pg4-init/30/0 | jq '.logs | contains(["ERROR:  syntax error at or near \"STABLE\""])' | grep "true"
+          curl --unix-socket pc-${name}.sock http://localhost/process/logs/pg4-init/0/30 | jq '.logs | contains(["ERROR:  syntax error at or near \"STABLE\""])' | grep "true"
         '';
         name = "postgres-test";
       };
