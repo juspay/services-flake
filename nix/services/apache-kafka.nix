@@ -159,7 +159,7 @@ with lib;
                 else
                   ''
                     if ${
-                      lib.concatMapStringsSep " && " (l: ''[ ! -f "${l}/meta.properties" ]'') config.settings."log.dirs"
+                      lib.concatMapStringsSep " && " (l: ''[ ! -f ${lib.escapeShellArg "${l}/meta.properties"} ]'') config.settings."log.dirs"
                     }; then
                       ${config.package}/bin/kafka-storage.sh format -t "${config.clusterId}" -c ${config.configFiles.serverProperties}
                     fi
