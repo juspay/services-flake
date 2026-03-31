@@ -54,7 +54,6 @@
             "${inputs.services-flake}/nix/services/nats-server_test.nix"
             "${inputs.services-flake}/nix/services/nginx/nginx_test.nix"
             "${inputs.services-flake}/nix/services/ollama_test.nix"
-            "${inputs.services-flake}/nix/services/open-webui_test.nix"
             "${inputs.services-flake}/nix/services/pgadmin_test.nix"
             "${inputs.services-flake}/nix/services/plantuml_test.nix"
             "${inputs.services-flake}/nix/services/postgres/postgres_test.nix"
@@ -88,6 +87,14 @@
             # Fails on macOS with: `error: chmod '"/nix/store/rcx3n94ygmd61rrv2p22sykhk0yx49n4-elasticsearch-7.17.16/modules/x-pack-ml/platform/darwin-aarch64/controller.app"': Operation not permitted`
             # Related: https://github.com/NixOS/nix/issues/6765
             "${inputs.services-flake}/nix/services/elasticsearch_test.nix"
+            # error: Refusing to evaluate package 'postgresql-test-hook' in /nix/store/cqzw8bdv3bjjrvhln6nhc5hk2y0sxqs8-source/pkgs/by-name/po/postgresqlTestHook/package.nix:8 because it is not available on the requested hostPlatform:
+            # hostPlatform.system = "aarch64-darwin"
+            # package.meta.platforms = [ ]
+            # package.meta.badPlatforms = [
+            #   "x86_64-darwin"
+            #   "aarch64-darwin"
+            # ]
+            "${inputs.services-flake}/nix/services/open-webui_test.nix"
           ]
           # Tests on non-linux host only
           ++ lib.optionals (!pkgs.stdenv.hostPlatform.isLinux) [
