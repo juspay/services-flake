@@ -4,6 +4,7 @@
     enable = true;
     use_default_settings = false;
     settings = {
+      brand = { };
       doi_resolvers."dummy" = "http://example.org";
       default_doi_resolver = "dummy";
     };
