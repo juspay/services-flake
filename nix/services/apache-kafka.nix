@@ -102,6 +102,9 @@ with lib;
       '';
       type = types.bool;
       default = false;
+      apply = v: lib.throwIf (v && config.clusterId == null)
+        "services.apache-kafka.${name}.clusterId must be set when formatLogDirs is true"
+        v;
     };
 
     formatLogDirsIgnoreFormatted = mkOption {
