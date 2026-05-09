@@ -57,7 +57,7 @@
             clickhouse-client --host 127.0.0.1 --port 9001 --query "SELECT * FROM sample_db.ride WHERE short_id = 'test_ride';" | grep test_ride
 
             # Test if `clickhouse3-init` fails due to `bad_test.sql`
-            curl --unix-socket pc-${name}.sock http://localhost/process/logs/clickhouse3-init/30/0 | jq '.logs | any(. | startswith("Code: 62. DB::Exception: Syntax error"))' | grep "true"
+            curl --unix-socket pc-${name}.sock http://localhost/process/logs/clickhouse3-init/0/30 | jq '.logs | any(. | startswith("Code: 62. DB::Exception: Syntax error"))' | grep "true"
           '';
         name = "clickhouse-test";
       };
