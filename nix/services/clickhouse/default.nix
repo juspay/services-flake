@@ -37,6 +37,9 @@ in
           users_xml = {
             path = "${config.package}/etc/clickhouse-server/users.xml";
           };
+          local_directory = {
+            path = "${config.dataDir}/clickhouse/access";
+          };
         };
       };
     };
