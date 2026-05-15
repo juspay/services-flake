@@ -2,6 +2,12 @@
   services.qdrant."qdrant1" = {
     enable = true;
   };
+  settings.processes.qdrant1.environment = {
+    # ERROR qdrant::startup: Panic occurred in file src/common/inference/service.rs at line 104:
+    # Invalid timeout value for HTTP client:
+    # reqwest::Error { kind: Builder, source: General("No CA certificates were loaded from the system") }
+    SSL_CERT_FILE = "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt";
+  };
 
   settings.processes.test =
     let
