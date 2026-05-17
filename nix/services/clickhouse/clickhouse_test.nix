@@ -50,6 +50,9 @@
             clickhouse-client < ${insertQuery}
             clickhouse-client < ${selectQuery} | grep foo
 
+            # should work as long as `local_directory` path is writable
+            clickhouse-client --query "CREATE user test identified by 'test'"
+
             # Test clickhouse http port
             curl http://localhost:9050 | grep Ok
 

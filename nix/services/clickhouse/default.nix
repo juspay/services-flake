@@ -37,6 +37,9 @@ in
           users_xml = {
             path = "${config.package}/etc/clickhouse-server/users.xml";
           };
+          local_directory = {
+            path = "${config.dataDir}/clickhouse/access";
+          };
         };
       };
     };
@@ -149,13 +152,7 @@ in
                 command = startScript;
 
                 readiness_probe = {
-                  # FIXME: revert back to clickhouse-client readiness_probe once CI is moved out of github public runners
-                  # See: https://github.com/juspay/services-flake/issues/100
-                  # exec.command = ''${config.package}/bin/clickhouse-client --query "SELECT 1" --port ${builtins.toString config.port}'';
-                  http_get = {
-                    host = "localhost";
-                    port = if (lib.hasAttr "http_port" config.extraConfig) then config.extraConfig.http_port else 8123;
-                  };
+                  exec.command = ''${config.package}/bin/clickhouse-client --query "SELECT 1" --port ${builtins.toString config.port}'';
                   initial_delay_seconds = 2;
                   period_seconds = 10;
                   timeout_seconds = 4;
