@@ -62,6 +62,7 @@
             "${inputs.services-flake}/nix/services/neo4j_test.nix"
             "${inputs.services-flake}/nix/services/redis_test.nix"
             "${inputs.services-flake}/nix/services/redis-cluster_test.nix"
+            "${inputs.services-flake}/nix/services/seaweedfs_test.nix" # Darwin build fixed in https://github.com/NixOS/nixpkgs/pull/534897
             "${inputs.services-flake}/nix/services/searxng_test.nix"
             "${inputs.services-flake}/nix/services/tempo_test.nix"
             "${inputs.services-flake}/nix/services/loki_test.nix"
