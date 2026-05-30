@@ -18,6 +18,7 @@ in
     ./plantuml.nix
     ./redis-cluster.nix
     ./redis.nix
+    ./seaweedfs.nix
     ./zookeeper.nix
     ./grafana.nix
     ./memcached.nix
