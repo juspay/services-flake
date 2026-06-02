@@ -34,6 +34,7 @@ short-title: Services
 - [[qdrant]]#
 - [[redis]]#
   - [[redis-cluster]]
+- [[seaweedfs]]#
 - [[searxng]]#
 - [[tika]]#
 - [[weaviate]]#
