@@ -68,11 +68,13 @@
                 # RAG_RERANKING_MODEL_AUTO_UPDATE = "True";
                 # DEVICE_TYPE = "cpu";
               };
+            processSettings."open-webui1" = {
+              # Modify the process-compose setting
+              # Start the Open WebUI service after the Ollama service has finished initializing and loading the models
+              depends_on.ollama1-models.condition = "process_completed_successfully";
+            };
           };
         };
-
-        # Start the Open WebUI service after the Ollama service has finished initializing and loading the models
-        settings.processes.open-webui1.depends_on.ollama1-models.condition = "process_completed_successfully";
 
         # Open the browser after the Open WebUI service has started
         settings.processes.open-browser = {
