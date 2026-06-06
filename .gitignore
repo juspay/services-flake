@@ -1,6 +1,6 @@
 .direnv
 # created when `just test <service>` is used
-/result
+/**/result
 # created when `just run <service>` is used
 /test/data
 
