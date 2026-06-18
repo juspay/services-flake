@@ -26,6 +26,7 @@ in
     ./prometheus.nix
     ./pgadmin.nix
     ./cassandra.nix
+    ./pyroscope.nix
     ./tempo.nix
     ./weaviate.nix
     ./searxng.nix

@@ -64,10 +64,10 @@ in
 
             {
               environment = {
-                DATA_DIR = config.dataDir;
-                STATIC_DIR = config.dataDir;
-                HF_HOME = config.dataDir;
-                SENTENCE_TRANSFORMERS_HOME = config.dataDir;
+                DATA_DIR = "${config.dataDir}/data";
+                STATIC_DIR = "${config.dataDir}/static";
+                HF_HOME = "${config.dataDir}/hf_home";
+                SENTENCE_TRANSFORMERS_HOME = "${config.dataDir}/transformers_home";
               } // config.environment;
 
               command = pkgs.writeShellApplication {

@@ -27,7 +27,7 @@
     # Test whether `-` is allowed in a database name. See https://github.com/juspay/services-flake/issues/513
     initialDatabases = [{ name = "test-database"; }];
     importTimeZones = true;
-    package = pkgs.mysql80;
+    package = pkgs.mysql84;
     settings.mysqld.port = 3309;
   };
   settings.processes.test =

@@ -15,6 +15,7 @@ short-title: Services
 - [[grafana]]#
   - [[tempo]]
   - [[loki]]
+  - [[pyroscope]]
 - [[memcached]]#
 - [[minio]]#
 - [[mongodb]]#
