@@ -67,26 +67,6 @@ in
                     };
                   };
                 };
-                distributor = {
-                  receivers = {
-                    jaeger = {
-                      protocols = {
-                        thrift_http = null;
-                        grpc = null;
-                        thrift_binary = null;
-                        thrift_compact = null;
-                      };
-                    };
-                    zipkin = null;
-                    otlp = {
-                      protocols = {
-                        http = null;
-                        grpc = null;
-                      };
-                    };
-                    opencensus = null;
-                  };
-                };
               }
               config.extraConfig;
             tempoConfigYaml = yamlFormat.generate "tempo.yaml" tempoConfig;
