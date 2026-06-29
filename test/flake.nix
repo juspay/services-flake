@@ -90,6 +90,7 @@
             #   "aarch64-darwin"
             # ]
             "${inputs.services-flake}/nix/services/open-webui_test.nix"
+            "${inputs.services-flake}/nix/services/seaweedfs_test.nix" # Darwin build fixed in https://github.com/NixOS/nixpkgs/pull/534897
           ]
           # Tests on non-linux host only
           ++ lib.optionals (!pkgs.stdenv.hostPlatform.isLinux) [
