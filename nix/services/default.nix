@@ -35,6 +35,7 @@ in
     ./loki.nix
     ./phpfpm.nix
     ./pubsub-emulator.nix
+    ./keycloak.nix
     ./qdrant.nix
     ./chromadb.nix
     ./neo4j.nix
