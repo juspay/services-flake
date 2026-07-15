@@ -1,8 +1,13 @@
 { pkgs, config, ... }:
+let
+  name = "k1";
+  inherit (config.services.keycloak.${name}) dataDir;
+  realmSrc = ./keycloak/test-realms/test.json;
+in
 {
-  services.keycloak.k1 = {
+  services.keycloak.${name} = {
     enable = true;
-    settings.http-port = 8089;
+    settings.http-port = 8091;
 
     database.type = "dev-file";
 
@@ -14,7 +19,7 @@
       };
 
       test = {
-        path = ./keycloak/test-realms/test.json;
+        path = realmSrc;
         import = true;
         export = true;
       };
@@ -23,25 +28,20 @@
 
   settings.processes.test =
     let
-      cfg = config.services.keycloak."k1";
+      test-export = pkgs.callPackage ./keycloak/test-realms/export.nix {
+        process-compose = config.package;
+        realmDstDir = "${dataDir}/realm-export";
+        pcSocketPath = config.cli.options.unix-socket;
+        keycloak-name = name;
+      };
     in
     {
       command = pkgs.writeShellApplication {
-        runtimeInputs = [
-          cfg.package
-          pkgs.gnugrep
-          pkgs.curl
-          pkgs.uutils-coreutils-noprefix
-          pkgs.jq
-        ];
-        text = "
-        # TODO: Realm export tests were removed because the H2 embedded database
-        # (dev-file) holds a file lock that isn't reliably released by the time the
-        # export JVM starts. Consider re-adding export tests with a PostgreSQL backend.
-        ";
-        name = "k1-tests";
+        runtimeInputs = [ test-export ];
+        text = "test-export";
+        name = "${name}-test";
       };
 
-      depends_on."k1".condition = "process_healthy";
+      depends_on.${name}.condition = "process_healthy";
     };
 }

@@ -1,13 +1,21 @@
 { pkgs, config, ... }:
+let
+  name = "k1-certs";
+  inherit (config.services.keycloak.${name}) dataDir;
+  realmSrc = ./keycloak/test-realms/test.json;
+
+  sslCertificate = "./keycloak/test-certs/ssl-cert.crt";
+  sslCertificateKey = "./keycloak/test-certs/ssl-cert.key";
+in
 {
-  services.keycloak.k1-certs = {
+  services.keycloak.${name} = {
     enable = true;
     settings.http-port = 8090;
 
     database.type = "dev-file";
 
-    sslCertificate = "./certs/ssl-cert.crt";
-    sslCertificateKey = "./certs/ssl-cert.key";
+    # They must not end up in the Nix store.
+    inherit sslCertificate sslCertificateKey;
 
     realms = {
       master = {
@@ -17,34 +25,53 @@
       };
 
       test = {
-        path = ./keycloak/test-realms/test.json;
+        path = realmSrc;
         import = true;
         export = true;
       };
     };
   };
 
-  settings.processes.test =
+  # Copy certificates from the Nix store to correct location (only for tests).
+  settings.processes.copy-certs =
     let
-      cfg = config.services.keycloak.k1-certs;
+      cert = ./keycloak/test-certs/ssl-cert.crt;
+      certKey = ./keycloak/test-certs/ssl-cert.key;
     in
     {
       command = pkgs.writeShellApplication {
-        runtimeInputs = [
-          cfg.package
-          pkgs.gnugrep
-          pkgs.curl
-          pkgs.uutils-coreutils-noprefix
-          pkgs.jq
-        ];
-        text = "
-        # TODO: Realm export tests were removed because the H2 embedded database
-        # (dev-file) holds a file lock that isn't reliably released by the time the
-        # export JVM starts. Consider re-adding export tests with a PostgreSQL backend.
-        ";
-        name = "k1-certs-tests";
+        name = "copy-certs";
+        text =
+          # Bash
+          ''
+            echo "Copying certificates (pwd: $(pwd))..."
+            mkdir -p "keycloak/test-certs"
+            cp "${cert}" "keycloak/test-certs/ssl-cert.crt"
+            cp "${certKey}" "keycloak/test-certs/ssl-cert.key"
+          '';
+      };
+    };
+
+  settings.processes.${name} = {
+    depends_on.copy-certs.condition = "process_completed_successfully";
+  };
+
+  settings.processes.test =
+    let
+      test-export = pkgs.callPackage ./keycloak/test-realms/export.nix {
+        process-compose = config.package;
+        realmDstDir = "${dataDir}/realm-export";
+        pcSocketPath = config.cli.options.unix-socket;
+        keycloak-name = name;
+      };
+    in
+    {
+      command = pkgs.writeShellApplication {
+        runtimeInputs = [ test-export ];
+        text = "test-export";
+        name = "${name}-test";
       };
 
-      depends_on."k1-certs".condition = "process_healthy";
+      depends_on.${name}.condition = "process_healthy";
     };
 }

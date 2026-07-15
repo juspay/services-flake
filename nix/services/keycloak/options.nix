@@ -138,9 +138,14 @@ in
               default = null;
               example = "./realms/a.json";
               description = ''
-                The path (string, relative to `config.dataDir`) where you want to import (or export) this realm «name» to.
-                If not set and `import` is `true` this realm is not imported.
-                If not set and `export` is `true` its exported to `''${config.dataDir}/keycloak/realm-export/«name».json`.
+                The path (relative to the `process-compose` working dir or an Nix store path)
+                where you want to import (or export) this realm «name» to.
+                - If not set and `import` is `true` this realm is not imported.
+                - If
+                  - set to an Nix store path
+                  - or not it is not set
+                  and `export` is `true` then
+                  it is exported to `''${config.dataDir}/realm-export/«name».json`.
               '';
             };
 
