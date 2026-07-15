@@ -91,6 +91,8 @@
             # ]
             "${inputs.services-flake}/nix/services/open-webui_test.nix"
             "${inputs.services-flake}/nix/services/seaweedfs_test.nix" # Darwin build fixed in https://github.com/NixOS/nixpkgs/pull/534897
+            "${inputs.services-flake}/nix/services/keycloak_test.nix"
+            "${inputs.services-flake}/nix/services/keycloak-certs_test.nix"
           ]
           # Tests on non-linux host only
           ++ lib.optionals (!pkgs.stdenv.hostPlatform.isLinux) [
