@@ -136,7 +136,7 @@ let
 
   realmsToExport = lib.filterAttrs (_: v: v.export) cfg.realms;
   realmsExport =
-    if (!cfg.processes.exportRealms || lib.length (lib.attrNames realmsToExport) == 0) then
+    if (!cfg.exportRealms || lib.length (lib.attrNames realmsToExport) == 0) then
       [ ]
     else
       assertKeycloakStopped

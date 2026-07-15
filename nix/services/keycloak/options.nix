@@ -97,26 +97,13 @@ in
       '';
     };
 
-    scripts = {
-      exportRealm = mkOption {
-        type = types.bool;
-        default = true;
-        description = ''
-          Global toggle to enable/disable the **single** realm export
-          script `keycloak-realm-export`.
-        '';
-      };
-    };
-
-    processes = {
-      exportRealms = mkOption {
-        type = types.bool;
-        default = true;
-        description = ''
-          Global toggle to enable/disable the realms export process `keycloak-realm-export-all`
-          if any realms have `realms.«name».export == true`.
-        '';
-      };
+    exportRealms = mkOption {
+      type = types.bool;
+      default = true;
+      description = ''
+        Global toggle to enable/disable the realms export process `keycloak-realm-export-all`
+        if any realms have `realms.«name».export == true`.
+      '';
     };
 
     realms = mkOption {

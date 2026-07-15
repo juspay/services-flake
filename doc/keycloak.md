@@ -94,4 +94,4 @@ process-compose process start «name»-realm-export-all
 
 Each realm is exported to its `path` when that path is a relative (non-store) location, otherwise to `${config.services.keycloak.«name».dataDir}/realm-export/<realm>.json`. Exports are pretty-printed with `jq` for easy diffing.
 
-You can disable the export processes/scripts globally with `processes.exportRealms = false;`.
+You can disable the export processes/scripts globally with `exportRealms = false;`.
