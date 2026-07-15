@@ -5,7 +5,7 @@
 , ...
 }:
 let
-  cfg = config.services.keycloak;
+  cfg = config;
 
   isSecret = v: lib.isAttrs v && v ? _secret && lib.isString v._secret;
 
@@ -77,7 +77,7 @@ let
     (
       realm: e:
         let
-          f = config.env.DEVENV_ROOT + "/" + e.path;
+          f = e.path;
         in
         ''
           echo "Symlinking realm file '${f}' to import path '$KC_HOME_DIR/data/import'."
@@ -128,8 +128,8 @@ let
           realm: e:
             let
               file =
-                if e.path == null then
-                  (config.env.DEVENV_STATE + "/keycloak/realm-export/${realm}.json")
+                if (e.path == null || lib.isStorePath e.path) then
+                  (config.dataDir + "/keycloak/realm-export/${realm}.json")
                 else
                   e.path;
             in
@@ -154,11 +154,10 @@ let
     ${pkgs.curl}/bin/curl -k --head -fsS "https://localhost:${toString cfg.settings.http-management-port}${lib.removeSuffix "/" cfg.settings.http-management-relative-path}/health/ready"
   '';
 
-  dataDir = "./" + cfg.dataDir;
   keycloakEnv = {
-    KC_HOME_DIR = dataDir + "/keycloak";
-    KC_CONF_DIR = dataDir + "/keycloak/conf";
-    KC_TMP_DIR = dataDir + "/keycloak/tmp";
+    KC_HOME_DIR = cfg.dataDir + "/keycloak";
+    KC_CONF_DIR = cfg.dataDir + "/keycloak/conf";
+    KC_TMP_DIR = cfg.dataDir + "/keycloak/tmp";
 
     KC_BOOTSTRAP_ADMIN_USERNAME = "admin";
     KC_BOOTSTRAP_ADMIN_PASSWORD = "${lib.escapeShellArg cfg.initialAdminPassword}";
@@ -193,26 +192,26 @@ let
       '';
 in
 {
+  # Merge some default values into the freeform options.
+  settings = lib.mapAttrs (n: v: lib.mkOptionDefault v) {
+    # We always enable http since we also use it to check the health.
+    http-enabled = true;
+    db = cfg.database.type;
+
+    health-enabled = true;
+    http-management-relative-path = "/";
+
+    log-console-level = "info";
+    log-level = "info";
+
+    https-certificate-file =
+      if providedSSLCerts then cfg.sslCertificate else "${dummyCertificates}/ssl-cert.crt";
+    https-certificate-key-file =
+      if providedSSLCerts then cfg.sslCertificateKey else "${dummyCertificates}/ssl-cert.key";
+  };
+
   outputs = {
-    # Merge some default values into the freeform options.
-    services.keycloak.settings = lib.mapAttrs (n: v: lib.mkOptionDefault v) {
-      # We always enable http since we also use it to check the health.
-      http-enabled = true;
-      db = cfg.database.type;
-
-      health-enabled = true;
-      http-management-relative-path = "/";
-
-      log-console-level = "info";
-      log-level = "info";
-
-      https-certificate-file =
-        if providedSSLCerts then cfg.sslCertificate else "${dummyCertificates}/ssl-cert.crt";
-      https-certificate-key-file =
-        if providedSSLCerts then cfg.sslCertificateKey else "${dummyCertificates}/ssl-cert.key";
-    };
-
-    settings.processes = lib.mkIf cfg.enable {
+    settings.processes = {
       ${name} = {
         environment = keycloakEnv;
         command = "${lib.getExe keycloak-start}";

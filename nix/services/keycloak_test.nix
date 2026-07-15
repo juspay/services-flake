@@ -8,13 +8,13 @@
 
     realms = {
       master = {
-        path = "./realms/master.json";
+        path = ./keycloak/test-realms/master.json;
         export = true;
         import = false;
       };
 
       test = {
-        path = "./keycloak/test-realms/realms/test.json";
+        path = ./keycloak/test-realms/test.json;
         import = true;
         export = true;
       };
@@ -39,7 +39,7 @@
         # (dev-file) holds a file lock that isn't reliably released by the time the
         # export JVM starts. Consider re-adding export tests with a PostgreSQL backend.
         ";
-        name = "keycloak-test";
+        name = "k1-tests";
       };
 
       depends_on."k1".condition = "process_healthy";

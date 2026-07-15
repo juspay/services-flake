@@ -7,7 +7,7 @@
 }:
 
 let
-  cfg = config.services.keycloak;
+  cfg = config;
 
   hasRealmExports = lib.any (lib.mapAttrsToList (realmName: opts: opts.export.enable) cfg.realms);
 
@@ -19,23 +19,6 @@ let
 in
 {
   options = {
-    enable = mkOption {
-      type = types.bool;
-      default = false;
-      example = true;
-      description = ''
-        Whether to enable the Keycloak identity and access management
-        server.
-      '';
-    };
-    dataDir = mkOption {
-      type = types.str;
-      default = "./data";
-      description = ''
-        Base directory where keycloak stores its data `<dataDir>/keycloak`.
-      '';
-    };
-
     sslCertificate = mkOption {
       type = types.nullOr (
         lib.types.pathWith {
@@ -143,17 +126,21 @@ in
           options = {
             path = mkOption {
               type = types.nullOr (
-                lib.types.pathWith {
-                  inStore = false;
-                  absolute = false;
-                }
+                # A relative, user-provided path.
+                lib.types.either
+                  (lib.types.pathWith {
+                    inStore = false;
+                    absolute = false;
+                  })
+                  # A nix store path.
+                  (lib.types.pathWith { inStore = true; })
               );
               default = null;
               example = "./realms/a.json";
               description = ''
-                The path (string, relative to `DEVENV_ROOT`) where you want to import (or export) this realm «name» to.
+                The path (string, relative to `config.dataDir`) where you want to import (or export) this realm «name» to.
                 If not set and `import` is `true` this realm is not imported.
-                If not set and `export` is `true` its exported to `$DEVENV_STATE/keycloak/realm-export/«name».json`.
+                If not set and `export` is `true` its exported to `''${config.dataDir}/keycloak/realm-export/«name».json`.
               '';
             };
 

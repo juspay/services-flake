@@ -2,44 +2,47 @@ let
   inherit (import ../lib.nix) multiService;
 in
 {
-  imports = (builtins.map multiService [
-    ./apache-kafka.nix
-    ./azurite.nix
-    ./clickhouse
-    ./dynamodb-local.nix
-    ./elasticmq.nix
-    ./elasticsearch.nix
-    ./mongodb.nix
-    ./mysql
-    ./nginx
-    ./ollama.nix
-    ./postgres
-    ./open-webui.nix
-    ./plantuml.nix
-    ./redis-cluster.nix
-    ./redis.nix
-    ./seaweedfs.nix
-    ./zookeeper.nix
-    ./grafana.nix
-    ./memcached.nix
-    ./minio.nix
-    ./nats-server.nix
-    ./prometheus.nix
-    ./pgadmin.nix
-    ./cassandra.nix
-    ./pyroscope.nix
-    ./tempo.nix
-    ./weaviate.nix
-    ./searxng.nix
-    ./tika.nix
-    ./loki.nix
-    ./phpfpm.nix
-    ./pubsub-emulator.nix
-    ./qdrant.nix
-    ./chromadb.nix
-    ./neo4j.nix
-  ]) ++ [
-    ./devshell.nix
-  ];
+  imports =
+    (map multiService [
+      ./apache-kafka.nix
+      ./azurite.nix
+      ./clickhouse
+      ./dynamodb-local.nix
+      ./elasticmq.nix
+      ./elasticsearch.nix
+      ./mongodb.nix
+      ./mysql
+      ./nginx
+      ./ollama.nix
+      ./postgres
+      ./open-webui.nix
+      ./plantuml.nix
+      ./redis-cluster.nix
+      ./redis.nix
+      ./seaweedfs.nix
+      ./zookeeper.nix
+      ./grafana.nix
+      ./memcached.nix
+      ./minio.nix
+      ./nats-server.nix
+      ./prometheus.nix
+      ./pgadmin.nix
+      ./cassandra.nix
+      ./pyroscope.nix
+      ./tempo.nix
+      ./weaviate.nix
+      ./searxng.nix
+      ./tika.nix
+      ./loki.nix
+      ./phpfpm.nix
+      ./pubsub-emulator.nix
+      ./qdrant.nix
+      ./chromadb.nix
+      ./neo4j.nix
+      ./keycloak.nix
+    ])
+    ++ [
+      ./devshell.nix
+    ];
 
 }
