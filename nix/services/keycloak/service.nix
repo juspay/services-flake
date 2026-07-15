@@ -79,13 +79,16 @@ let
         let
           f = e.path;
         in
+        # Bash
         ''
-          echo "Symlinking realm file '${f}' to import path '$KC_HOME_DIR/data/import'."
-          if [ ! -f "${f}" ]; then
-            echo "Realm file '${f}' does not exist!" >&2
+          f=$(realpath "${f}")
+          echo "Symlinking realm file '$f' to import path '$KC_HOME_DIR/data/import'."
+          if [ ! -f "$f" ]; then
+            echo "Realm file '$f' does not exist!" >&2
             exit 1
           fi
-          ln -fs "${f}" "$KC_HOME_DIR/data/import/"
+          ln -fs "$f" "$KC_HOME_DIR/data/import/"
+          unset f
         ''
     )
     (lib.filterAttrs (_: v: v.import && v.path != null) cfg.realms);
