@@ -6,97 +6,113 @@
     process-compose-flake.url = "github:Platonic-Systems/process-compose-flake";
     services-flake.url = "github:juspay/services-flake";
   };
-  outputs = inputs:
+  outputs =
+    inputs:
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       systems = import inputs.systems;
       imports = [
         inputs.process-compose-flake.flakeModule
         ./nix/pkgs.nix
       ];
-      perSystem = { self', inputs', pkgs, system, lib, ... }: {
-        process-compose =
-          let
-            mkPackageFor = mod:
-              let
-                # Derive name from filename
-                name = lib.pipe mod [
-                  builtins.baseNameOf
-                  (builtins.match "(.*)_test.nix")
-                  builtins.head
-                ];
-              in
-              lib.nameValuePair name {
-                imports = [
-                  inputs.services-flake.processComposeModules.default
-                  mod
-                ];
-                cli = {
-                  options = {
-                    # HTTP server disabled by default but we need it here for tests
-                    no-server = false;
-                    use-uds = true;
-                    unix-socket = "pc-${name}.sock";
+      perSystem =
+        { self'
+        , inputs'
+        , pkgs
+        , system
+        , lib
+        , ...
+        }:
+        {
+          process-compose =
+            let
+              mkPackageFor =
+                mod:
+                let
+                  # Derive name from filename
+                  name = lib.pipe mod [
+                    builtins.baseNameOf
+                    (builtins.match "(.*)_test.nix")
+                    builtins.head
+                  ];
+                in
+                lib.nameValuePair name {
+                  imports = [
+                    inputs.services-flake.processComposeModules.default
+                    mod
+                  ];
+                  cli = {
+                    options = {
+                      # HTTP server disabled by default but we need it here for tests
+                      no-server = false;
+                      use-uds = true;
+                      unix-socket = "pc-${name}.sock";
+                    };
                   };
                 };
-              };
-          in
-          builtins.listToAttrs (builtins.map mkPackageFor ([
-            "${inputs.services-flake}/nix/services/apache-kafka-kraft_test.nix"
-            "${inputs.services-flake}/nix/services/azurite_test.nix"
-            "${inputs.services-flake}/nix/services/chromadb_test.nix"
-            "${inputs.services-flake}/nix/services/clickhouse/clickhouse_test.nix"
-            "${inputs.services-flake}/nix/services/dynamodb-local_test.nix"
-            "${inputs.services-flake}/nix/services/elasticmq_test.nix"
-            "${inputs.services-flake}/nix/services/grafana_test.nix"
-            "${inputs.services-flake}/nix/services/memcached_test.nix"
-            "${inputs.services-flake}/nix/services/mysql/mysql_test.nix"
-            "${inputs.services-flake}/nix/services/nats-server_test.nix"
-            "${inputs.services-flake}/nix/services/nginx/nginx_test.nix"
-            "${inputs.services-flake}/nix/services/ollama_test.nix"
-            "${inputs.services-flake}/nix/services/pgadmin_test.nix"
-            "${inputs.services-flake}/nix/services/plantuml_test.nix"
-            "${inputs.services-flake}/nix/services/postgres/postgres_test.nix"
-            "${inputs.services-flake}/nix/services/prometheus_test.nix"
-            "${inputs.services-flake}/nix/services/pubsub-emulator_test.nix"
-            "${inputs.services-flake}/nix/services/qdrant_test.nix"
-            "${inputs.services-flake}/nix/services/neo4j_test.nix"
-            "${inputs.services-flake}/nix/services/redis_test.nix"
-            "${inputs.services-flake}/nix/services/redis-cluster_test.nix"
-            "${inputs.services-flake}/nix/services/searxng_test.nix"
-            "${inputs.services-flake}/nix/services/pyroscope_test.nix"
-            "${inputs.services-flake}/nix/services/tempo_test.nix"
-            "${inputs.services-flake}/nix/services/loki_test.nix"
-            "${inputs.services-flake}/nix/services/tika_test.nix"
-            "${inputs.services-flake}/nix/services/weaviate_test.nix"
-            "${inputs.services-flake}/nix/services/zookeeper_test.nix"
-          ] ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
-            # `phpfpm` test fails on aarch64-darwin:
-            # [phpfpm1        ] [28-Jul-2025 13:05:47.512506] DEBUG: pid 90757, fpm_stdio_save_original_stderr(), line 81: saving original STDERR fd: dup()
-            # [phpfpm1        ] [28-Jul-2025 13:05:47.512606] ERROR: pid 90757, fpm_stdio_open_error_log(), line 386: failed to open error_log (/proc/self/fd/2): No such file or directory (2)
-            # [phpfpm1        ] [28-Jul-2025 13:05:47.512647] ERROR: pid 90757, fpm_conf_init_main(), line 1882: failed to post process the configuration
-            # [phpfpm1        ] [28-Jul-2025 13:05:47.512661] ERROR: pid 90757, fpm_init(), line 72: FPM initialization failed
-            # [phpfpm2        ] [28-Jul-2025 13:05:47] ERROR: failed to open error_log (/proc/self/fd/2): No such file or directory (2)
-            # [phpfpm2        ] [28-Jul-2025 13:05:47] ERROR: failed to post process the configuration
-            # [phpfpm2        ] [28-Jul-2025 13:05:47] ERROR: FPM initialization failed
-            "${inputs.services-flake}/nix/services/phpfpm_test.nix"
-            # Fails on macOS with: `error: chmod '"/nix/store/rcx3n94ygmd61rrv2p22sykhk0yx49n4-elasticsearch-7.17.16/modules/x-pack-ml/platform/darwin-aarch64/controller.app"': Operation not permitted`
-            # Related: https://github.com/NixOS/nix/issues/6765
-            "${inputs.services-flake}/nix/services/elasticsearch_test.nix"
-            # error: Refusing to evaluate package 'postgresql-test-hook' in /nix/store/cqzw8bdv3bjjrvhln6nhc5hk2y0sxqs8-source/pkgs/by-name/po/postgresqlTestHook/package.nix:8 because it is not available on the requested hostPlatform:
-            # hostPlatform.system = "aarch64-darwin"
-            # package.meta.platforms = [ ]
-            # package.meta.badPlatforms = [
-            #   "x86_64-darwin"
-            #   "aarch64-darwin"
-            # ]
-            "${inputs.services-flake}/nix/services/open-webui_test.nix"
-            "${inputs.services-flake}/nix/services/seaweedfs_test.nix" # Darwin build fixed in https://github.com/NixOS/nixpkgs/pull/534897
-          ]
-          # Tests on non-linux host only
-          ++ lib.optionals (!pkgs.stdenv.hostPlatform.isLinux) [
-            # Fails on Linux due to Nix's build sandbox constraints, see https://github.com/NixOS/nixpkgs/issues/377016#issuecomment-2614610914
-            "${inputs.services-flake}/nix/services/mongodb_test.nix"
-          ]));
-      };
+            in
+            builtins.listToAttrs (
+              builtins.map mkPackageFor (
+                [
+                  "${inputs.services-flake}/nix/services/apache-kafka-kraft_test.nix"
+                  "${inputs.services-flake}/nix/services/azurite_test.nix"
+                  "${inputs.services-flake}/nix/services/chromadb_test.nix"
+                  "${inputs.services-flake}/nix/services/clickhouse/clickhouse_test.nix"
+                  "${inputs.services-flake}/nix/services/dynamodb-local_test.nix"
+                  "${inputs.services-flake}/nix/services/elasticmq_test.nix"
+                  "${inputs.services-flake}/nix/services/grafana_test.nix"
+                  "${inputs.services-flake}/nix/services/memcached_test.nix"
+                  "${inputs.services-flake}/nix/services/mysql/mysql_test.nix"
+                  "${inputs.services-flake}/nix/services/nats-server_test.nix"
+                  "${inputs.services-flake}/nix/services/nginx/nginx_test.nix"
+                  "${inputs.services-flake}/nix/services/ollama_test.nix"
+                  "${inputs.services-flake}/nix/services/pgadmin_test.nix"
+                  "${inputs.services-flake}/nix/services/plantuml_test.nix"
+                  "${inputs.services-flake}/nix/services/postgres/postgres_test.nix"
+                  "${inputs.services-flake}/nix/services/prometheus_test.nix"
+                  "${inputs.services-flake}/nix/services/pubsub-emulator_test.nix"
+                  "${inputs.services-flake}/nix/services/qdrant_test.nix"
+                  "${inputs.services-flake}/nix/services/neo4j_test.nix"
+                  "${inputs.services-flake}/nix/services/redis_test.nix"
+                  "${inputs.services-flake}/nix/services/redis-cluster_test.nix"
+                  "${inputs.services-flake}/nix/services/searxng_test.nix"
+                  "${inputs.services-flake}/nix/services/pyroscope_test.nix"
+                  "${inputs.services-flake}/nix/services/tempo_test.nix"
+                  "${inputs.services-flake}/nix/services/loki_test.nix"
+                  "${inputs.services-flake}/nix/services/tika_test.nix"
+                  "${inputs.services-flake}/nix/services/weaviate_test.nix"
+                  "${inputs.services-flake}/nix/services/zookeeper_test.nix"
+                  "${inputs.services-flake}/nix/services/mailhog_test.nix"
+                ]
+                ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+                  # `phpfpm` test fails on aarch64-darwin:
+                  # [phpfpm1        ] [28-Jul-2025 13:05:47.512506] DEBUG: pid 90757, fpm_stdio_save_original_stderr(), line 81: saving original STDERR fd: dup()
+                  # [phpfpm1        ] [28-Jul-2025 13:05:47.512606] ERROR: pid 90757, fpm_stdio_open_error_log(), line 386: failed to open error_log (/proc/self/fd/2): No such file or directory (2)
+                  # [phpfpm1        ] [28-Jul-2025 13:05:47.512647] ERROR: pid 90757, fpm_conf_init_main(), line 1882: failed to post process the configuration
+                  # [phpfpm1        ] [28-Jul-2025 13:05:47.512661] ERROR: pid 90757, fpm_init(), line 72: FPM initialization failed
+                  # [phpfpm2        ] [28-Jul-2025 13:05:47] ERROR: failed to open error_log (/proc/self/fd/2): No such file or directory (2)
+                  # [phpfpm2        ] [28-Jul-2025 13:05:47] ERROR: failed to post process the configuration
+                  # [phpfpm2        ] [28-Jul-2025 13:05:47] ERROR: FPM initialization failed
+                  "${inputs.services-flake}/nix/services/phpfpm_test.nix"
+                  # Fails on macOS with: `error: chmod '"/nix/store/rcx3n94ygmd61rrv2p22sykhk0yx49n4-elasticsearch-7.17.16/modules/x-pack-ml/platform/darwin-aarch64/controller.app"': Operation not permitted`
+                  # Related: https://github.com/NixOS/nix/issues/6765
+                  "${inputs.services-flake}/nix/services/elasticsearch_test.nix"
+                  # error: Refusing to evaluate package 'postgresql-test-hook' in /nix/store/cqzw8bdv3bjjrvhln6nhc5hk2y0sxqs8-source/pkgs/by-name/po/postgresqlTestHook/package.nix:8 because it is not available on the requested hostPlatform:
+                  # hostPlatform.system = "aarch64-darwin"
+                  # package.meta.platforms = [ ]
+                  # package.meta.badPlatforms = [
+                  #   "x86_64-darwin"
+                  #   "aarch64-darwin"
+                  # ]
+                  "${inputs.services-flake}/nix/services/open-webui_test.nix"
+                  "${inputs.services-flake}/nix/services/seaweedfs_test.nix" # Darwin build fixed in https://github.com/NixOS/nixpkgs/pull/534897
+                ]
+                # Tests on non-linux host only
+                ++ lib.optionals (!pkgs.stdenv.hostPlatform.isLinux) [
+                  # Fails on Linux due to Nix's build sandbox constraints, see https://github.com/NixOS/nixpkgs/issues/377016#issuecomment-2614610914
+                  "${inputs.services-flake}/nix/services/mongodb_test.nix"
+                ]
+              )
+            );
+        };
     };
 }
