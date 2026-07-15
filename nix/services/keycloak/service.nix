@@ -238,15 +238,6 @@ in
         };
       };
 
-      "${name}-realm-export" = lib.mkIf cfg.scripts.exportRealm {
-        environment = keycloakEnv;
-        command = "${keycloak-realm-export}/bin/keycloak-realm-export";
-        disabled = true;
-        description = ''
-          Export a realm '$1' (first argument) from keycloak to location '$2' (second argument).
-        '';
-      };
-
       # Export all configured realms.
       "${name}-realm-export-all" = lib.mkIf (realmsExport != [ ]) {
         environment = keycloakEnv;
