@@ -28,7 +28,9 @@
                 doInstallCheck = false;
               });
 
-            }
+          } // {
+          # Add authentik packages cause its not in nixpkgs.
+          authentikComponents = inputs'.authentik-nix.legacyPackages.authentikComponents;
           )
         ];
       };
