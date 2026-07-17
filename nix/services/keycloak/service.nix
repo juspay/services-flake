@@ -109,17 +109,6 @@ let
     ''
   ];
 
-  keycloak-realm-export = pkgs.writeShellScriptBin "keycloak-realm-export" (
-    lib.concatStringsSep "\n" (
-      assertKeycloakStopped
-      ++ [
-        ''
-          ${keycloakBuild}/bin/kc.sh export --optimized --realm "$1" --file "$2"
-        ''
-      ]
-    )
-  );
-
   realmExportPath =
     let
       isInStore =
