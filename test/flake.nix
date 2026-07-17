@@ -5,7 +5,7 @@
     systems.url = "github:nix-systems/default";
     process-compose-flake.url = "github:Platonic-Systems/process-compose-flake";
     services-flake.url = "github:juspay/services-flake";
-    authentik-nix.url = "github:nix-community/authentik-nix";
+    authentik-nix.url = "github:nix-community/authentik-nix/version/2026.5.4";
   };
   outputs =
     inputs:
