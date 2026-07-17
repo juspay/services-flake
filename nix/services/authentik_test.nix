@@ -1,6 +1,7 @@
-{ config
-, pkgs
-, ...
+{
+  config,
+  pkgs,
+  ...
 }:
 let
   name = "ak";
@@ -18,8 +19,6 @@ in
 
     secretKey = "test";
 
-    # These match the companion instances above; shown explicitly for clarity even
-    # though they are also the module defaults.
     settings = {
       logLevel = "info";
 
@@ -41,7 +40,6 @@ in
 
   };
 
-  # Verify the server is actually serving once it reports healthy.
   settings.processes.test = {
     command = pkgs.writeShellApplication {
       name = "${name}-test";
