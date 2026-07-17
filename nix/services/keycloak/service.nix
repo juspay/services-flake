@@ -168,9 +168,9 @@ let
   '';
 
   keycloakEnv = {
-    KC_HOME_DIR = cfg.dataDir + "/keycloak";
-    KC_CONF_DIR = cfg.dataDir + "/keycloak/conf";
-    KC_TMP_DIR = cfg.dataDir + "/keycloak/tmp";
+    KC_HOME_DIR = lib.traceVal cfg.dataDir;
+    KC_CONF_DIR = cfg.dataDir + "/conf";
+    KC_TMP_DIR = cfg.dataDir + "/tmp";
 
     KC_BOOTSTRAP_ADMIN_USERNAME = "admin";
     KC_BOOTSTRAP_ADMIN_PASSWORD = "${lib.escapeShellArg cfg.initialAdminPassword}";
