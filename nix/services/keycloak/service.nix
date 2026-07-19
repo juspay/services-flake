@@ -135,6 +135,7 @@ let
             let
               file = realmExportPath realm e;
             in
+            # Bash
             ''
               echo "Exporting realm '${realm}' to '${file}'."
               mkdir -p "$(dirname "${file}")"
@@ -229,8 +230,10 @@ in
         };
       };
 
+    }
+    // (lib.optionalAttrs (realmsExport != [ ]) {
       # Export all configured realms.
-      "${name}-realm-export-all" = lib.mkIf (realmsExport != [ ]) {
+      "${name}-realm-export-all" = {
         environment = keycloakEnv;
         command = "${keycloak-realm-export-all}/bin/keycloak-realm-export-all";
         disabled = true;
@@ -238,6 +241,6 @@ in
           Save the configured realms from keycloak, to back them up. You can run it manually.
         '';
       };
-    };
+    });
   };
 }
