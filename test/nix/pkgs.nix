@@ -31,7 +31,7 @@
                 }
               // {
                 # Add authentik packages cause its not in nixpkgs.
-                authentik-nix = inputs'.authentik-nix.packages;
+                authentikComponents = inputs'.authentik-nix.legacyPackages.authentikComponents;
               }
           )
         ];

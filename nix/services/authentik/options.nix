@@ -1,4 +1,6 @@
 { lib
+, pkgs
+, name
 , ...
 }:
 
@@ -8,34 +10,29 @@ let
     types
     ;
 
-  # A relative user-provided path, or a Nix store path (same pattern as keycloak realms).
-  blueprintPath = types.nullOr (
-    types.either
-      (types.pathWith {
-        inStore = false;
-        absolute = false;
-      })
-      (types.pathWith { inStore = true; })
-  );
+  settingsFormat = pkgs.formats.yaml { };
+
+  hostAndPort = name: port: {
+    host = mkOption {
+      type = types.str;
+      default = "0.0.0.0";
+      description = "Host of the ${name}.";
+    };
+    port = mkOption {
+      type = types.number;
+      default = port;
+      description = "Port of the ${name}.";
+    };
+  };
 in
 {
   options = {
-    # Authentik is not in nixpkgs, so the package set has to be provided by the user
-    # from their own `authentik-nix` flake input. This keeps services-flake input-free.
     components = mkOption {
-      type = types.attrsOf types.package;
-      example = lib.literalExpression "inputs.authentik-nix.packages.\${system}";
+      type = types.raw;
+      example = lib.literalExpression "inputs.authentik-nix.legacyPackages.\${system}.authentikComponents";
       description = ''
-        The Authentik component packages, typically
-        `inputs.authentik-nix.packages.''${system}`.
-
-        Must provide at least the following attributes:
-        - `gopkgs`            – provides `bin/server`
-        - `rust`              – provides `bin/authentik` (the `worker` subcommand)
-        - `migrate`           – provides `bin/migrate.py`
-        - `staticWorkdirDeps` – the working-directory dependencies
-                                (`authentik/`, `blueprints/`, `templates/`, static assets)
-        - `manage`            – the management CLI (optional, for blueprint tooling)
+        The Authentik component set, typically
+        `inputs.authentik-nix.legacyPackages.''${system}.authentikComponents`.
       '';
     };
 
@@ -94,172 +91,97 @@ in
           The config to easily define the needed postgres process.
         '';
       };
+    };
 
-      redis = mkOption {
-        type = types.attrsOf types.raw;
-        readOnly = true;
+    logLevel = mkOption {
+      type = types.str;
+      default = "info";
+      example = "debug";
+      description = "Authentik log level.";
+    };
+
+    server = {
+      http = hostAndPort "server endpoint" 9000;
+      https = hostAndPort "server endpoint" 9443;
+      metrics = hostAndPort "server metrics endpoint." 9300;
+    };
+
+    worker = {
+      http = hostAndPort "worker endpoint" 9001;
+      metrics = hostAndPort "worker metrics endpoint." 9302;
+    };
+
+    email = hostAndPort "${name}'s email connection" 25;
+
+    postgres = (hostAndPort "${name}'s postgres DB" 5432) // {
+      name = mkOption {
+        type = types.str;
+        default = "authentik";
+        description = "PostgreSQL database name (`postgresql.name`).";
+      };
+
+      user = mkOption {
+        type = types.str;
+        default = "authentik";
+        description = "PostgreSQL user (`postgresql.user`).";
+      };
+
+      password = mkOption {
+        type = types.str;
+        default = "authentik";
         description = ''
-          The config to easily define the needed redis process.
+          PostgreSQL password (`postgresql.password`). Written to the config
+          file in the Nix store; for non-dev use, override it via
+          {option}`environmentFile` (`AUTHENTIK_POSTGRESQL__PASSWORD`).
         '';
       };
     };
 
-    settings = mkOption {
-      type = types.submodule {
-        options = {
-          logLevel = mkOption {
-            type = types.str;
-            default = "info";
-            example = "debug";
-            description = "Authentik log level (`log_level`).";
-          };
-
-          listen = {
-            http = mkOption {
-              type = types.str;
-              default = "0.0.0.0:9000";
-              description = "Address the HTTP server listens on (`listen.listen_http`).";
-            };
-
-            https = mkOption {
-              type = types.str;
-              default = "0.0.0.0:9443";
-              description = "Address the HTTPS server listens on (`listen.listen_https`).";
-            };
-          };
-
-          email = {
-            host = mkOption {
-              type = types.str;
-              default = "localhost";
-              description = "Email SMTP server host name.";
-            };
-
-            port = mkOption {
-              type = types.str;
-              default = "localhost";
-              description = "Email SMTP server port.";
-            };
-          };
-
-          postgres = {
-            host = mkOption {
-              type = types.str;
-              default = "127.0.0.1";
-              description = "PostgreSQL host (`postgresql.host`).";
-            };
-
-            port = mkOption {
-              type = types.port;
-              default = 5432;
-              description = "PostgreSQL port (`postgresql.port`).";
-            };
-
-            name = mkOption {
-              type = types.str;
-              default = "authentik";
-              description = "PostgreSQL database name (`postgresql.name`).";
-            };
-
-            user = mkOption {
-              type = types.str;
-              default = "authentik";
-              description = "PostgreSQL user (`postgresql.user`).";
-            };
-
-            password = mkOption {
-              type = types.str;
-              default = "authentik";
+    blueprints = mkOption {
+      default = { };
+      type = types.attrsOf (
+        types.submodule {
+          options = {
+            path = mkOption {
+              type = types.pathWith {
+                inStore = true;
+              };
+              default = null;
               description = ''
-                PostgreSQL password (`postgresql.password`). Written to the config
-                file in the Nix store; for non-dev use, override it via
-                {option}`environmentFile` (`AUTHENTIK_POSTGRESQL__PASSWORD`).
+                Path of a blueprint YAML file to make available for import.
               '';
             };
-          };
 
-          redis = {
-            host = mkOption {
-              type = types.str;
-              default = "127.0.0.1";
-              description = "Redis host (`redis.host`).";
-            };
-
-            port = mkOption {
-              type = types.port;
-              default = 6379;
-              description = "Redis port (`redis.port`).";
+            import = mkOption {
+              type = types.bool;
+              default = true;
+              description = "Whether to make this blueprint available for import.";
             };
           };
-
-          blueprints = mkOption {
-            default = { };
-            type = types.attrsOf (
-              types.submodule {
-                options = {
-                  path = mkOption {
-                    type = blueprintPath;
-                    default = null;
-                    example = "./blueprints/my-blueprint.yaml";
-                    description = ''
-                      Path (relative to the `process-compose` working dir, or a Nix store
-                      path) of a blueprint YAML file to make available for import.
-                    '';
-                  };
-
-                  import = mkOption {
-                    type = types.bool;
-                    default = true;
-                    description = "Whether to make this blueprint available for import.";
-                  };
-                };
-              }
-            );
-
-            example = lib.literalExpression ''
-              {
-                my-app = {
-                  path = ./blueprints/my-app.yaml;
-                };
-              }
-            '';
-
-            description = ''
-              Blueprints to import on start up.
-              Enabled blueprints are copied into the blueprints directoryr and
-              auto-applied by the Authentik worker.
-            '';
-          };
-        };
-      };
-
-      default = { };
+        }
+      );
 
       example = lib.literalExpression ''
         {
-          log_level = "debug";
-          listen.listen_http = "0.0.0.0:9002";
-          postgresql.host = "127.0.0.1";
-          email = {
-            host = "localhost";
-            port = 25;
+          my-app = {
+            path = ./blueprints/my-app.yaml;
           };
         }
       '';
 
       description = ''
-        Authentik configuration, rendered to a `local.yml` file that Authentik loads
-        from its working directory. Corresponds to the keys documented at
-        <https://docs.goauthentik.io/docs/install-config/configuration/>.
-
-        Authentik config is hierarchical YAML, so allow arbitrary nested keys.
-        It is not well documented.
-        See the default: <https://raw.githubusercontent.com/goauthentik/authentik/main/authentik/lib/default.yml>
-
-        The defaults point PostgreSQL/Redis at the companion
-        `services.postgres."authentik-db-pg"` and
-        `services.redis."authentik-db-redis"` instances used in the example and test.
+        Blueprints to import on start up.
+        Enabled blueprints are copied into the blueprints directoryr and
+        auto-applied by the Authentik worker.
       '';
+    };
+
+    settings = mkOption {
+      description = "YAML option for authentic which are merged with '<dataDir>/authentic/lib/default.yml'.";
+      type = types.submodule {
+        freeformType = settingsFormat.type;
+        options = { };
+      };
     };
   };
 }

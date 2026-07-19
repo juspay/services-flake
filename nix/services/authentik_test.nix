@@ -1,43 +1,39 @@
-{
-  config,
-  pkgs,
-  ...
+{ config
+, pkgs
+, ...
 }:
 let
   name = "ak";
-  httpPort = 9002;
+  httpPort = 9001;
   ak = config.services.authentik.${name};
 in
 {
   services.postgres = ak.services.postgres;
-  services.redis = ak.services.redis;
 
   services.authentik.${name} = {
     enable = true;
 
-    components = pkgs.authentik-nix;
+    components = pkgs.authentikComponents;
 
     secretKey = "test";
 
-    settings = {
-      logLevel = "info";
-
-      listen.http = "0.0.0.0:${toString httpPort}";
-
-      postgres = {
-        port = 5433;
-        user = "authentik";
-        name = "authentik";
-        password = "authentik";
-      };
-
-      redis.port = 6378;
-
-      blueprints.example = {
-        path = ./authentik/test-blueprints/example.yaml;
-      };
+    postgres = {
+      port = 5433;
+      user = "authentik";
+      name = "authentik";
+      password = "authentik";
     };
 
+    server.http.port = 9001;
+    worker.http.port = 9002;
+
+    blueprints.example = {
+      path = ./authentik/test-blueprints/example.yaml;
+    };
+
+    settings = {
+      logLevel = "info";
+    };
   };
 
   settings.processes.test = {
