@@ -11,11 +11,8 @@ let
 in
 {
   options = {
-    package = lib.mkOption {
-      type = types.package;
-      description = "Which package of mailhog to use";
-      default = pkgs.mailhog;
-      defaultText = lib.literalExpression "pkgs.mailhog";
+    package = lib.mkPackageOption pkgs "mailhog" {
+      extraDescription = "The mailhog package to use.";
     };
 
     api = {
