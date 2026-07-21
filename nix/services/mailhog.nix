@@ -38,7 +38,7 @@ in
         default = "127.0.0.1";
       };
       port = lib.mkOption {
-        type = types.number;
+        type = types.port;
         description = "Port for the UI.";
         default = 8025;
       };
@@ -51,7 +51,7 @@ in
         default = "127.0.0.1";
       };
       port = lib.mkOption {
-        type = types.number;
+        type = types.port;
         description = "Port for the SMTP.";
         default = 1025;
       };
