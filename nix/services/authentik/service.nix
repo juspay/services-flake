@@ -15,18 +15,20 @@ let
   # `/usr/bin/env` does not exist in the Nix build sandbox that
   # `nix build .#checks…` (`just test`) runs the process-compose stack in,
   # so the migration crashes with "bad interpreter".
-  modMigrate =
-    prev: pythonEnv:
+  makeSandboxSafe =
+    prev: name: pythonEnv:
     pkgs.runCommand "authentik-migrate-sandbox-safe" { }
       # Bash
       ''
         cp -R --no-preserve=mode,ownership ${prev} $out
+        wrapped="$out/bin/.${name}.py-wrapped"
+        normal="$out/bin/${name}.py"
 
-        substituteInPlace $out/bin/.migrate.py-wrapped \
+        substituteInPlace "$wrapped" \
           --replace-fail '#!/usr/bin/env python' '#!${pythonEnv}/bin/python'
-        substituteInPlace $out/bin/migrate.py \
-          --replace-fail '${prev}/bin/.migrate.py-wrapped' "$out/bin/.migrate.py-wrapped"
-        chmod +x "$out/bin/.migrate.py-wrapped" "$out/bin/migrate.py"
+        substituteInPlace  "$normal" \
+          --replace-fail '${prev}/bin/.${name}.py-wrapped' "$wrapped"
+        chmod +x "$out/bin/.${name}.py-wrapped" "$out/bin/${name}.py"
       '';
 
   settingsFile = settingsFormat.generate "authentik.yml" cfg.settings;
@@ -71,7 +73,8 @@ let
       in
       {
         authentikComponents = prevComps // {
-          migrate = modMigrate prevComps.migrate prevComps.pythonEnv;
+          manage = makeSandboxSafe prevComps.manage "manage" prevComps.pythonEnv;
+          migrate = makeSandboxSafe prevComps.migrate "migrate" prevComps.pythonEnv;
           staticWorkdirDeps = modStaticWorkdirDeps prevComps.staticWorkdirDeps prev.authentik-src;
         };
       }
