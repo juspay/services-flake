@@ -25,7 +25,7 @@ in
         default = "127.0.0.1";
       };
       port = lib.mkOption {
-        type = types.number;
+        type = types.port;
         description = "Port for the API.";
         default = 8025;
       };
@@ -58,7 +58,7 @@ in
     };
 
     extraArgs = lib.mkOption {
-      type = types.listOf types.lines;
+      type = types.listOf types.str;
       default = [ ];
       example = [ "-invite-jim" ];
       description = ''
