@@ -75,7 +75,7 @@ in
           -api-bind-addr '${cfg.api.host}:${toString cfg.api.port}' \
           -ui-bind-addr '${cfg.ui.host}:${toString cfg.ui.port}' \
           -smtp-bind-addr '${cfg.smtp.host}:${toString cfg.smtp.port}' \
-          ${lib.concatStringsSep " " cfg.additionalArgs}
+          ${lib.escapeShellArgs cfg.additionalArgs}
       '';
 
     readiness_probe = {
