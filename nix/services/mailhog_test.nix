@@ -10,8 +10,6 @@
       ];
 
       text = ''
-        set -euo pipefail
-
         message="$(printf 'From: sender@example.com\r\nTo: recipient@example.com\r\nSubject: Test email\r\n\r\nThis is a test message sent via curl to MailHog.\r\n')"
 
         echo "Sending email."
