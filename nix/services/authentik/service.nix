@@ -58,8 +58,8 @@ let
 
           echo "Placing blueprints."
           rm -v $out/blueprints
-          cp -vr ${authentik-src}/blueprints $out/blueprints
-          cd "$out"
+          cp -vr --no-preserve=mode,ownership ${authentik-src}/blueprints $out/blueprints
+          cd "$out/blueprints"
           ${lib.concatStringsSep "\n" blueprintImport}
         '';
     });
