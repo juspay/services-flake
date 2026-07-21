@@ -57,7 +57,7 @@ in
       };
     };
 
-    additionalArgs = lib.mkOption {
+    extraArgs = lib.mkOption {
       type = types.listOf types.lines;
       default = [ ];
       example = [ "-invite-jim" ];
@@ -75,7 +75,7 @@ in
           -api-bind-addr '${cfg.api.host}:${toString cfg.api.port}' \
           -ui-bind-addr '${cfg.ui.host}:${toString cfg.ui.port}' \
           -smtp-bind-addr '${cfg.smtp.host}:${toString cfg.smtp.port}' \
-          ${lib.escapeShellArgs cfg.additionalArgs}
+          ${lib.escapeShellArgs cfg.extraArgs}
       '';
 
     readiness_probe = {
