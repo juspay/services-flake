@@ -19,7 +19,7 @@ let
       description = "Host of the ${name}.";
     };
     port = mkOption {
-      type = types.number;
+      type = types.port;
       default = port;
       description = "Port of the ${name}.";
     };
