@@ -1,6 +1,7 @@
 # Mailhog
 
-[Mailhog SMTP server](https://grafana.com/docs/loki/latest/) is Web and API based SMTP testing tool.
+[Mailhog SMTP server](https://github.com/mailhog/MailHog) is a Web and API based SMTP testing tool
+which only runs in RAM and has not storage.
 
 ## Getting Started
 
@@ -29,7 +30,7 @@ curl -sS smtp://127.0.0.1:1025 \
 
 ### Web UI
 
-Inspect [https://localhost:8025](https://localhost:8025).
+Inspect [http://localhost:8025](https://localhost:8025).
 
 ### Using the API
 
