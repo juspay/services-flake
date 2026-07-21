@@ -1,4 +1,5 @@
-{ lib
+{ config
+, lib
 , pkgs
 , name
 , ...
@@ -7,6 +8,7 @@
 let
   inherit (lib)
     mkOption
+    mkEnableOption
     types
     ;
 
@@ -137,43 +139,32 @@ in
       };
     };
 
-    blueprints = mkOption {
-      default = { };
-      type = types.attrsOf (
-        types.submodule {
-          options = {
-            path = mkOption {
-              type = types.pathWith {
-                inStore = true;
-              };
-              default = null;
-              description = ''
-                Path of a blueprint YAML file to make available for import.
-              '';
-            };
-
-            import = mkOption {
-              type = types.bool;
-              default = true;
-              description = "Whether to make this blueprint available for import.";
-            };
+    blueprints = {
+      export = {
+        enable = mkEnableOption "blueprint export process on manual trigger";
+        path = mkOption {
+          description = "The path to the export file.";
+          type = types.pathWith {
+            inStore = false;
+            absolute = false;
           };
-        }
-      );
+          default = "${config.dataDir}/export/blueprint.yaml";
+        };
+      };
 
-      example = lib.literalExpression ''
-        {
-          my-app = {
-            path = ./blueprints/my-app.yaml;
-          };
-        }
-      '';
-
-      description = ''
-        Blueprints to import on start up.
-        Enabled blueprints are copied into the blueprints directoryr and
-        auto-applied by the Authentik worker.
-      '';
+      imports = mkOption {
+        description = ''
+          Blueprints to import on start up.
+          Enabled blueprints are copied into the blueprints directoryr and
+          auto-applied by the Authentik worker.
+        '';
+        type = types.listOf (
+          types.pathWith {
+            inStore = true;
+          }
+        );
+        default = [ ];
+      };
     };
 
     settings = mkOption {

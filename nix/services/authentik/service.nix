@@ -78,6 +78,7 @@ let
   );
 
   # The authentik components.
+  inherit (finalComponents.authentikComponents) manage;
   inherit (finalComponents.authentikComponents) gopkgs;
   inherit (finalComponents.authentikComponents) rust;
   inherit (finalComponents.authentikComponents) migrate;
@@ -121,19 +122,19 @@ let
   # Copy the enabled blueprints into the Authentik blueprints dir.
   # Copied (not symlinked) for the same reason as the built-in
   # blueprints: authentik rejects blueprints whose resolved path escapes `blueprints_dir`.
-  blueprintImport = lib.mapAttrsToList
+  blueprintImport = lib.map
     (
-      bp: e:
-        # Bash
-        ''
-          filename="${bp}.yaml"
-          f="${e.path}"
-          echo "Copying blueprint '${bp}' from '$f' into './additional/${bp}'."
-          mkdir -p ./additional
-          cp -L "$f" "./additional/${bp}"
-        ''
+      p:
+      # Bash
+      ''
+        filename="${lib.baseNameOf p}"
+        f="${p}"
+        echo "Copying blueprint '${p}' from '$f' into './additional/$filename'."
+        mkdir -p ./additional
+        cp -L "$f" "./additional/$filename"
+      ''
     )
-    (lib.filterAttrs (_: v: v.import && v.path != null) cfg.blueprints);
+    cfg.blueprints.imports;
 
   loadEnvFile =
     lib.optionalString (cfg.environmentFile != null)
@@ -184,9 +185,6 @@ let
       echo "====================="
       cat "$staticDir/authentik/lib/default.yml"
       echo "====================="
-
-      cd "$staticDir"
-      echo "Working dir: $(pwd)"
     '';
 
   setup =
@@ -202,6 +200,7 @@ let
       # Bash
       ''
         ${setup}
+        cd "$staticDir"
         echo "Starting authentik migrate ..."
         exec ${migrate}/bin/migrate.py
       '';
@@ -211,8 +210,19 @@ let
       # Bash
       ''
         ${setup}
+        cd "$staticDir"
         echo "Starting authentik worker ..."
         exec ${rust}/bin/authentik worker
+      '';
+
+  authentik-blueprint-export =
+    pkgs.writeShellScriptBin "authentik-worker"
+      # Bash
+      ''
+        ${setup}
+        echo "Starting authentik blueprint export to '${cfg.blueprints.export.path}'..."
+        mkdir -p "$(dirname "${cfg.blueprints.export.path}")"
+        exec ${manage}/bin/manage.py export_blueprint > "${cfg.blueprints.export.path}"
       '';
 
   authentik-server =
@@ -220,6 +230,7 @@ let
       # Bash
       ''
         ${setup}
+        cd "$staticDir"
         echo "Starting authentik server ..."
         exec ${gopkgs}/bin/server
       '';
@@ -271,41 +282,51 @@ in
     };
   };
 
-  outputs.settings.processes = lib.mkIf cfg.enable {
-    "${name}-migrate" = {
-      description = "Authentik database migrations: a prerequisite that creates the schema.";
-      environment = connEnv;
-      command = "${lib.getExe authentik-migrate}";
+  outputs.settings.processes = lib.mkIf cfg.enable (
+    {
+      "${name}-migrate" = {
+        description = "Authentik database migrations: a prerequisite that creates the schema.";
+        environment = connEnv;
+        command = "${lib.getExe authentik-migrate}";
 
-      depends_on = {
-        "${name}-pg-db".condition = "process_healthy";
-      };
-    };
-
-    "${name}-worker" = {
-      description = "Authentik background worker: processes tasks and applies blueprints.";
-      environment = connEnv // listenEnv "worker";
-      command = "${lib.getExe authentik-worker}";
-      depends_on."${name}-migrate".condition = "process_completed_successfully";
-    };
-
-    "${name}" = {
-      description = "Authentik HTTP/API server.";
-      environment = connEnv // listenEnv "server";
-      command = "${lib.getExe authentik-server}";
-
-      depends_on = {
-        "${name}-migrate".condition = "process_completed_successfully";
-        "${name}-worker".condition = "process_started";
+        depends_on = {
+          "${name}-pg-db".condition = "process_healthy";
+        };
       };
 
-      readiness_probe = {
-        exec.command = "${lib.getExe authentik-health}";
-        initial_delay_seconds = 20;
-        period_seconds = 5;
-        timeout_seconds = 4;
-        failure_threshold = 30;
+      "${name}-worker" = {
+        description = "Authentik background worker: processes tasks and applies blueprints.";
+        environment = connEnv // listenEnv "worker";
+        command = "${lib.getExe authentik-worker}";
+        depends_on."${name}-migrate".condition = "process_completed_successfully";
       };
-    };
-  };
+
+      "${name}" = {
+        description = "Authentik HTTP/API server.";
+        environment = connEnv // listenEnv "server";
+        command = "${lib.getExe authentik-server}";
+
+        depends_on = {
+          "${name}-migrate".condition = "process_completed_successfully";
+          "${name}-worker".condition = "process_started";
+        };
+
+        readiness_probe = {
+          exec.command = "${lib.getExe authentik-health}";
+          initial_delay_seconds = 20;
+          period_seconds = 5;
+          timeout_seconds = 4;
+          failure_threshold = 30;
+        };
+      };
+    }
+    // lib.optionalAttrs (cfg.blueprints.export.enable) {
+      "${name}-blueprint-export" = {
+        disabled = true;
+        description = "Authentik blueprint export.";
+        environment = connEnv // listenEnv "worker";
+        command = "${lib.getExe authentik-blueprint-export}";
+      };
+    }
+  );
 }
