@@ -8,8 +8,16 @@ let
 in
 {
   services.rustfs."rsfs" = {
-    package = pkgs.rustfs;
     enable = true;
+    package = pkgs.rustfs;
+
+    provision = {
+      enable = true;
+      buckets = [
+        "test-a"
+        "test-b"
+      ];
+    };
   };
 
   settings.processes.rsfs.environment = {
@@ -20,18 +28,37 @@ in
   settings.processes.test = {
     command = pkgs.writeShellApplication {
       name = "rustfs-test";
-      runtimeInputs = [ pkgs.curl ];
+
+      runtimeInputs = [
+        pkgs.curl
+        pkgs.minio-client
+        pkgs.gnugrep
+      ];
+
       text = ''
         set -eu
         echo "Checking if rustfs is up."
-        curl -sfS "http://${cfg.server.host}:${lib.toString cfg.server.port}/health"
+        curl -fsS "http://${cfg.server.host}:${lib.toString cfg.server.port}/health"
         echo "Rustfs is up."
 
         echo "Checking if rustfs console is up."
-        curl -sfS "http://${cfg.server.host}:${lib.toString cfg.console.port}/rustfs/console"
+        curl -fsS "http://${cfg.server.host}:${lib.toString cfg.console.port}/rustfs/console"
         echo "Rustfs console is up."
+
+        echo "Check buckets."
+        endpoint="${cfg.server.host}:${lib.toString cfg.server.port}"
+        export MC_HOST_rustfs="http://${cfg.accessKey}:${cfg.secretKey}@$endpoint"
+        out=$(mc ls rustfs)
+        for b in ${lib.escapeShellArgs cfg.provision.buckets}; do
+          if echo "$out" | grep -q "$b"; then
+            echo "!! Bucket '$b' not listed.";
+            exit 1
+          fi
+        done
+        echo "All buckets created."
       '';
     };
     depends_on."rsfs".condition = "process_healthy";
+    depends_on."rsfs-provision".condition = "process_completed";
   };
 }
