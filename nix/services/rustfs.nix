@@ -41,7 +41,11 @@ in
         description = "The TCP port for the web console.";
       };
 
-      enable = lib.mkEnableOption "console";
+      enable = lib.mkOption {
+        type = types.bool;
+        default = true; # This is the default in RustFS.
+        description = "Enable the console.";
+      };
     };
 
     accessKey = lib.mkOption {
