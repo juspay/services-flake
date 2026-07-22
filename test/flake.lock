@@ -85,12 +85,12 @@
         "flake-parts": "flake-parts",
         "nixpkgs": "nixpkgs",
         "process-compose-flake": "process-compose-flake",
-        "rustfs": "rustfs",
+        "rustfs-flake": "rustfs-flake",
         "services-flake": "services-flake",
         "systems": "systems"
       }
     },
-    "rustfs": {
+    "rustfs-flake": {
       "inputs": {
         "nixpkgs": "nixpkgs_2"
       },

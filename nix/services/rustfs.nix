@@ -175,7 +175,7 @@ in
       name = "rustfs-provision";
       runtimeInputs = [
         pkgs.curl
-        pkgs.minio-client
+        pkgs.awscli2
         pkgs.zip
       ];
       text =
@@ -183,11 +183,13 @@ in
         ''
           endpoint="${config.server.host}:${lib.toString config.server.port}"
 
-          # Throwaway --config-dir so nothing is written to $HOME.
+          # Scratch dir (for the IAM zip); nothing is written to $HOME.
           tmp="$(mktemp -d)"
           trap 'rm -rf "$tmp"' EXIT
 
-          export MC_HOST_rustfs="http://${config.accessKey}:${config.secretKey}@$endpoint"
+          export AWS_ACCESS_KEY_ID="${config.accessKey}"
+          export AWS_SECRET_ACCESS_KEY="${config.secretKey}"
+          export AWS_DEFAULT_REGION="${config.region}"
         ''
         + lib.concatStringsSep "\n" (
           lib.map
@@ -195,16 +197,15 @@ in
               b:
               # Bash
               ''
-                echo "Provision: Ensuring bucket 'rustfs/${b}'."
-                mc --config-dir "$tmp" --ignore-existing "rustfs/${b}"
+                echo "Provision: Ensuring bucket '${b}'."
+                aws --endpoint-url "http://$endpoint" s3 mb "s3://${b}" 2>/dev/null
+                echo "Provision: Bucket '${b}' created."
               ''
             )
             config.provision.buckets
         )
         + (lib.optionalString (config.provision.iam.path != null) ''
           echo "Provision: Importing IAM from zipping '${config.provision.iam.path}'"
-
-          endpoint="http://${config.server.host}:${lib.toString config.server.port}"
           zip -rq "$tmp/iam.zip" "${config.provision.iam.path}"
 
           curl -fsS -X PUT \
