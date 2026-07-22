@@ -1,6 +1,7 @@
 { config
 , lib
 , name
+, pkgs
 , ...
 }:
 
@@ -71,13 +72,22 @@ in
 
   config.outputs.settings.processes.${name} = {
     environment = {
-      RUSTFS_ADDRESS = config.server.host;
+      # RustFS uses `reqwest`, which panics at startup ("No CA certificates were
+      # loaded from the system") when no CA bundle is available (e.g. inside the
+      # Nix build sandbox). Point it at nixpkgs' cacert; overridable via
+      # `extraEnvironment`.
+      SSL_CERT_FILE = "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt";
+
+      RUSTFS_ADDRESS = "${config.server.host}:${lib.toString config.server.port}";
       RUSTFS_PORT = lib.toString config.server.port;
+
       RUSTFS_CONSOLE_ENABLE = if config.console.enable then "true" else "false";
-      RUSTFS_CONSOLE_ADDRESS = config.server.host;
+      RUSTFS_CONSOLE_ADDRESS = "${config.server.host}:${lib.toString config.console.port}";
       RUSTFS_CONSOLE_PORT = lib.toString config.console.port;
+
       RUSTFS_ACCESS_KEY = config.accessKey;
       RUSTFS_SECRET_KEY = config.secretKey;
+
       RUSTFS_DATA_DIR = config.dataDir;
     }
     // config.extraEnvironment;

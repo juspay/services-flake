@@ -12,6 +12,11 @@ in
     enable = true;
   };
 
+  settings.processes.rsfs.environment = {
+    # The test needs CA certificates.
+    SSL_CERT_FILE = "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt";
+  };
+
   settings.processes.test = {
     command = pkgs.writeShellApplication {
       name = "rustfs-test";
