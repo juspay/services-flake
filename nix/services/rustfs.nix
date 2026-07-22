@@ -157,7 +157,7 @@ in
         RUSTFS_ACCESS_KEY = config.accessKey;
         RUSTFS_SECRET_KEY = config.secretKey;
 
-        RUSTFS_DATA_DIR = config.dataDir;
+        RUSTFS_DATA_DIR = "${config.dataDir}/data";
 
         RUSTFS_REGION = config.region;
       }

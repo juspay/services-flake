@@ -5,6 +5,8 @@
 }:
 let
   cfg = config.services.rustfs.rsfs;
+  name = "rsfs";
+  exportPath = config.services.rustfs.${name}.iam.export.path;
 in
 {
   services.rustfs."rsfs" = {
@@ -20,7 +22,7 @@ in
     iam.export.enable = true;
   };
 
-  settings.processes.rsfs.environment = {
+  settings.processes.${name}.environment = {
     # The test needs CA certificates.
     SSL_CERT_FILE = "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt";
   };
@@ -33,6 +35,7 @@ in
         pkgs.curl
         pkgs.gnugrep
         pkgs.awscli2
+        pkgs.jq
       ];
 
       text = ''
@@ -59,6 +62,44 @@ in
           fi
         done
         echo "All buckets created."
+
+
+        export PC_SOCKET_PATH="${config.cli.options.unix-socket}"
+        # Silence process-compose not finding a config home.
+        mkdir -p "$(pwd)/.config/process-compose"
+        # shellcheck disable=SC2155
+        export XDG_CONFIG_HOME="$(pwd)/.config"
+
+        echo "Check export."
+        process-compose process start "${name}-iam-export"
+
+        completed="false"
+        for _ in $(seq 1 30); do
+          if
+            [ "$(
+              process-compose process get "${name}-iam-export"  \
+                -o json |
+                jq -r ".[0].status"
+            )" = "Completed" ]
+          then
+            completed="true"
+            break
+          fi
+
+          sleep 2
+        done
+
+        if [ "$completed" != "true" ]; then
+          echo "!! Blueprint export did not complete in time."
+          exit 1
+        fi
+
+        # shellcheck disable=SC2010
+        if [ ! -d "${exportPath}/iam-assets" ]; then
+          echo "!! Export dir '${exportPath}' did not get created."
+          ls "${exportPath}"
+          exit 1
+        fi
       '';
     };
     depends_on."rsfs".condition = "process_healthy";
