@@ -78,11 +78,9 @@ in
   config.outputs.settings.processes.${name} = {
     environment = {
       RUSTFS_ADDRESS = "${config.server.host}:${lib.toString config.server.port}";
-      RUSTFS_PORT = lib.toString config.server.port;
 
       RUSTFS_CONSOLE_ENABLE = if config.console.enable then "true" else "false";
       RUSTFS_CONSOLE_ADDRESS = "${config.server.host}:${lib.toString config.console.port}";
-      RUSTFS_CONSOLE_PORT = lib.toString config.console.port;
 
       RUSTFS_ACCESS_KEY = config.accessKey;
       RUSTFS_SECRET_KEY = config.secretKey;
