@@ -11,13 +11,13 @@ in
     enable = true;
     package = pkgs.rustfs;
 
-    provision = {
-      enable = true;
-      buckets = [
-        "test-a"
-        "test-b"
-      ];
-    };
+    buckets = [
+      "test-a"
+      "test-b"
+    ];
+
+    iam.import.path = ./rustfs/test/iam-export;
+    iam.export.enable = true;
   };
 
   settings.processes.rsfs.environment = {
@@ -52,7 +52,7 @@ in
 
         endpoint="${cfg.server.host}:${lib.toString cfg.server.port}"
         out=$(aws --endpoint-url "http://$endpoint" s3api list-buckets --query 'Buckets[].Name' --output text)
-        for b in ${lib.escapeShellArgs cfg.provision.buckets}; do
+        for b in ${lib.escapeShellArgs cfg.buckets}; do
           if ! grep -qw "$b" <<<"$out"; then
             echo "!! Bucket '$b' not listed."
             exit 1

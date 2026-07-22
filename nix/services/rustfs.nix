@@ -7,6 +7,9 @@
 
 let
   inherit (lib) types mkOption mkEnableOption;
+
+  provisionEnable =
+    config.buckets != [ ] || config.iam.import.path != null || config.provisionScript != null;
 in
 {
   options = {
@@ -73,21 +76,19 @@ in
       description = "The service region reported to clients.";
     };
 
-    provision = {
-      enable = mkEnableOption "rustfs provisioning (buckets + IAM blueprint) on startup";
+    buckets = lib.mkOption {
+      type = types.listOf types.str;
+      default = [ ];
+      description = "Buckets to create on startup.";
+      example = [
+        "uploads"
+        "assets"
+      ];
+    };
 
-      buckets = lib.mkOption {
-        type = types.listOf types.str;
-        default = [ ];
-        description = "Buckets to create on startup (idempotent).";
-        example = [
-          "uploads"
-          "assets"
-        ];
-      };
-
-      iam = {
-        path = lib.mkOption {
+    iam = {
+      import = {
+        path = mkOption {
           type = types.nullOr (
             types.either
               (types.pathWith {
@@ -106,13 +107,28 @@ in
         };
       };
 
-      extraScript = lib.mkOption {
-        type = types.nullOr types.package;
-        default = null;
-        description = ''
-          Extra script with custom provisioning steps.
-        '';
+      export = {
+        enable = mkEnableOption "export of IAM settings on a process '${name}-iam-export'.";
+        path = mkOption {
+          type = types.pathWith {
+            inStore = false;
+            absolute = false;
+          };
+          default = "${config.dataDir}/export/iam-settings";
+          description = ''
+            Path to the folder where to unzip the RustFS IAM export when the
+            manual process '${name}-iam-export runs'.
+          '';
+        };
       };
+    };
+
+    provisionScript = mkOption {
+      type = types.nullOr types.package;
+      default = null;
+      description = ''
+        Extra provision script with custom provisioning steps.
+      '';
     };
 
     extraEnvironment = mkOption {
@@ -130,103 +146,139 @@ in
     };
   };
 
-  config.outputs.settings.processes.${name} = {
-    environment = {
-      RUST_LOG = config.logLevel;
-      RUSTFS_ADDRESS = "${config.server.host}:${lib.toString config.server.port}";
-      RUSTFS_CONSOLE_ENABLE = lib.boolToString config.console.enable;
-      RUSTFS_CONSOLE_ADDRESS = "${config.server.host}:${lib.toString config.console.port}";
+  config.outputs.settings.processes = {
+    ${name} = {
+      environment = {
+        RUST_LOG = config.logLevel;
+        RUSTFS_ADDRESS = "${config.server.host}:${lib.toString config.server.port}";
+        RUSTFS_CONSOLE_ENABLE = lib.boolToString config.console.enable;
+        RUSTFS_CONSOLE_ADDRESS = "${config.server.host}:${lib.toString config.console.port}";
 
-      RUSTFS_ACCESS_KEY = config.accessKey;
-      RUSTFS_SECRET_KEY = config.secretKey;
+        RUSTFS_ACCESS_KEY = config.accessKey;
+        RUSTFS_SECRET_KEY = config.secretKey;
 
-      RUSTFS_DATA_DIR = config.dataDir;
+        RUSTFS_DATA_DIR = config.dataDir;
 
-      RUSTFS_REGION = config.region;
-    }
-    // config.extraEnvironment;
+        RUSTFS_REGION = config.region;
+      }
+      // config.extraEnvironment;
 
-    command = pkgs.writeShellApplication {
-      name = "rustfs";
-      text =
-        # Bash
-        ''
-          mkdir -p "$RUSTFS_DATA_DIR"
-          exec ${config.package}/bin/rustfs server "$RUSTFS_DATA_DIR"
-        '';
-    };
-
-    readiness_probe = {
-      http_get = {
-        host = config.server.host;
-        port = config.server.port;
-        path = "/health";
+      command = pkgs.writeShellApplication {
+        name = "rustfs";
+        text =
+          # Bash
+          ''
+            mkdir -p "$RUSTFS_DATA_DIR"
+            exec ${config.package}/bin/rustfs server "$RUSTFS_DATA_DIR"
+          '';
       };
-      initial_delay_seconds = 1;
-      period_seconds = 2;
-      timeout_seconds = 2;
-      success_threshold = 1;
-      failure_threshold = 10;
+
+      readiness_probe = {
+        http_get = {
+          host = config.server.host;
+          port = config.server.port;
+          path = "/health";
+        };
+        initial_delay_seconds = 1;
+        period_seconds = 2;
+        timeout_seconds = 2;
+        success_threshold = 1;
+        failure_threshold = 10;
+      };
     };
-  };
+  }
+  // lib.optionalAttrs provisionEnable {
+    "${name}-provision" = {
+      command = pkgs.writeShellApplication {
+        name = "rustfs-provision";
+        runtimeInputs = [
+          pkgs.curl
+          pkgs.awscli2
+          pkgs.zip
+        ];
+        text =
+          # Bash
+          ''
+            # shellcheck disable=SC2034
+            endpoint="${config.server.host}:${lib.toString config.server.port}"
 
-  config.outputs.settings.processes."${name}-provision" = lib.mkIf config.provision.enable {
-    command = pkgs.writeShellApplication {
-      name = "rustfs-provision";
-      runtimeInputs = [
-        pkgs.curl
-        pkgs.awscli2
-        pkgs.zip
-      ];
-      text =
-        # Bash
-        ''
-          endpoint="${config.server.host}:${lib.toString config.server.port}"
+            # Scratch dir (for the IAM zip); nothing is written to $HOME.
+            tmp="$(mktemp -d)"
+            trap 'rm -rf "$tmp"' EXIT
 
-          # Scratch dir (for the IAM zip); nothing is written to $HOME.
-          tmp="$(mktemp -d)"
-          trap 'rm -rf "$tmp"' EXIT
+            export AWS_ACCESS_KEY_ID="${config.accessKey}"
+            export AWS_SECRET_ACCESS_KEY="${config.secretKey}"
+            export AWS_DEFAULT_REGION="${config.region}"
+          ''
+          + lib.concatStringsSep "\n" (
+            lib.map
+              (
+                b:
+                # Bash
+                ''
+                  echo "Provision: Ensuring bucket '${b}'."
+                  aws --endpoint-url "http://$endpoint" s3 mb "s3://${b}" 2>/dev/null
+                  echo "Provision: Bucket '${b}' created."
+                ''
+              )
+              config.buckets
+          )
+          + (lib.optionalString (config.iam.import.path != null) ''
+            echo "Provision: Importing IAM from zipping '${config.iam.import.path}'"
+            zip -rq "$tmp/iam.zip" "${config.iam.import.path}"
 
-          export AWS_ACCESS_KEY_ID="${config.accessKey}"
-          export AWS_SECRET_ACCESS_KEY="${config.secretKey}"
-          export AWS_DEFAULT_REGION="${config.region}"
-        ''
-        + lib.concatStringsSep "\n" (
-          lib.map
-            (
-              b:
-              # Bash
-              ''
-                echo "Provision: Ensuring bucket '${b}'."
-                aws --endpoint-url "http://$endpoint" s3 mb "s3://${b}" 2>/dev/null
-                echo "Provision: Bucket '${b}' created."
-              ''
-            )
-            config.provision.buckets
-        )
-        + (lib.optionalString (config.provision.iam.path != null) ''
-          echo "Provision: Importing IAM from zipping '${config.provision.iam.path}'"
-          zip -rq "$tmp/iam.zip" "${config.provision.iam.path}"
+            curl -fsS -X PUT \
+              --aws-sigv4 "aws:amz:${config.region}:s3" \
+              -u "${config.accessKey}:${config.secretKey}" \
+              --data-binary "@$tmp/iam.zip" \
+              -H "Content-Type: application/zip" \
+              "http://$endpoint/rustfs/admin/v3/import-iam"
 
-          curl -fsS -X PUT \
-            --aws-sigv4 "aws:amz:${config.region}:s3" \
-            -u "${config.accessKey}:${config.secretKey}" \
-            --data-binary "@$tmp/iam.zip" \
-            -H "Content-Type: application/zip" \
-            "http://$endpoint/rustfs/admin/v3/import-iam"
+            echo "Provision: IAM import done."
+          '')
+          + (lib.optionalString (config.provisionScript != null) "${lib.getExe config.provisionScript}")
+          + ''
+            echo "Provision: Done."
+          '';
+      };
 
-          echo "Provision: IAM import done."
-        '')
-        + (lib.optionalString
-          (
-            config.provision.extraScript != null
-          ) "${lib.getExe config.provision.extraScript}")
-        + ''
-          echo "Provision: Done."
-        '';
+      depends_on.${name}.condition = "process_healthy";
+      availability.restart = "no";
     };
+  }
+  // lib.optionalAttrs config.iam.export.enable {
+    "${name}-iam-export" = {
+      command = pkgs.writeShellApplication {
+        name = "${name}-iam-export";
+        runtimeInputs = [
+          pkgs.curl
+          pkgs.unzip
+        ];
+        text =
+          # Bash
+          ''
+            endpoint="${config.server.host}:${lib.toString config.server.port}"
 
-    depends_on.${name}.condition = "process_healthy";
-    availability.restart = "no";
+            tmp="$(mktemp -d)"
+            trap 'rm -rf "$tmp"' EXIT
+
+            # IAM export — SigV4-signed GET from the admin export endpoint.
+            echo "Export: Downloading IAM settings into '${config.iam.export.path}'."
+            curl -fsS -X GET \
+              --aws-sigv4 "aws:amz:${config.region}:s3" \
+              -u "${config.accessKey}:${config.secretKey}" \
+              -H "Accept: application/zip" \
+              -o "$tmp/iam.zip" \
+              "http://$endpoint/rustfs/admin/v3/export-iam"
+
+            echo "Unzipping into '${config.iam.export.path}'."
+            mkdir -p "${config.iam.export.path}"
+            unzip -oq "$tmp/iam.zip" -d "${config.iam.export.path}"
+
+            echo "Export: IAM export done."
+          '';
+      };
+      disabled = true;
+    };
   };
 }
