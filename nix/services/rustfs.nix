@@ -1,4 +1,5 @@
-{ config
+{ pkgs
+, config
 , lib
 , name
 , ...
@@ -95,12 +96,15 @@ in
     }
     // config.extraEnvironment;
 
-    command =
-      # Bash
-      ''
-        mkdir -p "$RUSTFS_DATA_DIR"
-        exec ${config.package}/bin/rustfs server "$RUSTFS_DATA_DIR"
-      '';
+    command = pkgs.writeShellApplication {
+      name = "rustfs";
+      text =
+        # Bash
+        ''
+          mkdir -p "$RUSTFS_DATA_DIR"
+          exec ${config.package}/bin/rustfs server "$RUSTFS_DATA_DIR"
+        '';
+    };
 
     readiness_probe = {
       http_get = {
