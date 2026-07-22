@@ -290,24 +290,21 @@ in
       "${name}-migrate" = {
         description = "Authentik database migrations: a prerequisite that creates the schema.";
         environment = connEnv;
-        command = "${lib.getExe authentik-migrate}";
-
-        depends_on = {
-          "${name}-pg-db".condition = "process_healthy";
-        };
+        command = authentik-migrate;
+        depends_on."${name}-pg-db".condition = "process_healthy";
       };
 
       "${name}-worker" = {
         description = "Authentik background worker: processes tasks and applies blueprints.";
         environment = connEnv // listenEnv "worker";
-        command = "${lib.getExe authentik-worker}";
+        command = authentik-worker;
         depends_on."${name}-migrate".condition = "process_completed_successfully";
       };
 
       "${name}" = {
         description = "Authentik HTTP/API server.";
         environment = connEnv // listenEnv "server";
-        command = "${lib.getExe authentik-server}";
+        command = authentik-server;
 
         depends_on = {
           "${name}-migrate".condition = "process_completed_successfully";
