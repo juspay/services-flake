@@ -91,7 +91,7 @@ in
       # Bash
       ''
         mkdir -p "$RUSTFS_DATA_DIR"
-        exec ${config.package}/bin/rustfs "$RUSTFS_DATA_DIR"
+        exec ${config.package}/bin/rustfs server "$RUSTFS_DATA_DIR"
       '';
 
     readiness_probe = {
