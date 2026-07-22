@@ -66,14 +66,15 @@ in
 
   config.outputs.settings.processes.${name} = {
     command =
-      # Bash
-      ''
-        exec ${lib.getExe cfg.package} \
-          -api-bind-addr '${cfg.api.host}:${toString cfg.api.port}' \
-          -ui-bind-addr '${cfg.ui.host}:${toString cfg.ui.port}' \
-          -smtp-bind-addr '${cfg.smtp.host}:${toString cfg.smtp.port}' \
-          ${lib.escapeShellArgs cfg.extraArgs}
-      '';
+      pkgs.writeShellScriptBin "mailhog"
+        # Bash
+        ''
+          exec ${lib.getExe cfg.package} \
+            -api-bind-addr '${cfg.api.host}:${toString cfg.api.port}' \
+            -ui-bind-addr '${cfg.ui.host}:${toString cfg.ui.port}' \
+            -smtp-bind-addr '${cfg.smtp.host}:${toString cfg.smtp.port}' \
+            ${lib.escapeShellArgs cfg.extraArgs}
+        '';
 
     readiness_probe = {
       http_get = {
