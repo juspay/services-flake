@@ -219,7 +219,7 @@ in
     settings.processes = {
       ${name} = {
         environment = keycloakEnv;
-        command = "${lib.getExe keycloak-start}";
+        command = keycloak-start;
         readiness_probe = {
           exec = {
             command = "${lib.getExe keycloak-health}";
@@ -235,7 +235,7 @@ in
       # Export all configured realms.
       "${name}-realm-export-all" = {
         environment = keycloakEnv;
-        command = "${keycloak-realm-export-all}/bin/keycloak-realm-export-all";
+        command = keycloak-realm-export-all;
         disabled = true;
         description = ''
           Save the configured realms from keycloak, to back them up. You can run it manually.
