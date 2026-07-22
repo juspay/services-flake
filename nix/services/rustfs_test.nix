@@ -22,9 +22,14 @@ in
       name = "rustfs-test";
       runtimeInputs = [ pkgs.curl ];
       text = ''
+        set -eu
         echo "Checking if rustfs is up."
-        curl -sS "http://${cfg.server.host}:${lib.toString cfg.server.port}/health"
+        curl -sfS "http://${cfg.server.host}:${lib.toString cfg.server.port}/health"
         echo "Rustfs is up."
+
+        echo "Checking if rustfs console is up."
+        curl -sfS "http://${cfg.server.host}:${lib.toString cfg.console.port}/rustfs/console"
+        echo "Rustfs console is up."
       '';
     };
     depends_on."rsfs".condition = "process_healthy";

@@ -30,7 +30,7 @@
 
                 }
               // {
-                rustfs = inputs'.rustfs.packages.default;
+                rustfs = inputs'.rustfs-flake.packages.default;
               }
           )
         ];

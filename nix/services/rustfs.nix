@@ -13,7 +13,7 @@ in
       type = types.package;
       description = ''
         Which package of RustFS to use,
-        e.g. 'inputs.rustfs.packages.''${pkgs.stdenv.hostPlatform.system}.default'.
+        e.g. 'inputs.rustfs-flake.packages.''${pkgs.stdenv.hostPlatform.system}.default'.
       '';
     };
 
@@ -60,6 +60,12 @@ in
       description = "Secret key for authentication (8 to 40 characters).";
     };
 
+    logLevel = lib.mkOption {
+      type = lib.types.str;
+      default = "info";
+      description = "Log level (error, warn, info, debug, trace).";
+    };
+
     extraEnvironment = lib.mkOption {
       type = types.attrsOf types.str;
       default = { };
@@ -77,9 +83,9 @@ in
 
   config.outputs.settings.processes.${name} = {
     environment = {
+      RUST_LOG = config.logLevel;
       RUSTFS_ADDRESS = "${config.server.host}:${lib.toString config.server.port}";
-
-      RUSTFS_CONSOLE_ENABLE = if config.console.enable then "true" else "false";
+      RUSTFS_CONSOLE_ENABLE = lib.boolToString config.console.enable;
       RUSTFS_CONSOLE_ADDRESS = "${config.server.host}:${lib.toString config.console.port}";
 
       RUSTFS_ACCESS_KEY = config.accessKey;

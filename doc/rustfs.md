@@ -2,7 +2,9 @@
 
 [RustFS](https://github.com/rustfs/rustfs) is a high-performance, distributed object storage system written in Rust. It is compatible with the Amazon S3 API and can be used as a drop-in alternative to MinIO.
 
-RustFS is not in nixpkgs. You must provide the package yourself via [`package`](#options), e.g. from the [`rustfs`](https://github.com/rustfs/rustfs) flake input.
+RustFS is not in nixpkgs. You must provide the package yourself
+via [`package`](#options), e.g. from the
+[`rustfs-flake`](https://github.com/rustfs/rustfs-flake) flake input.
 
 ## Getting Started
 
@@ -13,7 +15,7 @@ RustFS is not in nixpkgs. You must provide the package yourself via [`package`](
     process-compose."default" = {
       services.rustfs."s3" = {
         enable = true;
-        package = inputs.rustfs.packages.${system}.default;
+        package = inputs.rustfs-flake.packages.${system}.default;
 
         server.port = 9000;          # S3 API
         console.enable = true;
