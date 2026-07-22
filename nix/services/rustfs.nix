@@ -11,8 +11,10 @@ in
   options = {
     package = lib.mkOption {
       type = types.package;
-      description = "Which package of RustFS to use";
-      defaultText = lib.literalExpression "inputs.rustfs.packages.\${pkgs.stdenv.hostPlatform.system}.default";
+      description = ''
+        Which package of RustFS to use,
+        e.g. 'inputs.rustfs.packages.''${pkgs.stdenv.hostPlatform.system}.default'.
+      '';
     };
 
     server = {
