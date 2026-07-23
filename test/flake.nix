@@ -48,6 +48,8 @@
             "${inputs.services-flake}/nix/services/dynamodb-local_test.nix"
             "${inputs.services-flake}/nix/services/elasticmq_test.nix"
             "${inputs.services-flake}/nix/services/grafana_test.nix"
+            "${inputs.services-flake}/nix/services/keycloak_test.nix"
+            "${inputs.services-flake}/nix/services/keycloak-certs_test.nix"
             "${inputs.services-flake}/nix/services/memcached_test.nix"
             "${inputs.services-flake}/nix/services/mysql/mysql_test.nix"
             "${inputs.services-flake}/nix/services/nats-server_test.nix"
@@ -69,8 +71,6 @@
             "${inputs.services-flake}/nix/services/tika_test.nix"
             "${inputs.services-flake}/nix/services/weaviate_test.nix"
             "${inputs.services-flake}/nix/services/zookeeper_test.nix"
-            "${inputs.services-flake}/nix/services/keycloak_test.nix"
-            "${inputs.services-flake}/nix/services/keycloak-certs_test.nix"
           ] ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
             # `phpfpm` test fails on aarch64-darwin:
             # [phpfpm1        ] [28-Jul-2025 13:05:47.512506] DEBUG: pid 90757, fpm_stdio_save_original_stderr(), line 81: saving original STDERR fd: dup()
