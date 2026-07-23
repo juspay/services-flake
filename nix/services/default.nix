@@ -38,6 +38,7 @@ in
     ./qdrant.nix
     ./chromadb.nix
     ./neo4j.nix
+    ./rustfs.nix
   ]) ++ [
     ./devshell.nix
   ];

@@ -62,6 +62,7 @@
             "${inputs.services-flake}/nix/services/neo4j_test.nix"
             "${inputs.services-flake}/nix/services/redis_test.nix"
             "${inputs.services-flake}/nix/services/redis-cluster_test.nix"
+            "${inputs.services-flake}/nix/services/rustfs_test.nix"
             "${inputs.services-flake}/nix/services/searxng_test.nix"
             "${inputs.services-flake}/nix/services/pyroscope_test.nix"
             "${inputs.services-flake}/nix/services/tempo_test.nix"
