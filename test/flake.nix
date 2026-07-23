@@ -54,6 +54,7 @@
             builtins.listToAttrs (
               builtins.map mkPackageFor (
                 [
+                  "${inputs.services-flake}/nix/services/authentik_test.nix"
                   "${inputs.services-flake}/nix/services/apache-kafka-kraft_test.nix"
                   "${inputs.services-flake}/nix/services/azurite_test.nix"
                   "${inputs.services-flake}/nix/services/chromadb_test.nix"
