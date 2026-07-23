@@ -38,7 +38,9 @@ in
     ./qdrant.nix
     ./chromadb.nix
     ./neo4j.nix
-  ]) ++ [
+    ./mailhog.nix
+  ])
+  ++ [
     ./devshell.nix
   ];
 
