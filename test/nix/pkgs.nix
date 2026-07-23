@@ -1,40 +1,30 @@
 { inputs, ... }:
 
 {
-  perSystem =
-    { self'
-    , inputs'
-    , pkgs
-    , system
-    , lib
-    , ...
-    }:
-    {
-      _module.args.pkgs = import inputs.nixpkgs {
-        inherit system;
+  perSystem = { self', inputs', pkgs, system, lib, ... }: {
+    _module.args.pkgs = import inputs.nixpkgs {
+      inherit system;
 
-        # Required for elastic search
-        config.allowUnfree = true;
+      # Required for elastic search
+      config.allowUnfree = true;
 
-        overlays = [
-          (
-            self: super:
-              lib.optionalAttrs super.stdenv.isDarwin
-                {
+      overlays = [
+        (self: super: lib.optionalAttrs super.stdenv.isDarwin
+          {
 
-                  # Disable tests, because they are failing on darwin:
-                  # https://github.com/NixOS/nixpkgs/issues/281214
-                  pgadmin4 = super.pgadmin4.overrideAttrs (_: {
-                    doInstallCheck = false;
-                  });
+            # Disable tests, because they are failing on darwin:
+            # https://github.com/NixOS/nixpkgs/issues/281214
+            pgadmin4 = super.pgadmin4.overrideAttrs (_: {
+              doInstallCheck =
+                false;
+            });
 
-                }
-              // {
-                # Add authentik packages cause its not in nixpkgs.
-                authentikComponents = inputs'.authentik-nix.legacyPackages.authentikComponents;
-              }
-          )
-        ];
-      };
+          } // {
+          # Add authentik packages cause its not in nixpkgs.
+          authentikComponents = inputs'.authentik-nix.legacyPackages.authentikComponents;
+        }
+        )
+      ];
     };
+  };
 }
