@@ -19,10 +19,7 @@
                 false;
             });
 
-          } // {
-          rustfs = inputs'.rustfs-flake.packages.default;
-        }
-        )
+          } // { rustfs = inputs'.rustfs-flake.packages.default; })
       ];
     };
   };
