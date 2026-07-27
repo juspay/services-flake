@@ -95,17 +95,16 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1784250516,
-        "narHash": "sha256-cf2DfGyHKwwnfb6I836u6delfuwtubIcj4WPO/VPG74=",
+        "lastModified": 1784874492,
+        "narHash": "sha256-E4kC+rya1KfPpDGWtq+E3Ka4HoJGVIo5f9ZsHzYivUs=",
         "owner": "rustfs",
         "repo": "rustfs-flake",
-        "rev": "f5222f68c19bed705c619412827c4c0d3a33dcd6",
+        "rev": "7dedccc7160410a325f922ed8591d90152a261b7",
         "type": "github"
       },
       "original": {
         "owner": "rustfs",
         "repo": "rustfs-flake",
-        "rev": "f5222f68c19bed705c619412827c4c0d3a33dcd6",
         "type": "github"
       }
     },

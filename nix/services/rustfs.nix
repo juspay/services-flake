@@ -224,17 +224,22 @@ in
               config.buckets
           )
           + (lib.optionalString (config.iam.import.path != null) ''
-            echo "Provision: Importing IAM from zipping '${config.iam.import.path}'"
-            zip -rq "$tmp/iam.zip" "${config.iam.import.path}"
+            if [ -d "${config.iam.import.path}" ]; then
+              src="${config.iam.import.path}"
+              echo "Provision: Importing IAM from zipping '$src'"
+              (cd "${config.iam.import.path}" && zip -rq "$tmp/iam.zip" .)
 
-            curl -fsS -X PUT \
-              --aws-sigv4 "aws:amz:${config.region}:s3" \
-              -u "${config.accessKey}:${config.secretKey}" \
-              --data-binary "@$tmp/iam.zip" \
-              -H "Content-Type: application/zip" \
-              "http://$endpoint/rustfs/admin/v3/import-iam"
+              curl -fsS -X PUT \
+                --aws-sigv4 "aws:amz:${config.region}:s3" \
+                -u "${config.accessKey}:${config.secretKey}" \
+                --data-binary "@$tmp/iam.zip" \
+                -H "Content-Type: application/zip" \
+                "http://$endpoint/rustfs/admin/v3/import-iam"
 
-            echo "Provision: IAM import done."
+              echo "Provision: IAM import done."
+            else
+              echo "Provision: IAM import: path '$src' does not exist."
+            fi
           '')
           + (lib.optionalString (config.provisionScript != null) "${lib.getExe config.provisionScript}")
           + ''

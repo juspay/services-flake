@@ -5,6 +5,7 @@
     systems.url = "github:nix-systems/default";
     process-compose-flake.url = "github:Platonic-Systems/process-compose-flake";
     services-flake.url = "github:juspay/services-flake";
+    rustfs-flake.url = "github:rustfs/rustfs-flake?rev=f5222f68c19bed705c619412827c4c0d3a33dcd6";
   };
   outputs = inputs:
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
