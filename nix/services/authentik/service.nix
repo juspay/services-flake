@@ -170,7 +170,7 @@ let
         mkdir -p "$tmpDir"
         ln -s "$tmpDir" "$dataDir/temp"
       fi
-      export TMPDIR="$dataDir/temp"
+      export TMPDIR="$tmpDir"
       export TEMPDIR="$TMPDIR"
 
       export PROMETHEUS_MULTIPROC_DIR="$dataDir/prometheus"
