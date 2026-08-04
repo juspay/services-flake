@@ -19,15 +19,16 @@ in
 
     realms = {
       master = {
-        path = ./keycloak/test-realms/master.json;
-        export = true;
-        import = false;
+        export = {
+          enable = true;
+        };
       };
 
       test = {
-        path = realmSrc;
-        import = true;
-        export = true;
+        import = realmSrc;
+        export = {
+          enable = true;
+        };
       };
     };
   };

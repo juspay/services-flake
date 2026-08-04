@@ -21,14 +21,18 @@
 
     realms = {
       master = {
-        path = ./master.json;
-        export = true;
-        import = false;
+        export = {
+           enable = true; # Export to data folder.
+        };
       };
       test = {
-        path = ./test.json;
-        import = false; # Set that to true once exported.
-        export = true;
+        # Set that once exported.
+        # import = "./test.json"
+
+        export = {
+           enable = true;
+           path = "./test.json";
+        };
       };
     };
   };
@@ -46,8 +50,8 @@ The temporary admin user is `admin` with the password set by [`initialAdminPassw
 
 ### Import Realms
 
-A realm listed under `realms` with `import = true` (the default) and a `path` set is imported on start up, provided the realm does not already exist.
-The `path` may be relative to the `process-compose` working directory or a Nix store path.
+A realm listed under `realms` with `import` set is imported on start up, provided the realm does not already exist.
+The `import` path may be relative to the `process-compose` working directory or a Nix store path.
 
 ```nix
 {
@@ -55,8 +59,7 @@ The `path` may be relative to the `process-compose` working directory or a Nix s
     enable = true;
 
     realms.test = {
-      path = ./test.json;
-      import = true;
+      import = ./test.json; # Nix store path. Quote to make it a relative path.
     };
   };
 }
@@ -66,15 +69,18 @@ The `path` may be relative to the `process-compose` working directory or a Nix s
 
 ### Export Settings
 
-To export realms when you made changes in the UI, make sure to have set `export = true` on the realms you care about:
+To export realms when you made changes in the UI, make sure to have set `export` on the realms you care about:
 
 ```nix
 {
   services.keycloak."kc" = {
     enable = true;
+
     realms.test = {
-      path = ./test.json;
-      export = true;
+      export = {
+        enable = true;
+        path = "./test.json"; # Optional.
+      };
     };
   };
 }
@@ -82,7 +88,7 @@ To export realms when you made changes in the UI, make sure to have set `export 
 
 This creates two process-compose processes, both **disabled by default** (they are not run automatically, since exporting requires Keycloak to be stopped):
 
-- `«name»-realm-export-all` — exports every realm with `export = true`.
+- `«name»-realm-export-all` — exports every realm with `export.enable = true`.
 
 Run it manually once Keycloak has stopped, e.g. from the process-compose TUI, or:
 

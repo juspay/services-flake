@@ -77,7 +77,7 @@ let
     (
       realm: e:
         let
-          f = e.path;
+          f = e.import;
         in
         # Bash
         ''
@@ -91,7 +91,7 @@ let
           unset f
         ''
     )
-    (lib.filterAttrs (_: v: v.import && v.path != null) cfg.realms);
+    (lib.filterAttrs (_: v: v.import != null) cfg.realms);
 
   # Generate the commands to export realms.
   assertKeycloakStopped = [
@@ -118,12 +118,17 @@ let
         );
     in
     realm: e:
-      if (e.path == null || isInStore e.path) then
-        (config.dataDir + "/realm-export/${realm}.json")
+      if e.export.path != null then
+        e.export.path
       else
-        e.path;
+        (
+          if e.import == null || isInStore e.import then
+            (config.dataDir + "/realm-export/${realm}.json")
+          else
+            e.import
+        );
 
-  realmsToExport = lib.filterAttrs (_: v: v.export) cfg.realms;
+  realmsToExport = lib.filterAttrs (_: v: v.export.enable) cfg.realms;
   realmsExport =
     if (!cfg.exportRealms || lib.length (lib.attrNames realmsToExport) == 0) then
       [ ]

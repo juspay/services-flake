@@ -14,6 +14,7 @@ let
   inherit (lib)
     mkOption
     mkPackageOption
+    mkEnableOption
     types
     ;
 in
@@ -111,7 +112,7 @@ in
       type = types.attrsOf (
         types.submodule {
           options = {
-            path = mkOption {
+            import = mkOption {
               type = types.nullOr (
                 # A relative, user-provided path.
                 lib.types.either
@@ -136,22 +137,27 @@ in
               '';
             };
 
-            import = mkOption {
-              type = types.bool;
-              default = true;
-              example = true;
-              description = ''
-                If you want to import that realm on start up, if the realm does not yet exist.
+            export = {
+              enable = mkEnableOption ''
+                export the realm on process launch `<name>-export-realms`.
               '';
-            };
 
-            export = mkOption {
-              type = types.bool;
-              default = false;
-              example = true;
-              description = ''
-                If you want to export that realm on process/script launch `keycloak-export-realms`.
-              '';
+              path = mkOption {
+                type = types.nullOr (
+                  lib.types.pathWith {
+                    inStore = false;
+                    absolute = false;
+                  }
+                );
+                default = null;
+                example = "./realms/a.json";
+                description = ''
+                  The path (relative to the `process-compose` working dir or an Nix store path)
+                  where you want to export this realm «name» to.
+                  - If not set and `import.path` is relative it is used as default.
+                  - If not set otherwise its defaulted to a value in the data folder.
+                '';
+              };
             };
           };
         }
