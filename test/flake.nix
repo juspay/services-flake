@@ -67,6 +67,7 @@
                   "${inputs.services-flake}/nix/services/nats-server_test.nix"
                   "${inputs.services-flake}/nix/services/nginx/nginx_test.nix"
                   "${inputs.services-flake}/nix/services/ollama_test.nix"
+                  "${inputs.services-flake}/nix/services/openobserve_test.nix"
                   "${inputs.services-flake}/nix/services/pgadmin_test.nix"
                   "${inputs.services-flake}/nix/services/plantuml_test.nix"
                   "${inputs.services-flake}/nix/services/postgres/postgres_test.nix"
