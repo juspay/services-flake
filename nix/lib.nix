@@ -21,12 +21,13 @@
             default = "./data/${name}";
             description = "The directory where all data for `${service}.<name>` is stored";
           };
-          namespace = lib.mkOption {
-            description = ''
-              Namespace for the ${service} service
-            '';
-            default = "${service}.${name}";
-            type = lib.types.str;
+          processSettings = lib.mkOption {
+            type = lib.types.lazyAttrsOf lib.types.deferredModule;
+            description = "Settings for a process-compose process defined in this service";
+            default = { };
+            apply = v: {
+              processes = v;
+            };
           };
           outputs = {
             defaultProcessSettings = lib.mkOption {
@@ -37,7 +38,7 @@
                 Default settings for all processes under the ${service} service
               '';
               default = {
-                namespace = lib.mkDefault config.namespace;
+                namespace = lib.mkDefault "${service}.${name}";
               };
             };
             settings = lib.mkOption {
@@ -48,7 +49,12 @@
               '';
               apply = v: v // {
                 processes = lib.flip lib.mapAttrs v.processes (_: cfg:
-                  { imports = [ config.outputs.defaultProcessSettings cfg ]; }
+                  {
+                    imports = [
+                      config.outputs.defaultProcessSettings
+                      cfg
+                    ];
+                  }
                 );
               };
             };
@@ -77,7 +83,8 @@
           imports =
             lib.pipe config.services.${service} [
               (lib.filterAttrs (_: cfg: cfg.enable))
-              (lib.mapAttrsToList (_: cfg: cfg.outputs.settings))
+              (lib.mapAttrsToList (_: cfg: [ cfg.outputs.settings cfg.processSettings ]))
+              lib.concatLists
             ];
         };
       };
