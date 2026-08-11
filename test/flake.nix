@@ -63,6 +63,7 @@
                   "${inputs.services-flake}/nix/services/grafana_test.nix"
                   "${inputs.services-flake}/nix/services/mailhog_test.nix"
                   "${inputs.services-flake}/nix/services/memcached_test.nix"
+                  "${inputs.services-flake}/nix/services/mimir_test.nix"
                   "${inputs.services-flake}/nix/services/mysql/mysql_test.nix"
                   "${inputs.services-flake}/nix/services/nats-server_test.nix"
                   "${inputs.services-flake}/nix/services/nginx/nginx_test.nix"
