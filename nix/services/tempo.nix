@@ -65,6 +65,13 @@ in
                     local = {
                       path = "${config.dataDir}/blocks";
                     };
+                  }
+                  # The live_store block is only supported by Tempo 3.x and later.
+                  // lib.optionalAttrs (lib.versionAtLeast config.package.version "3") {
+                    live_store = {
+                      shutdown_marker_dir = "${config.dataDir}/live-store/shutdown-marker";
+                      wal.path = "${config.dataDir}/live-store/traces";
+                    };
                   };
                 };
               }
