@@ -92,7 +92,7 @@ in
               period_seconds = 10;
               timeout_seconds = 2;
               success_threshold = 1;
-              failure_threshold = 5;
+              failure_threshold = 15;
             };
             availability = {
               restart = "on_failure";
