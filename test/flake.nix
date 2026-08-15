@@ -61,6 +61,7 @@
                   "${inputs.services-flake}/nix/services/dynamodb-local_test.nix"
                   "${inputs.services-flake}/nix/services/elasticmq_test.nix"
                   "${inputs.services-flake}/nix/services/grafana_test.nix"
+                  "${inputs.services-flake}/nix/services/alloy_test.nix"
                   "${inputs.services-flake}/nix/services/mailhog_test.nix"
                   "${inputs.services-flake}/nix/services/memcached_test.nix"
                   "${inputs.services-flake}/nix/services/mysql/mysql_test.nix"
