@@ -22,6 +22,7 @@ in
       ./seaweedfs.nix
       ./zookeeper.nix
       ./grafana.nix
+      ./alloy.nix
       ./memcached.nix
       ./minio.nix
       ./nats-server.nix

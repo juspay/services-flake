@@ -13,6 +13,7 @@ short-title: Services
 - [[elasticmq]]#
 - [[elasticsearch]]#
 - [[grafana]]#
+  - [[alloy]]
   - [[tempo]]
   - [[loki]]
   - [[pyroscope]]
