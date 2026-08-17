@@ -1,4 +1,10 @@
-{ pkgs, lib, name, config, ... }:
+{
+  pkgs,
+  lib,
+  name,
+  config,
+  ...
+}:
 let
   inherit (lib) types literalExpression;
 in
@@ -48,7 +54,9 @@ in
               };
             in
             {
-              command = "${lib.getExe tikaPackage} --host ${config.host} --port ${toString config.port} ${lib.optionalString (config.configFile != null) "--config ${config.configFile}"}";
+              command = "${lib.getExe tikaPackage} --host ${config.host} --port ${toString config.port} ${
+                lib.optionalString (config.configFile != null) "--config ${config.configFile}"
+              }";
               availability = {
                 restart = "on_failure";
                 max_restarts = 5;

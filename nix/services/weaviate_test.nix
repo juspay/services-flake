@@ -13,7 +13,10 @@
     in
     {
       command = pkgs.writeShellApplication {
-        runtimeInputs = [ cfg.package pkgs.curl ];
+        runtimeInputs = [
+          cfg.package
+          pkgs.curl
+        ];
         text = ''
           curl http://localhost:8080/v1/.well-known/live
         '';

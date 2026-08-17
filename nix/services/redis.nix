@@ -1,5 +1,11 @@
 # Based on https://github.com/cachix/devenv/blob/main/src/modules/services/redis.nix
-{ pkgs, lib, name, config, ... }:
+{
+  pkgs,
+  lib,
+  name,
+  config,
+  ...
+}:
 let
   inherit (lib) types;
 in
@@ -25,11 +31,11 @@ in
 
         If port is set to `0`, redis will not listen on a TCP socket.
       '';
-      apply = v:
+      apply =
+        v:
         lib.warnIf ((config.unixSocket != null) && (v != 0)) ''
           `${name}` is listening on both the TCP port and Unix socket, set `port = 0;` to listen on only the Unix socket
-        ''
-          v;
+        '' v;
     };
 
     unixSocket = lib.mkOption {
@@ -66,13 +72,18 @@ in
                 port ${toString config.port}
                 ${lib.optionalString (config.bind != null) "bind ${config.bind}"}
                 ${lib.optionalString (config.unixSocket != null) "unixsocket ${config.unixSocket}"}
-                ${lib.optionalString (config.unixSocket != null) "unixsocketperm ${builtins.toString config.unixSocketPerm}"}
+                ${lib.optionalString (
+                  config.unixSocket != null
+                ) "unixsocketperm ${builtins.toString config.unixSocketPerm}"}
                 ${config.extraConfig}
               '';
 
               startScript = pkgs.writeShellApplication {
                 name = "start-redis";
-                runtimeInputs = [ pkgs.coreutils config.package ];
+                runtimeInputs = [
+                  pkgs.coreutils
+                  config.package
+                ];
                 text = ''
                   set -euo pipefail
 
@@ -93,7 +104,7 @@ in
                 let
                   # Transform `unixSocket` by prefixing `config.dataDir` if a relative path is used
                   transformedSocketPath =
-                    if (config.unixSocket != null && (! lib.hasPrefix "/" config.unixSocket)) then
+                    if (config.unixSocket != null && (!lib.hasPrefix "/" config.unixSocket)) then
                       "${config.dataDir}/${config.unixSocket}"
                     else
                       config.unixSocket;

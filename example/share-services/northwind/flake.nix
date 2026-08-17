@@ -10,22 +10,30 @@
     northwind.url = "github:pthom/northwind_psql";
     northwind.flake = false;
   };
-  outputs = inputs:
+  outputs =
+    inputs:
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       systems = import inputs.systems;
       imports = [
         inputs.process-compose-flake.flakeModule
       ];
-      flake.processComposeModules.default =
-        import ./services.nix { inherit inputs; };
-      perSystem = { self', pkgs, config, lib, ... }: {
-        process-compose."default" = { config, ... }: {
-          imports = [
-            inputs.services-flake.processComposeModules.default
-            inputs.self.processComposeModules.default
-          ];
+      flake.processComposeModules.default = import ./services.nix { inherit inputs; };
+      perSystem =
+        {
+          self',
+          pkgs,
+          config,
+          lib,
+          ...
+        }:
+        {
+          process-compose."default" = { config, ... }: {
+            imports = [
+              inputs.services-flake.processComposeModules.default
+              inputs.self.processComposeModules.default
+            ];
+          };
+          devShells.default = config.process-compose."default".services.outputs.devShell;
         };
-        devShells.default = config.process-compose."default".services.outputs.devShell;
-      };
     };
 }

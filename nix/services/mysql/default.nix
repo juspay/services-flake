@@ -1,6 +1,13 @@
 # Based on: https://github.com/cachix/devenv/blob/main/src/modules/services/mysql.nix
-{ pkgs, lib, name, config, ... }:
-with lib.types; let
+{
+  pkgs,
+  lib,
+  name,
+  config,
+  ...
+}:
+with lib.types;
+let
   inherit (lib) types;
   format = pkgs.formats.ini { listsAsDuplicateKeys = true; };
 in
@@ -55,24 +62,26 @@ in
     };
 
     initialDatabases = lib.mkOption {
-      type = types.listOf (types.submodule {
-        options = {
-          name = lib.mkOption {
-            type = types.str;
-            description = ''
-              The name of the database to create.
-            '';
+      type = types.listOf (
+        types.submodule {
+          options = {
+            name = lib.mkOption {
+              type = types.str;
+              description = ''
+                The name of the database to create.
+              '';
+            };
+            schema = lib.mkOption {
+              type = types.nullOr types.path;
+              default = null;
+              description = ''
+                The initial schema of the database; if null (the default),
+                an empty database is created.
+              '';
+            };
           };
-          schema = lib.mkOption {
-            type = types.nullOr types.path;
-            default = null;
-            description = ''
-              The initial schema of the database; if null (the default),
-              an empty database is created.
-            '';
-          };
-        };
-      });
+        }
+      );
       default = [ ];
       description = ''
         List of database names and their initial schemas that should be used to create databases on the first startup
@@ -95,46 +104,48 @@ in
     };
 
     ensureUsers = lib.mkOption {
-      type = types.listOf (types.submodule {
-        options = {
-          name = lib.mkOption {
-            type = types.str;
-            description = ''
-              Name of the user to ensure.
-            '';
-          };
+      type = types.listOf (
+        types.submodule {
+          options = {
+            name = lib.mkOption {
+              type = types.str;
+              description = ''
+                Name of the user to ensure.
+              '';
+            };
 
-          password = lib.mkOption {
-            type = types.nullOr types.str;
-            default = null;
-            description = ''
-              Password of the user to ensure.
-            '';
-          };
+            password = lib.mkOption {
+              type = types.nullOr types.str;
+              default = null;
+              description = ''
+                Password of the user to ensure.
+              '';
+            };
 
-          ensurePermissions = lib.mkOption {
-            type = types.attrsOf types.str;
-            default = { };
-            description = ''
-              Permissions to ensure for the user, specified as attribute set.
-              The attribute names specify the database and tables to grant the permissions for,
-              separated by a dot. You may use wildcards here.
-              The attribute values specfiy the permissions to grant.
-              You may specify one or multiple comma-separated SQL privileges here.
-              For more information on how to specify the target
-              and on which privileges exist, see the
-              [GRANT syntax](https://mariadb.com/kb/en/library/grant/).
-              The attributes are used as `GRANT ''${attrName} ON ''${attrValue}`.
-            '';
-            example = literalExpression ''
-              {
-                "database.*" = "ALL PRIVILEGES";
-                "*.*" = "SELECT, LOCK TABLES";
-              }
-            '';
+            ensurePermissions = lib.mkOption {
+              type = types.attrsOf types.str;
+              default = { };
+              description = ''
+                Permissions to ensure for the user, specified as attribute set.
+                The attribute names specify the database and tables to grant the permissions for,
+                separated by a dot. You may use wildcards here.
+                The attribute values specfiy the permissions to grant.
+                You may specify one or multiple comma-separated SQL privileges here.
+                For more information on how to specify the target
+                and on which privileges exist, see the
+                [GRANT syntax](https://mariadb.com/kb/en/library/grant/).
+                The attributes are used as `GRANT ''${attrName} ON ''${attrValue}`.
+              '';
+              example = literalExpression ''
+                {
+                  "database.*" = "ALL PRIVILEGES";
+                  "*.*" = "SELECT, LOCK TABLES";
+                }
+              '';
+            };
           };
-        };
-      });
+        }
+      );
       default = [ ];
       description = ''
         Ensures that the specified users exist and have at least the ensured permissions.
@@ -175,18 +186,23 @@ in
               export MYSQL_UNIX_PORT
               export MYSQLX_UNIX_PORT
 
-              ${lib.optionalString (lib.hasAttrByPath [ "mysqld" "port" ] config.settings) "export MYSQL_TCP_PORT=${toString config.settings.mysqld.port}"}
+              ${lib.optionalString (lib.hasAttrByPath [
+                "mysqld"
+                "port"
+              ] config.settings) "export MYSQL_TCP_PORT=${toString config.settings.mysqld.port}"}
             '';
 
             initDatabaseCmd =
-              if isMariaDB
-              then "mysql_install_db ${mysqldOptions} --auth-root-authentication-method=normal"
-              else "mysqld ${mysqldOptions} --default-time-zone=SYSTEM --initialize-insecure";
+              if isMariaDB then
+                "mysql_install_db ${mysqldOptions} --auth-root-authentication-method=normal"
+              else
+                "mysqld ${mysqldOptions} --default-time-zone=SYSTEM --initialize-insecure";
 
             importTimeZones =
-              if (config.importTimeZones != null)
-              then config.importTimeZones
-              else lib.hasAttrByPath [ "settings" "mysqld" "default-time-zone" ] config;
+              if (config.importTimeZones != null) then
+                config.importTimeZones
+              else
+                lib.hasAttrByPath [ "settings" "mysqld" "default-time-zone" ] config;
 
             configureTimezones = ''
               # Start a temp database with the default-time-zone to import tz data
@@ -204,7 +220,10 @@ in
 
             startScript = pkgs.writeShellApplication {
               name = "start-mysql";
-              runtimeInputs = [ config.package pkgs.coreutils ];
+              runtimeInputs = [
+                config.package
+                pkgs.coreutils
+              ];
               text = ''
                 set -euo pipefail
 
@@ -223,82 +242,87 @@ in
 
             mysqlCommand = "mysql ${mysqlOptions} -u root";
 
-            runInitialScript = lib.optionalString (config.initialScript != null) ''echo ${lib.escapeShellArg config.initialScript} | MYSQL_PWD="" ${mysqlCommand} -N
-'';
+            runInitialScript = lib.optionalString (config.initialScript != null) ''
+              echo ${lib.escapeShellArg config.initialScript} | MYSQL_PWD="" ${mysqlCommand} -N
+            '';
 
             configureScript = pkgs.writeShellApplication {
               name = "configure-mysql";
-              runtimeInputs = with pkgs; [ config.package coreutils findutils ];
+              runtimeInputs = with pkgs; [
+                config.package
+                coreutils
+                findutils
+              ];
               text = ''
                 set -euo pipefail
                 ${envs}
                 ${lib.concatMapStrings (database: ''
-                    # Create initial databases
-                    exists="$(
-                      MYSQL_PWD="" ${mysqlCommand} -sB information_schema \
-                        <<< 'select count(*) from schemata where schema_name = "${database.name}"'
-                    )"
-                    if [[ "$exists" -eq 0 ]]; then
-                      echo "Creating initial database: ${database.name}"
-                      ( echo "create database \`${database.name}\`;"
-                        ${lib.optionalString (database.schema != null) ''
-                      echo "use \`${database.name}\`;"
-                      # TODO: this silently falls through if database.schema does not exist,
-                      # we should catch this somehow and exit, but can't do it here because we're in a subshell.
-                      if [ -f "${database.schema}" ]
-                      then
-                          cat ${database.schema}
-                      elif [ -d "${database.schema}" ]
-                      then
-                          # -print0/-0 is used because of: https://www.shellcheck.net/wiki/SC2038
-                          find ${database.schema} -type f -name '*.sql' -print0 | xargs -0 cat
-                      fi
-                    ''}
-                      ) | MYSQL_PWD="" ${mysqlCommand} -N
-                    else
-                      echo "Database ${database.name} exists, skipping creation."
-                    fi
-                  '')
-                  config.initialDatabases}
+                  # Create initial databases
+                  exists="$(
+                    MYSQL_PWD="" ${mysqlCommand} -sB information_schema \
+                      <<< 'select count(*) from schemata where schema_name = "${database.name}"'
+                  )"
+                  if [[ "$exists" -eq 0 ]]; then
+                    echo "Creating initial database: ${database.name}"
+                    ( echo "create database \`${database.name}\`;"
+                      ${lib.optionalString (database.schema != null) ''
+                        echo "use \`${database.name}\`;"
+                        # TODO: this silently falls through if database.schema does not exist,
+                        # we should catch this somehow and exit, but can't do it here because we're in a subshell.
+                        if [ -f "${database.schema}" ]
+                        then
+                            cat ${database.schema}
+                        elif [ -d "${database.schema}" ]
+                        then
+                            # -print0/-0 is used because of: https://www.shellcheck.net/wiki/SC2038
+                            find ${database.schema} -type f -name '*.sql' -print0 | xargs -0 cat
+                        fi
+                      ''}
+                    ) | MYSQL_PWD="" ${mysqlCommand} -N
+                  else
+                    echo "Database ${database.name} exists, skipping creation."
+                  fi
+                '') config.initialDatabases}
 
                 ${lib.concatMapStrings (user: ''
-                    echo "Adding user: ${user.name}"
-                    ${lib.optionalString (user.password != null) "password='${user.password}'"}
-                    ( echo "CREATE USER IF NOT EXISTS '${user.name}'@'localhost' ${lib.optionalString (user.password != null) "IDENTIFIED BY '$password'"};"
-                      ${lib.concatStringsSep "\n" (lib.mapAttrsToList (database: permission: ''
+                  echo "Adding user: ${user.name}"
+                  ${lib.optionalString (user.password != null) "password='${user.password}'"}
+                  ( echo "CREATE USER IF NOT EXISTS '${user.name}'@'localhost' ${
+                    lib.optionalString (user.password != null) "IDENTIFIED BY '$password'"
+                  };"
+                    ${lib.concatStringsSep "\n" (
+                      lib.mapAttrsToList (database: permission: ''
                         echo "GRANT ${permission} ON ${database} TO '${user.name}'@'localhost';"
-                      '')
-                      user.ensurePermissions)}
-                    ) | MYSQL_PWD="" ${mysqlCommand} -N
-                  '')
-                  config.ensureUsers}
+                      '') user.ensurePermissions
+                    )}
+                  ) | MYSQL_PWD="" ${mysqlCommand} -N
+                '') config.ensureUsers}
 
                 ${runInitialScript}
               '';
             };
           in
           {
-            "${name}" =
-              {
-                command = startScript;
+            "${name}" = {
+              command = startScript;
 
-                readiness_probe = {
-                  # Turns out using `--defaults-file` alone doesn't make the readiness_probe work unless `MYSQL_UNIX_PORT` is set.
-                  # Hence the use of `--socket`.
-                  exec.command = "${config.package}/bin/mysqladmin --socket=${config.socketDir}/mysql.sock ping -h localhost";
-                  initial_delay_seconds = 2;
-                  period_seconds = 10;
-                  timeout_seconds = 4;
-                  success_threshold = 1;
-                  failure_threshold = 5;
-                };
-
-                # https://github.com/F1bonacc1/process-compose#-auto-restart-if-not-healthy
-                availability = {
-                  restart = "on_failure";
-                  max_restarts = 5;
-                };
+              readiness_probe = {
+                # Turns out using `--defaults-file` alone doesn't make the readiness_probe work unless `MYSQL_UNIX_PORT` is set.
+                # Hence the use of `--socket`.
+                exec.command = "${config.package}/bin/mysqladmin --socket=${config.socketDir}/mysql.sock ping -h localhost";
+                initial_delay_seconds = 2;
+                period_seconds = 10;
+                timeout_seconds = 4;
+                success_threshold = 1;
+                failure_threshold = 5;
               };
+
+              # https://github.com/F1bonacc1/process-compose#-auto-restart-if-not-healthy
+              availability = {
+                restart = "on_failure";
+                max_restarts = 5;
+              };
+            };
             "${name}-configure" = {
               command = configureScript;
               depends_on."${name}".condition = "process_healthy";

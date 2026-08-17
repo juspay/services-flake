@@ -1,5 +1,11 @@
 # Based on: https://github.com/cachix/devenv/blob/main/src/modules/services/clickhouse.nix
-{ pkgs, lib, name, config, ... }:
+{
+  pkgs,
+  lib,
+  name,
+  config,
+  ...
+}:
 let
   inherit (lib) types;
   yamlFormat = pkgs.formats.yaml { };
@@ -51,24 +57,26 @@ in
     };
 
     initialDatabases = lib.mkOption {
-      type = types.listOf (types.submodule {
-        options = {
-          name = lib.mkOption {
-            type = types.str;
-            description = ''
-              The name of the database to create.
-            '';
+      type = types.listOf (
+        types.submodule {
+          options = {
+            name = lib.mkOption {
+              type = types.str;
+              description = ''
+                The name of the database to create.
+              '';
+            };
+            schemas = lib.mkOption {
+              type = types.nullOr (types.listOf types.path);
+              default = null;
+              description = ''
+                The initial list of schemas for the database; if null (the default),
+                an empty database is created.
+              '';
+            };
           };
-          schemas = lib.mkOption {
-            type = types.nullOr (types.listOf types.path);
-            default = null;
-            description = ''
-              The initial list of schemas for the database; if null (the default),
-              an empty database is created.
-            '';
-          };
-        };
-      });
+        }
+      );
       default = [ ];
       description = ''
         List of database names and their initial schemas that should be used to create databases on the first startup
@@ -99,20 +107,25 @@ in
             "${name}-init" =
               let
                 # https://github.com/ClickHouse/ClickHouse/issues/4491
-                setupInitialSchema = schema: '' < ${schema} tr -s '\r\n' ' ' | clickhouse-client -mn --port ${builtins.toString config.port}; '';
-                setupInitialDatabases =
-                  lib.concatMapStrings
-                    (database: ''
-                      echo "Creating database: ${database.name}"
-                      clickhouse-client --port ${builtins.toString config.port} --query "CREATE DATABASE iF NOT EXISTS ${database.name}"
-                      echo "Database successfully created: ${database.name}"
-                      ${lib.optionalString (database.schemas != null)
-                        (lib.concatMapStrings (schema: setupInitialSchema schema) database.schemas)}
-                    '')
-                    config.initialDatabases;
+                setupInitialSchema =
+                  schema:
+                  ''< ${schema} tr -s '\r\n' ' ' | clickhouse-client -mn --port ${builtins.toString config.port}; '';
+                setupInitialDatabases = lib.concatMapStrings (database: ''
+                  echo "Creating database: ${database.name}"
+                  clickhouse-client --port ${builtins.toString config.port} --query "CREATE DATABASE iF NOT EXISTS ${database.name}"
+                  echo "Database successfully created: ${database.name}"
+                  ${lib.optionalString (database.schemas != null) (
+                    lib.concatMapStrings (schema: setupInitialSchema schema) database.schemas
+                  )}
+                '') config.initialDatabases;
                 setupScript = pkgs.writeShellApplication {
                   name = "setup-clickhouse";
-                  runtimeInputs = with pkgs; [ config.package coreutils gnugrep gawk ];
+                  runtimeInputs = with pkgs; [
+                    config.package
+                    coreutils
+                    gnugrep
+                    gawk
+                  ];
                   # TODO: Find a better way to start clickhouse-server than waiting for 5 seconds: https://github.com/juspay/services-flake/pull/91#discussion_r1481710799
                   text = ''
                     if test -d ${config.dataDir}

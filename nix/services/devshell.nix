@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
   inherit (lib) types;
 in
@@ -31,17 +36,22 @@ in
       # `outputs` is a reserved attribute set and is not the name of a service.
       (lib.filterAttrs (n: _: n != "outputs"))
 
-      (lib.mapAttrs (_service: instances:
-        lib.attrNames (lib.filterAttrs (_: v: v.enable) instances)))
+      (lib.mapAttrs (_service: instances: lib.attrNames (lib.filterAttrs (_: v: v.enable) instances)))
     ];
 
     services.outputs.devShell = pkgs.mkShell {
       packages = lib.pipe config.services.outputs.enabledServices [
-        (lib.mapAttrsToList (service: instances:
-          map
-            (instance:
-              lib.attrByPath ([ service instance "package" ]) (builtins.throw "${service}.${instance} doesn't define a `package` option") config.services)
-            instances))
+        (lib.mapAttrsToList (
+          service: instances:
+          map (
+            instance:
+            lib.attrByPath ([
+              service
+              instance
+              "package"
+            ]) (builtins.throw "${service}.${instance} doesn't define a `package` option") config.services
+          ) instances
+        ))
 
         lib.flatten
       ];

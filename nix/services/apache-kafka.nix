@@ -1,5 +1,11 @@
 # Based on: https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/misc/apache-kafka.nix
-{ config, lib, pkgs, name, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  name,
+  ...
+}:
 let
   mkPropertyString =
     let
@@ -12,8 +18,9 @@ let
     in
     v: render.${lib.strings.typeOf v} v;
 
-  stringlySettings = lib.mapAttrs (_: mkPropertyString)
-    (lib.filterAttrs (_: v: v != null) config.settings);
+  stringlySettings = lib.mapAttrs (_: mkPropertyString) (
+    lib.filterAttrs (_: v: v != null) config.settings
+  );
 
   generator = (pkgs.formats.javaProperties { }).generate;
 in
@@ -37,10 +44,16 @@ with lib;
         `settings.broker.id`).
       '';
       type = types.submodule {
-        freeformType = with types; let
-          primitive = oneOf [ bool int str ];
-        in
-        lazyAttrsOf (nullOr (either primitive (listOf primitive)));
+        freeformType =
+          with types;
+          let
+            primitive = oneOf [
+              bool
+              int
+              str
+            ];
+          in
+          lazyAttrsOf (nullOr (either primitive (listOf primitive)));
 
         options = {
           "broker.id" = mkOption {
@@ -102,9 +115,11 @@ with lib;
       '';
       type = types.bool;
       default = false;
-      apply = v: lib.throwIf (v && config.clusterId == null)
-        "services.apache-kafka.${name}.clusterId must be set when formatLogDirs is true"
-        v;
+      apply =
+        v:
+        lib.throwIf (
+          v && config.clusterId == null
+        ) "services.apache-kafka.${name}.clusterId must be set when formatLogDirs is true" v;
     };
 
     formatLogDirsIgnoreFormatted = mkOption {
@@ -162,7 +177,9 @@ with lib;
                 else
                   ''
                     if ${
-                      lib.concatMapStringsSep " && " (l: ''[ ! -f ${lib.escapeShellArg "${l}/meta.properties"} ]'') config.settings."log.dirs"
+                      lib.concatMapStringsSep " && " (
+                        l: "[ ! -f ${lib.escapeShellArg "${l}/meta.properties"} ]"
+                      ) config.settings."log.dirs"
                     }; then
                       ${config.package}/bin/kafka-storage.sh format -t "${config.clusterId}" -c ${config.configFiles.serverProperties}
                     fi

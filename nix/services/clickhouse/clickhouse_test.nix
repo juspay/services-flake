@@ -1,4 +1,10 @@
-{ pkgs, config, name, ... }: {
+{
+  pkgs,
+  config,
+  name,
+  ...
+}:
+{
   services.clickhouse."clickhouse1" = {
     enable = true;
     port = 9000;
@@ -28,8 +34,10 @@
   };
 
   # avoid both the processes trying to create `data` directory at the same time
-  settings.processes."clickhouse2-init".depends_on."clickhouse1-init".condition = "process_completed_successfully";
-  settings.processes."clickhouse3-init".depends_on."clickhouse2-init".condition = "process_completed_successfully";
+  settings.processes."clickhouse2-init".depends_on."clickhouse1-init".condition =
+    "process_completed_successfully";
+  settings.processes."clickhouse3-init".depends_on."clickhouse2-init".condition =
+    "process_completed_successfully";
 
   settings.processes.test =
     let
@@ -37,7 +45,12 @@
     in
     {
       command = pkgs.writeShellApplication {
-        runtimeInputs = [ cfg.package pkgs.gnugrep pkgs.curl pkgs.jq ];
+        runtimeInputs = [
+          cfg.package
+          pkgs.gnugrep
+          pkgs.curl
+          pkgs.jq
+        ];
         text =
           let
             # Tests based on: https://github.com/NixOS/nixpkgs/blob/master/nixos/tests/clickhouse.nix
