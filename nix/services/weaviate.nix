@@ -1,10 +1,14 @@
-{ pkgs, lib, name, config, ... }:
+{
+  pkgs,
+  lib,
+  name,
+  config,
+  ...
+}:
 let
   inherit (lib) types;
-  asAtom = value:
-    if builtins.isList value then lib.concatStringsSep "," value else value;
-  toStr = value:
-    if builtins.isString value then value else builtins.toJSON value;
+  asAtom = value: if builtins.isList value then lib.concatStringsSep "," value else value;
+  toStr = value: if builtins.isString value then value else builtins.toJSON value;
 in
 {
   options = {
@@ -28,7 +32,12 @@ in
     };
 
     environment = lib.mkOption {
-      type = types.attrsOf (types.oneOf [ types.raw (types.listOf types.str) ]);
+      type = types.attrsOf (
+        types.oneOf [
+          types.raw
+          (types.listOf types.str)
+        ]
+      );
       default = { };
       description = ''
         Weaviate environment variables.
@@ -63,7 +72,9 @@ in
               };
             in
             {
-              environment = config.environment // { "PERSISTENCE_DATA_PATH" = config.dataDir; };
+              environment = config.environment // {
+                "PERSISTENCE_DATA_PATH" = config.dataDir;
+              };
 
               command = startScript;
 

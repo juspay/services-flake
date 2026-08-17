@@ -1,4 +1,10 @@
-{ pkgs, lib, name, config, ... }:
+{
+  pkgs,
+  lib,
+  name,
+  config,
+  ...
+}:
 let
   inherit (lib) types;
   iniFormat = pkgs.formats.ini { };
@@ -110,13 +116,11 @@ in
       settings = {
         processes."${name}" =
           let
-            grafanaConfig = lib.recursiveUpdate
-              {
-                server = {
-                  inherit (config) protocol http_port domain;
-                };
-              }
-              config.extraConf;
+            grafanaConfig = lib.recursiveUpdate {
+              server = {
+                inherit (config) protocol http_port domain;
+              };
+            } config.extraConf;
             grafanaConfigIni = iniFormat.generate "defaults.ini" grafanaConfig;
             provisioningConfig = pkgs.stdenv.mkDerivation {
               name = "grafana-provisioning";
@@ -140,19 +144,27 @@ in
                 mkdir -p $out/plugins
               '';
             };
-            declarativePlugins = pkgs.linkFarm "grafana-plugins" (builtins.map (pkg: { name = pkg.pname; path = pkg; }) config.declarativePlugins);
+            declarativePlugins = pkgs.linkFarm "grafana-plugins" (
+              builtins.map (pkg: {
+                name = pkg.pname;
+                path = pkg;
+              }) config.declarativePlugins
+            );
             startScript = pkgs.writeShellApplication {
               name = "start-grafana";
-              runtimeInputs =
-                [ config.package ] ++
-                (lib.lists.optionals pkgs.stdenv.isDarwin [
-                  pkgs.coreutils
-                ]);
+              runtimeInputs = [
+                config.package
+              ]
+              ++ (lib.lists.optionals pkgs.stdenv.isDarwin [
+                pkgs.coreutils
+              ]);
               text = ''
                 grafana server --config ${grafanaConfigIni} \
                                --homepath ${config.package}/share/grafana \
                                cfg:paths.data="$(readlink -m ${config.dataDir})" \
-                               ${lib.optionalString (config.declarativePlugins != null) "cfg:paths.plugins=${declarativePlugins}"} \
+                               ${
+                                 lib.optionalString (config.declarativePlugins != null) "cfg:paths.plugins=${declarativePlugins}"
+                               } \
                                cfg:paths.provisioning="${provisioningConfig}"
               '';
             };

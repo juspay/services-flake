@@ -13,24 +13,26 @@
   };
   # kafka should start only after zookeeper is healthy
   settings.processes.k1.depends_on."z1".condition = "process_healthy";
-  settings.processes.test =
-    {
-      command = pkgs.writeShellApplication {
-        runtimeInputs = [ pkgs.bash config.services.apache-kafka.k1.package ];
-        text = ''
-          # Create a topic
-          kafka-topics.sh --create --bootstrap-server localhost:9094 --partitions 1 \
-          --replication-factor 1 --topic testtopic
+  settings.processes.test = {
+    command = pkgs.writeShellApplication {
+      runtimeInputs = [
+        pkgs.bash
+        config.services.apache-kafka.k1.package
+      ];
+      text = ''
+        # Create a topic
+        kafka-topics.sh --create --bootstrap-server localhost:9094 --partitions 1 \
+        --replication-factor 1 --topic testtopic
 
-          # Producer
-          echo 'test 1' | kafka-console-producer.sh --broker-list localhost:9094 --topic testtopic
+        # Producer
+        echo 'test 1' | kafka-console-producer.sh --broker-list localhost:9094 --topic testtopic
 
-          # Consumer
-          kafka-console-consumer.sh --bootstrap-server localhost:9094 --topic testtopic \
-          --from-beginning --max-messages 1 | grep -q "test 1"
-        '';
-        name = "kafka-test";
-      };
-      depends_on."k1".condition = "process_healthy";
+        # Consumer
+        kafka-console-consumer.sh --bootstrap-server localhost:9094 --topic testtopic \
+        --from-beginning --max-messages 1 | grep -q "test 1"
+      '';
+      name = "kafka-test";
     };
+    depends_on."k1".condition = "process_healthy";
+  };
 }

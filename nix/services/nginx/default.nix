@@ -1,5 +1,11 @@
 # Based on: https://github.com/cachix/devenv/blob/main/src/modules/services/nginx.nix
-{ pkgs, lib, name, config, ... }:
+{
+  pkgs,
+  lib,
+  name,
+  config,
+  ...
+}:
 let
   inherit (lib) types;
   configFile = pkgs.writeText "nginx.conf" ''
@@ -85,7 +91,10 @@ in
         let
           startScript = pkgs.writeShellApplication {
             name = "start-nginx";
-            runtimeInputs = [ pkgs.coreutils config.package ];
+            runtimeInputs = [
+              pkgs.coreutils
+              config.package
+            ];
             text = ''
               set -euo pipefail
               if [[ ! -d "${config.dataDir}" ]]; then

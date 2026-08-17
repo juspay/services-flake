@@ -1,4 +1,10 @@
-{ pkgs, lib, name, config, ... }:
+{
+  pkgs,
+  lib,
+  name,
+  config,
+  ...
+}:
 let
   inherit (lib) types;
 in
@@ -65,7 +71,10 @@ in
 
               startScript = pkgs.writeShellApplication {
                 name = "start-mongodb";
-                runtimeInputs = [ pkgs.coreutils config.package ];
+                runtimeInputs = [
+                  pkgs.coreutils
+                  config.package
+                ];
                 text = ''
                   export MONGODATA="${config.dataDir}"
 

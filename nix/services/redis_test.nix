@@ -13,7 +13,10 @@
     in
     {
       command = pkgs.writeShellApplication {
-        runtimeInputs = [ cfg.package pkgs.gnugrep ];
+        runtimeInputs = [
+          cfg.package
+          pkgs.gnugrep
+        ];
         text = ''
           echo  "Ping from redis1"
           redis-cli ping | grep "PONG"

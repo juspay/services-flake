@@ -1,4 +1,10 @@
-{ config, pkgs, lib, name, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  name,
+  ...
+}:
 {
   options = {
     package = lib.mkPackageOption pkgs "elasticmq-server-bin" { };

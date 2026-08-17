@@ -1,5 +1,11 @@
 # Based on: https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/misc/zookeeper.nix
-{ config, lib, pkgs, name, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  name,
+  ...
+}:
 
 with lib;
 {
@@ -60,9 +66,16 @@ with lib;
 
     extraCmdLineOptions = mkOption {
       description = lib.mdDoc "Extra command line options for the Zookeeper launcher.";
-      default = [ "-Dcom.sun.management.jmxremote" "-Dcom.sun.management.jmxremote.local.only=true" ];
+      default = [
+        "-Dcom.sun.management.jmxremote"
+        "-Dcom.sun.management.jmxremote.local.only=true"
+      ];
       type = types.listOf types.str;
-      example = [ "-Djava.net.preferIPv4Stack=true" "-Dcom.sun.management.jmxremote" "-Dcom.sun.management.jmxremote.local.only=true" ];
+      example = [
+        "-Djava.net.preferIPv4Stack=true"
+        "-Dcom.sun.management.jmxremote"
+        "-Dcom.sun.management.jmxremote.local.only=true"
+      ];
     };
 
     preferIPv4 = mkOption {

@@ -4,8 +4,14 @@
   # where module filename is of form `${name}.nix`. The submodule takes this
   # 'name' parameter, and is expected to set the final process-compose config in
   # its `outputs.settings` option.
-  multiService = mod:
-    { config, pkgs, lib, ... }:
+  multiService =
+    mod:
+    {
+      config,
+      pkgs,
+      lib,
+      ...
+    }:
     let
       # Derive name from filename
       service = lib.pipe mod [
@@ -46,11 +52,19 @@
               description = ''
                 process-compose settings for the processes under the ${service} service
               '';
-              apply = v: v // {
-                processes = lib.flip lib.mapAttrs v.processes (_: cfg:
-                  { imports = [ config.outputs.defaultProcessSettings cfg ]; }
-                );
-              };
+              apply =
+                v:
+                v
+                // {
+                  processes = lib.flip lib.mapAttrs v.processes (
+                    _: cfg: {
+                      imports = [
+                        config.outputs.defaultProcessSettings
+                        cfg
+                      ];
+                    }
+                  );
+                };
             };
           };
         };
@@ -63,22 +77,23 @@
             ${service} service
           '';
           default = { };
-          type = lib.types.attrsOf (lib.types.submoduleWith {
-            specialArgs = { inherit pkgs; };
-            modules = [
-              serviceModule
-              mod
-            ];
-          });
+          type = lib.types.attrsOf (
+            lib.types.submoduleWith {
+              specialArgs = { inherit pkgs; };
+              modules = [
+                serviceModule
+                mod
+              ];
+            }
+          );
         };
       };
       config = {
         settings = {
-          imports =
-            lib.pipe config.services.${service} [
-              (lib.filterAttrs (_: cfg: cfg.enable))
-              (lib.mapAttrsToList (_: cfg: cfg.outputs.settings))
-            ];
+          imports = lib.pipe config.services.${service} [
+            (lib.filterAttrs (_: cfg: cfg.enable))
+            (lib.mapAttrsToList (_: cfg: cfg.outputs.settings))
+          ];
         };
       };
     };
