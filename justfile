@@ -1,3 +1,5 @@
+set positional-arguments  # Make `$@` work in inline shell scripts.
+
 # List all the just commands
 default:
     @just --list
@@ -5,6 +7,11 @@ default:
 # Generate CHANGELOG under `Unreleased`, starting from the previous release
 changelog:
     cz ch --start-rev $(git describe --tags --abbrev=0 HEAD^) --incremental
+
+# Format treewide all files.
+[group('format')]
+fmt *args:
+    treefmt "$@"
 
 # Run example/simple
 [group('example')]
