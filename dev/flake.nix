@@ -7,6 +7,11 @@
 
     # CI will override `services-flake` to run checks on the latest source
     services-flake.url = "github:juspay/services-flake";
+
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
   outputs =
     inputs@{
@@ -17,10 +22,13 @@
     }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = nixpkgs.lib.systems.flakeExposed;
+
       imports = [
         (inputs.pre-commit-hooks-nix + /flake-module.nix)
         ./nix/pre-commit.nix
+        ./nix/treefmt.nix
       ];
+
       perSystem =
         {
           self',
