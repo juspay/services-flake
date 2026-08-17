@@ -1,6 +1,7 @@
 # Zookeeper
 
-[Zookeeper](https://zookeeper.apache.org/) is a centralized service for maintaining configuration information, naming, providing distributed synchronization, and providing group services.
+[Zookeeper](https://zookeeper.apache.org/) is a centralized service for maintaining configuration
+information, naming, providing distributed synchronization, and providing group services.
 
 ## Usage example
 

@@ -8,20 +8,24 @@ template:
 
 # Local AI chatbot
 
-The [`llm` example][source] allows you to run advanced AI chatbots and services on your own computer with just one command. Once you've downloaded the model, you can use it without needing a constant internet connection.
+The [`llm` example][source] allows you to run advanced AI chatbots and services on your own computer
+with just one command. Once you've downloaded the model, you can use it without needing a constant
+internet connection.
 
 ![[llm.png]]
 
 > [!tip] On dev vs app mode
 >
 > **services-flake** provides two main uses:
-> 
+>
 > 1. Running services in development projects with source code access.
-> 1. Creating end-user *apps* that run multiple services.
-> 
-> Our example is based on the second use. These *apps* can be launched with `nix run` or installed using `nix profile install`.
+> 1. Creating end-user _apps_ that run multiple services.
+>
+> Our example is based on the second use. These _apps_ can be launched with `nix run` or installed
+> using `nix profile install`.
 
 {#run}
+
 ## Running the app
 
 To run the local AI chatbot and launch the Web UI,
@@ -31,7 +35,8 @@ To run the local AI chatbot and launch the Web UI,
 nix run "github:juspay/services-flake?dir=example/llm"
 ```
 
-Before launching the Web UI, this will download the [`phi3`] model, which is about 2.4GB. To reduce or avoid this delay, you can:
+Before launching the Web UI, this will download the [`phi3`] model, which is about 2.4GB. To reduce
+or avoid this delay, you can:
 
 1.  Choose a different model, or
 2.  Use no model at all
@@ -45,6 +50,7 @@ See further below for more options.
 </center>
 
 {#default-config}
+
 ## Default configuration & models
 
 The [example][source] runs two processes [[ollama]] and [[open-webui]]
@@ -52,11 +58,12 @@ The [example][source] runs two processes [[ollama]] and [[open-webui]]
 Key points:
 
 1.  **Data storage:**
-    -   Ollama data is stored in `$HOME/.services-flake/llm/ollama`
-    -   To change this location, edit the `dataDir` option in `flake.nix`
+    - Ollama data is stored in `$HOME/.services-flake/llm/ollama`
+    - To change this location, edit the `dataDir` option in `flake.nix`
 2.  **Model management**:
-    -   By default, the [`phi3`] model is automatically downloaded
-    -   To change or add [more models](https://ollama.com/library): a. Edit the `models` option in `flake.nix`, or b. Use the open-webui interface to download additional models.
+    - By default, the [`phi3`] model is automatically downloaded
+    - To change or add [more models](https://ollama.com/library): a. Edit the `models` option in
+      `flake.nix`, or b. Use the open-webui interface to download additional models.
 
 [`phi3`]: https://ollama.com/library/phi3
 [source]: https://github.com/juspay/services-flake/tree/main/example/llm

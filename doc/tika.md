@@ -1,7 +1,7 @@
 # Tika
 
-[Tika](https://tika.apache.org/) is a content analysis toolkit as a service that can detect and extract metadata and
-text from over a thousand different file types.
+[Tika](https://tika.apache.org/) is a content analysis toolkit as a service that can detect and
+extract metadata and text from over a thousand different file types.
 
 ## Getting Started
 

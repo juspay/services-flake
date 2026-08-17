@@ -1,8 +1,13 @@
 # Share services
 
-Let's say you have two projects: `foo` and `bar`. `foo` defines a service that needs to be used by `bar`. Both `foo` and `bar`, being separate projects, have their own `flake.nix`. In order for `bar` to reuse `foo` service instead of redefining it, `foo` can export `processComposeModules` in its flake `outputs`. `processComposeModules` is not a reserved output; it can be named anything, but the naming is appropriate for this scenario.
+Let's say you have two projects: `foo` and `bar`. `foo` defines a service that needs to be used by
+`bar`. Both `foo` and `bar`, being separate projects, have their own `flake.nix`. In order for `bar`
+to reuse `foo` service instead of redefining it, `foo` can export `processComposeModules` in its
+flake `outputs`. `processComposeModules` is not a reserved output; it can be named anything, but the
+naming is appropriate for this scenario.
 
-Next, we will see basic `flake.nix` for `foo` and `bar`. You can find a more real-world example at <https://github.com/juspay/services-flake/tree/main/example/share-services>.
+Next, we will see basic `flake.nix` for `foo` and `bar`. You can find a more real-world example at
+<https://github.com/juspay/services-flake/tree/main/example/share-services>.
 
 ## foo (Exports its service)
 
@@ -82,7 +87,7 @@ Next, we will see basic `flake.nix` for `foo` and `bar`. You can find a more rea
             inputs.foo.processComposeModules.default
           ];
           services.foo.enable = true;
-          
+
           # The rest of bar's services goes here...
         };
       };
