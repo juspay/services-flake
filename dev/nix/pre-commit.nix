@@ -6,7 +6,7 @@
       settings = {
         rootSrc = lib.mkForce inputs.services-flake;
         hooks = {
-          nixpkgs-fmt.enable = true;
+          nixfmt.enable = true;
           commitizen.enable = true;
         };
       };
