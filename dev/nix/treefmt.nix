@@ -13,6 +13,9 @@
       # For worktrees we need either `.git` or a file.
       projectRootFile = "CHANGELOG.md";
 
+      # Markdown, JSON, YAML, etc.
+      programs.prettier.enable = true;
+
       # Nix
       programs.nixfmt.enable = true;
     };
