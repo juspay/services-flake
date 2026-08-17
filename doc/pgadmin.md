@@ -21,7 +21,9 @@
 
 ### Visualize system statistics
 
-`pgAdmin` uses the functions exposed by [system_stats](https://github.com/EnterpriseDB/system_stats) [[postgresql]] extension to monitor the system metrics such as CPU, memory and disk information. Use this in your config:
+`pgAdmin` uses the functions exposed by [system_stats](https://github.com/EnterpriseDB/system_stats)
+[[postgresql]] extension to monitor the system metrics such as CPU, memory and disk information. Use
+this in your config:
 
 ```nix
 # In `perSystem.process-compose.<name>`

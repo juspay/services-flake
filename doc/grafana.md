@@ -1,6 +1,9 @@
 # Grafana
 
-[Grafana open source](https://grafana.com/docs/grafana/latest/) is open source visualization and analytics software. It allows you to query, visualize, alert on, and explore your metrics, logs, and traces no matter where they are stored. It provides you with tools to turn your time-series database (TSDB) data into insightful graphs and visualizations.
+[Grafana open source](https://grafana.com/docs/grafana/latest/) is open source visualization and
+analytics software. It allows you to query, visualize, alert on, and explore your metrics, logs, and
+traces no matter where they are stored. It provides you with tools to turn your time-series database
+(TSDB) data into insightful graphs and visualizations.
 
 ## Getting Started
 
@@ -12,12 +15,16 @@
 ```
 
 {#tips}
+
 ## Tips & Tricks
 
 {#change-database}
+
 ### Changing Grafana database
 
-By default, Grafana stores data in the `sqlite3` [database](https://grafana.com/docs/grafana/latest/setup-grafana/configure-grafana/#database). It also supports `mysql` and `postgres`.
+By default, Grafana stores data in the `sqlite3`
+[database](https://grafana.com/docs/grafana/latest/setup-grafana/configure-grafana/#database). It
+also supports `mysql` and `postgres`.
 
 To change the database to `postgres`, we can use the following config:
 

@@ -1,6 +1,7 @@
 # nats-server
 
-[NATS](https://nats.io) is a simple, secure and performant communications system for digital systems, services and devices.
+[NATS](https://nats.io) is a simple, secure and performant communications system for digital
+systems, services and devices.
 
 ## Usage example
 

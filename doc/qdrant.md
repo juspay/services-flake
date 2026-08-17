@@ -1,6 +1,7 @@
 # Qdrant
 
-[Qdrant](https://github.com/qdrant/qdrant) is a vector similarity search engine and database for AI applications.
+[Qdrant](https://github.com/qdrant/qdrant) is a vector similarity search engine and database for AI
+applications.
 
 ## Usage example
 

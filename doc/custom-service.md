@@ -5,11 +5,16 @@ page:
 
 # Custom service
 
-When using `services-flake` you are not just limited to the [[services|builtin services]]. You can also define your own service.
+When using `services-flake` you are not just limited to the [[services|builtin services]]. You can
+also define your own service.
 
-By default, `services-flake` supports multiple instances for each service, allowing you to run several instances of the same service simultaneously. However, you also have the option to create custom single-instance services. In the following sections, we’ll explore how to define custom services of both types.
+By default, `services-flake` supports multiple instances for each service, allowing you to run
+several instances of the same service simultaneously. However, you also have the option to create
+custom single-instance services. In the following sections, we’ll explore how to define custom
+services of both types.
 
 {#single-instance}
+
 ## Single instance service
 
 We will create a `hello` service that will return a greeting message:
@@ -42,7 +47,8 @@ We will create a `hello` service that will return a greeting message:
 
 Let's call this file `hello.nix`.
 
-Now, we can import this service in our flake. In this example, we will configure an existing service, [[ollama]], and our custom service from above:
+Now, we can import this service in our flake. In this example, we will configure an existing
+service, [[ollama]], and our custom service from above:
 
 ```nix
 {
@@ -75,15 +81,20 @@ Now, we can import this service in our flake. In this example, we will configure
 }
 ```
 
-Finally, `nix run`:
-![[single-instance-hello.png]]
+Finally, `nix run`: ![[single-instance-hello.png]]
 
 {#multi-instance}
+
 ## Multi-instance service
 
-For this purpose, `services-flake` exports a [multiService](https://github.com/juspay/services-flake/blob/647bff2c44b42529461f60a7fe07851ff93fb600/nix/lib.nix#L1-L34) library function. It aims to provide an interface wherein the user just writes the configuration like they would for a single instance service, and the library takes care of creating multiple instances of the service.
+For this purpose, `services-flake` exports a
+[multiService](https://github.com/juspay/services-flake/blob/647bff2c44b42529461f60a7fe07851ff93fb600/nix/lib.nix#L1-L34)
+library function. It aims to provide an interface wherein the user just writes the configuration
+like they would for a single instance service, and the library takes care of creating multiple
+instances of the service.
 
-Let's write the same `hello` service as above, in `hello.nix`, but this time as a multi-instance service:
+Let's write the same `hello` service as above, in `hello.nix`, but this time as a multi-instance
+service:
 
 ```nix
 { config, lib, name, pkgs, ... }:
@@ -108,9 +119,12 @@ Let's write the same `hello` service as above, in `hello.nix`, but this time as 
 
 The primary differences from the single instance service are:
 
-- The module now takes an additional argument `name`, which is the name of the instance of the service.
-- We no longer have to write the `config` block, as it is now handled by the library by importing the `outputs.settings` option.
-- And we don't have to write `options.services."${name}"` or define `enable` and `dataDir` options, as that is abstracted away by the library.
+- The module now takes an additional argument `name`, which is the name of the instance of the
+  service.
+- We no longer have to write the `config` block, as it is now handled by the library by importing
+  the `outputs.settings` option.
+- And we don't have to write `options.services."${name}"` or define `enable` and `dataDir` options,
+  as that is abstracted away by the library.
 
 Now that we have defined the multi-instance service, we can import it in our flake:
 
@@ -131,7 +145,7 @@ Now that we have defined the multi-instance service, we can import it in our fla
         inputs.process-compose-flake.flakeModule
       ];
       perSystem = { self', pkgs, lib, ... }: {
-        process-compose."default" = 
+        process-compose."default" =
         let
           inherit (inputs.services-flake.lib) multiService;
         in
@@ -158,10 +172,13 @@ Now that we have defined the multi-instance service, we can import it in our fla
 }
 ```
 
-And finally, `nix run`:
-![[multi-instance-hello.png]]
+And finally, `nix run`: ![[multi-instance-hello.png]]
 
 ## See also
 
 - [Postgres with replica](https://github.com/nammayatri/nammayatri/blob/main/Backend/nix/services/postgres-with-replica.nix)
-- [Passetto (A custom encryption service)](https://github.com/nammayatri/passetto/blob/nixify/process-compose.nix), is [imported](https://github.com/nammayatri/nammayatri/blob/e8032f1fac3581b9062e2469dfc778d2913d3665/Backend/nix/services/nammayatri.nix#L32) and [configured in the Nammayatri flake](https://github.com/nammayatri/nammayatri/blob/e8032f1fac3581b9062e2469dfc778d2913d3665/Backend/nix/services/nammayatri.nix#L285-L297).
+- [Passetto (A custom encryption service)](https://github.com/nammayatri/passetto/blob/nixify/process-compose.nix),
+  is
+  [imported](https://github.com/nammayatri/nammayatri/blob/e8032f1fac3581b9062e2469dfc778d2913d3665/Backend/nix/services/nammayatri.nix#L32)
+  and
+  [configured in the Nammayatri flake](https://github.com/nammayatri/nammayatri/blob/e8032f1fac3581b9062e2469dfc778d2913d3665/Backend/nix/services/nammayatri.nix#L285-L297).

@@ -1,6 +1,8 @@
 # Grafana Pyroscope
 
-[Grafana Pyroscope](https://grafana.com/docs/pyroscope/latest/) is an open-source continuous profiling database that lets you analyse application performance over time and pinpoint code-level bottlenecks.
+[Grafana Pyroscope](https://grafana.com/docs/pyroscope/latest/) is an open-source continuous
+profiling database that lets you analyse application performance over time and pinpoint code-level
+bottlenecks.
 
 ## Getting Started
 

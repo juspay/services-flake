@@ -1,6 +1,8 @@
 # Cassandra
 
-[Cassandra] is a free and open-source, distributed, wide-column store, NoSQL database management system designed to handle large amounts of data across many commodity servers, providing high availability with no single point of failure.
+[Cassandra] is a free and open-source, distributed, wide-column store, NoSQL database management
+system designed to handle large amounts of data across many commodity servers, providing high
+availability with no single point of failure.
 
 [Cassandra]: https://cassandra.apache.org/_/index.html
 
@@ -14,12 +16,15 @@
 ```
 
 {#tips}
+
 ## Tips & Tricks
 
 {#change-port}
+
 ### Change the default port
 
-By default, the Cassandra server is started on port `9042`. To change the port, we can use the following config:
+By default, the Cassandra server is started on port `9042`. To change the port, we can use the
+following config:
 
 ```nix
 {

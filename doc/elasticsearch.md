@@ -1,6 +1,7 @@
 # Elasticsearch
 
-[Elasticsearch](https://www.elastic.co/elasticsearch/) is a distributed, RESTful search and analytics engine capable of performing real-time search and analytics.
+[Elasticsearch](https://www.elastic.co/elasticsearch/) is a distributed, RESTful search and
+analytics engine capable of performing real-time search and analytics.
 
 ## Usage example
 
