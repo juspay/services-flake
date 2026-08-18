@@ -12,7 +12,11 @@
     in
     {
       command = pkgs.writeShellApplication {
-        runtimeInputs = [ cfg.package pkgs.curl pkgs.gnugrep ];
+        runtimeInputs = [
+          cfg.package
+          pkgs.curl
+          pkgs.gnugrep
+        ];
         text = ''
           curl http://localhost:5050/misc/ping | grep "PING"
         '';

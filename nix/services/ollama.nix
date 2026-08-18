@@ -1,5 +1,11 @@
 # Based on https://github.com/shivaraj-bh/ollama-flake/blob/main/services/ollama.nix
-{ pkgs, lib, name, config, ... }:
+{
+  pkgs,
+  lib,
+  name,
+  config,
+  ...
+}:
 let
   inherit (lib) types;
   ollamaPackage = pkgs.ollama.override {
@@ -45,7 +51,13 @@ in
       '';
     };
     acceleration = lib.mkOption {
-      type = types.nullOr (types.enum [ false "rocm" "cuda" ]);
+      type = types.nullOr (
+        types.enum [
+          false
+          "rocm"
+          "cuda"
+        ]
+      );
       default = null;
       example = "rocm";
       description = ''
@@ -97,7 +109,8 @@ in
                 OLLAMA_MODELS = config.dataDir;
                 OLLAMA_HOST = "${config.host}:${toString config.port}";
                 OLLAMA_KEEP_ALIVE = config.keepAlive;
-              } // config.environment;
+              }
+              // config.environment;
 
               readiness_probe = {
                 http_get = {

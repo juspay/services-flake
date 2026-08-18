@@ -1,5 +1,11 @@
 # Based on https://github.com/cachix/devenv/blob/main/src/modules/services/elasticsearch.nix
-{ pkgs, lib, name, config, ... }:
+{
+  pkgs,
+  lib,
+  name,
+  config,
+  ...
+}:
 let
   inherit (lib) types;
 in
@@ -38,8 +44,7 @@ in
     };
 
     cluster_name = lib.mkOption {
-      description =
-        "Elasticsearch name that identifies your cluster for auto-discovery.";
+      description = "Elasticsearch name that identifies your cluster for auto-discovery.";
       default = "elasticsearch";
       type = types.str;
     };
@@ -77,8 +82,7 @@ in
     };
 
     extraCmdLineOptions = lib.mkOption {
-      description =
-        "Extra command line options for the elasticsearch launcher.";
+      description = "Extra command line options for the elasticsearch launcher.";
       default = [ ];
       type = types.listOf types.str;
     };
@@ -94,8 +98,7 @@ in
       description = "Extra elasticsearch plugins";
       default = [ ];
       type = types.listOf types.package;
-      example =
-        lib.literalExpression "[ pkgs.elasticsearchPlugins.discovery-ec2 ]";
+      example = lib.literalExpression "[ pkgs.elasticsearchPlugins.discovery-ec2 ]";
     };
   };
 
@@ -135,7 +138,10 @@ in
             startScript = pkgs.writeShellApplication {
 
               name = "es-startup";
-              runtimeInputs = [ pkgs.coreutils config.package ];
+              runtimeInputs = [
+                pkgs.coreutils
+                config.package
+              ];
               text = ''
                 set -e
 

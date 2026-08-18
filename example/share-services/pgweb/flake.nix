@@ -9,30 +9,41 @@
 
     northwind.url = "github:juspay/services-flake?dir=example/share-services/northwind";
   };
-  outputs = inputs:
+  outputs =
+    inputs:
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       systems = import inputs.systems;
       imports = [
         inputs.process-compose-flake.flakeModule
       ];
-      perSystem = { self', pkgs, config, lib, ... }: {
-        process-compose."default" = { config, ... }: {
-          imports = [
-            inputs.services-flake.processComposeModules.default
-            # Importing this brings whatever processes/services the
-            # ../northwind/services.nix module exposes, which in our case is a
-            # postgresql process loaded with northwind sample database.
-            inputs.northwind.processComposeModules.default
-          ];
+      perSystem =
+        {
+          self',
+          pkgs,
+          config,
+          lib,
+          ...
+        }:
+        {
+          process-compose."default" = { config, ... }: {
+            imports = [
+              inputs.services-flake.processComposeModules.default
+              # Importing this brings whatever processes/services the
+              # ../northwind/services.nix module exposes, which in our case is a
+              # postgresql process loaded with northwind sample database.
+              inputs.northwind.processComposeModules.default
+            ];
 
-          # Add a pgweb process, that knows how to connect to our northwind db
-          settings.processes.pgweb = {
-            command = pkgs.pgweb;
-            depends_on."northwind".condition = "process_healthy";
-            environment.PGWEB_DATABASE_URL = config.services.postgres.northwind.connectionURI { dbName = "sample"; };
+            # Add a pgweb process, that knows how to connect to our northwind db
+            settings.processes.pgweb = {
+              command = pkgs.pgweb;
+              depends_on."northwind".condition = "process_healthy";
+              environment.PGWEB_DATABASE_URL = config.services.postgres.northwind.connectionURI {
+                dbName = "sample";
+              };
+            };
           };
+          devShells.default = config.process-compose."default".services.outputs.devShell;
         };
-        devShells.default = config.process-compose."default".services.outputs.devShell;
-      };
     };
 }

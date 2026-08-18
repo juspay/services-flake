@@ -1,4 +1,8 @@
-{ config, pkgs, lib }:
+{
+  config,
+  pkgs,
+  lib,
+}:
 let
   setupInitialSchema = dbName: schema: ''
     echo "Applying database schema on ${dbName}"
@@ -22,28 +26,25 @@ let
   '';
   setupInitialDatabases =
     if config.initialDatabases != [ ] then
-      (lib.concatMapStrings
-        (database: ''
-          echo "Checking presence of database: ${database.name}"
-          # Create initial databases
-          dbAlreadyExists=$(
-            echo "SELECT 1 as exists FROM pg_database WHERE datname = '${database.name}';" | \
-            psql_with_args -d postgres | \
-            grep -c 'exists = "1"' || true
-          )
-          echo "$dbAlreadyExists"
-          if [ 1 -ne "$dbAlreadyExists" ]; then
-            echo "Creating database: ${database.name}"
-            echo 'create database "${database.name}";' | psql_with_args -d postgres
-            ${lib.optionalString (database.schemas != null)
-              (lib.concatMapStrings (schema: setupInitialSchema (database.name) schema) database.schemas)}
-          fi
-        '')
-        config.initialDatabases)
+      (lib.concatMapStrings (database: ''
+        echo "Checking presence of database: ${database.name}"
+        # Create initial databases
+        dbAlreadyExists=$(
+          echo "SELECT 1 as exists FROM pg_database WHERE datname = '${database.name}';" | \
+          psql_with_args -d postgres | \
+          grep -c 'exists = "1"' || true
+        )
+        echo "$dbAlreadyExists"
+        if [ 1 -ne "$dbAlreadyExists" ]; then
+          echo "Creating database: ${database.name}"
+          echo 'create database "${database.name}";' | psql_with_args -d postgres
+          ${lib.optionalString (database.schemas != null) (
+            lib.concatMapStrings (schema: setupInitialSchema (database.name) schema) database.schemas
+          )}
+        fi
+      '') config.initialDatabases)
     else
-      lib.optionalString config.createDatabase ''
-        echo "CREATE DATABASE ''${USER:-$(id -nu)};" | psql_with_args -d postgres '';
-
+      lib.optionalString config.createDatabase ''echo "CREATE DATABASE ''${USER:-$(id -nu)};" | psql_with_args -d postgres '';
 
   runInitialScript =
     let
@@ -52,12 +53,11 @@ let
       '';
     in
     {
-      before = with config.initialScript;
-        lib.optionalString (before != null) (scriptCmd before);
-      after = with config.initialScript;
-        lib.optionalString (after != null) (scriptCmd after);
+      before = with config.initialScript; lib.optionalString (before != null) (scriptCmd before);
+      after = with config.initialScript; lib.optionalString (after != null) (scriptCmd after);
     };
-  toStr = value:
+  toStr =
+    value:
     if true == value then
       "yes"
     else if false == value then
@@ -66,22 +66,39 @@ let
       "'${lib.replaceStrings [ "'" ] [ "''" ] value}'"
     else
       toString value;
-  configFile = pkgs.writeText "postgresql.conf" (lib.concatStringsSep "\n"
-    (lib.mapAttrsToList (n: v: "${n} = ${toStr v}") (config.defaultSettings // config.settings)));
+  configFile = pkgs.writeText "postgresql.conf" (
+    lib.concatStringsSep "\n" (
+      lib.mapAttrsToList (n: v: "${n} = ${toStr v}") (config.defaultSettings // config.settings)
+    )
+  );
 
   initdbArgs =
     config.initdbArgs
-    ++ (lib.optionals (config.superuser != null) [ "-U" config.superuser ])
-    ++ [ "-D" "\"${config.dataDir}\"" ];
+    ++ (lib.optionals (config.superuser != null) [
+      "-U"
+      config.superuser
+    ])
+    ++ [
+      "-D"
+      "\"${config.dataDir}\""
+    ];
 in
 (pkgs.writeShellApplication {
   name = "setup-postgres";
-  runtimeInputs = with pkgs; [ config.package coreutils gnugrep gawk findutils ];
+  runtimeInputs = with pkgs; [
+    config.package
+    coreutils
+    gnugrep
+    gawk
+    findutils
+  ];
   text = ''
     set -x
     # Execute the `psql` command with default arguments
     function psql_with_args() {
-      psql ${lib.optionalString (config.superuser != null) "-U ${config.superuser}"} -v "ON_ERROR_STOP=1" "$@"
+      psql ${
+        lib.optionalString (config.superuser != null) "-U ${config.superuser}"
+      } -v "ON_ERROR_STOP=1" "$@"
     }
     # Setup postgres ENVs
     export PGDATA="${config.dataDir}"
@@ -112,11 +129,15 @@ in
       echo
       echo "PostgreSQL is setting up the initial database."
       echo
-      ${ if config.socketDir != "" then ''
-        PGHOST=$(mktemp -d "$(readlink -f "${config.socketDir}")/pg-init-XXXXXX")
-      '' else ''
-        PGHOST=$(mktemp -d /tmp/pg-init-XXXXXX)
-      ''
+      ${
+        if config.socketDir != "" then
+          ''
+            PGHOST=$(mktemp -d "$(readlink -f "${config.socketDir}")/pg-init-XXXXXX")
+          ''
+        else
+          ''
+            PGHOST=$(mktemp -d /tmp/pg-init-XXXXXX)
+          ''
       }
       export PGHOST
 

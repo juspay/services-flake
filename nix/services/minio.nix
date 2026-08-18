@@ -1,5 +1,11 @@
 # Based on https://github.com/cachix/devenv/blob/b6b5b96bd0b669b1f41147cbde950c26085a25c8/src/modules/services/minio.nix
-{ pkgs, lib, config, name, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  name,
+  ...
+}:
 let
   types = lib.types;
 

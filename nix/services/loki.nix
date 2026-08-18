@@ -1,8 +1,9 @@
-{ pkgs
-, lib
-, name
-, config
-, ...
+{
+  pkgs,
+  lib,
+  name,
+  config,
+  ...
 }:
 let
   inherit (lib) types;
@@ -57,44 +58,42 @@ in
       settings = {
         processes."${name}" =
           let
-            lokiConfig = lib.recursiveUpdate
-              {
-                server = {
-                  http_listen_port = config.httpPort;
-                  grpc_listen_port = config.grpcPort;
-                };
-                common = {
-                  instance_addr = config.httpAddress;
-                  path_prefix = "${config.dataDir}/";
-                  storage = {
-                    filesystem = {
-                      chunks_directory = "${config.dataDir}/chunks";
-                      rules_directory = "${config.dataDir}/rules";
-                    };
-                  };
-                  replication_factor = 1;
-                  ring = {
-                    kvstore = {
-                      store = "inmemory";
-                    };
+            lokiConfig = lib.recursiveUpdate {
+              server = {
+                http_listen_port = config.httpPort;
+                grpc_listen_port = config.grpcPort;
+              };
+              common = {
+                instance_addr = config.httpAddress;
+                path_prefix = "${config.dataDir}/";
+                storage = {
+                  filesystem = {
+                    chunks_directory = "${config.dataDir}/chunks";
+                    rules_directory = "${config.dataDir}/rules";
                   };
                 };
-                schema_config = {
-                  configs = [
-                    {
-                      from = "2020-10-24";
-                      store = "tsdb";
-                      object_store = "filesystem";
-                      schema = "v13";
-                      index = {
-                        prefix = "index_";
-                        period = "24h";
-                      };
-                    }
-                  ];
+                replication_factor = 1;
+                ring = {
+                  kvstore = {
+                    store = "inmemory";
+                  };
                 };
-              }
-              config.extraConfig;
+              };
+              schema_config = {
+                configs = [
+                  {
+                    from = "2020-10-24";
+                    store = "tsdb";
+                    object_store = "filesystem";
+                    schema = "v13";
+                    index = {
+                      prefix = "index_";
+                      period = "24h";
+                    };
+                  }
+                ];
+              };
+            } config.extraConfig;
             lokiConfigYaml = yamlFormat.generate "loki.yaml" lokiConfig;
           in
           {

@@ -1,4 +1,10 @@
-{ pkgs, lib, name, config, ... }:
+{
+  pkgs,
+  lib,
+  name,
+  config,
+  ...
+}:
 let
   inherit (lib) types;
   yamlFormat = pkgs.formats.yaml { };
@@ -35,10 +41,9 @@ in
     extraFlags = lib.mkOption {
       type = types.listOf types.str;
       default = [ ];
-      example = lib.literalExpression
-        ''
-          [ "-config.expand-env=true" ]
-        '';
+      example = lib.literalExpression ''
+        [ "-config.expand-env=true" ]
+      '';
       description = lib.mdDoc ''
         Additional flags to pass to tempo.
       '';
@@ -50,40 +55,39 @@ in
       settings = {
         processes."${name}" =
           let
-            tempoConfig = lib.recursiveUpdate
-              {
-                server = {
-                  http_listen_address = config.httpAddress;
-                  http_listen_port = config.httpPort;
-                };
-                storage = {
-                  trace = {
-                    backend = "local";
-                    wal = {
-                      path = "${config.dataDir}/wal";
-                    };
-                    local = {
-                      path = "${config.dataDir}/blocks";
-                    };
-                  }
-                  # The live_store block is only supported by Tempo 3.x and later.
-                  // lib.optionalAttrs (lib.versionAtLeast config.package.version "3") {
-                    live_store = {
-                      shutdown_marker_dir = "${config.dataDir}/live-store/shutdown-marker";
-                      wal.path = "${config.dataDir}/live-store/traces";
-                    };
+            tempoConfig = lib.recursiveUpdate {
+              server = {
+                http_listen_address = config.httpAddress;
+                http_listen_port = config.httpPort;
+              };
+              storage = {
+                trace = {
+                  backend = "local";
+                  wal = {
+                    path = "${config.dataDir}/wal";
+                  };
+                  local = {
+                    path = "${config.dataDir}/blocks";
+                  };
+                }
+                # The live_store block is only supported by Tempo 3.x and later.
+                // lib.optionalAttrs (lib.versionAtLeast config.package.version "3") {
+                  live_store = {
+                    shutdown_marker_dir = "${config.dataDir}/live-store/shutdown-marker";
+                    wal.path = "${config.dataDir}/live-store/traces";
                   };
                 };
-              }
-              config.extraConfig;
+              };
+            } config.extraConfig;
             tempoConfigYaml = yamlFormat.generate "tempo.yaml" tempoConfig;
             startScript = pkgs.writeShellApplication {
               name = "start-tempo";
-              runtimeInputs =
-                [ config.package ] ++
-                (lib.lists.optionals pkgs.stdenv.isDarwin [
-                  pkgs.coreutils
-                ]);
+              runtimeInputs = [
+                config.package
+              ]
+              ++ (lib.lists.optionals pkgs.stdenv.isDarwin [
+                pkgs.coreutils
+              ]);
               text = ''
                 tempo --config.file=${tempoConfigYaml} ${lib.escapeShellArgs config.extraFlags}
               '';

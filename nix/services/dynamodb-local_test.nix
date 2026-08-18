@@ -1,7 +1,9 @@
-{ pkgs
-, config
-, ...
-}: {
+{
+  pkgs,
+  config,
+  ...
+}:
+{
   services.dynamodb-local."dynamodb1" = {
     enable = true;
     inMemory = true;
@@ -21,7 +23,10 @@
     {
       command = pkgs.writeShellApplication {
         name = "dynamodb-test";
-        runtimeInputs = with pkgs; [ awscli2 jq ];
+        runtimeInputs = with pkgs; [
+          awscli2
+          jq
+        ];
         runtimeEnv = {
           AWS_ACCESS_KEY_ID = "fake";
           AWS_SECRET_ACCESS_KEY = "fake";

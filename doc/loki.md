@@ -1,6 +1,7 @@
 # Grafana Loki
 
-[Grafana Loki](https://grafana.com/docs/loki/latest/) is a log aggregation system designed to store and query logs from all your applications and infrastructure.
+[Grafana Loki](https://grafana.com/docs/loki/latest/) is a log aggregation system designed to store
+and query logs from all your applications and infrastructure.
 
 ## Getting Started
 
@@ -12,9 +13,11 @@
 ```
 
 {#tips}
+
 ## Tips & Tricks
 
 {#usage-with-grafana}
+
 ### Usage with Grafana
 
 To add loki as a datasource to #[[grafana]], we can use the following config:

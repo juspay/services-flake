@@ -1,8 +1,9 @@
-{ pkgs
-, lib
-, name
-, config
-, ...
+{
+  pkgs,
+  lib,
+  name,
+  config,
+  ...
 }:
 let
   inherit (lib) types;
@@ -86,11 +87,9 @@ in
         description = "Whether to enable the S3 gateway.";
         apply =
           v:
-          lib.throwIf
-            (
-              v && !config.filer.enable
-            ) "services.seaweedfs.${name}.filer.enable must be true when s3.enable is true"
-            v;
+          lib.throwIf (
+            v && !config.filer.enable
+          ) "services.seaweedfs.${name}.filer.enable must be true when s3.enable is true" v;
       };
       port = lib.mkOption {
         type = types.port;
@@ -169,7 +168,9 @@ in
             (check "http://${config.host}:${toString config.master.port}/cluster/healthz")
             (check "http://${config.host}:${toString config.volume.port}/healthz")
           ]
-          ++ lib.optional config.filer.enable (check "http://${config.host}:${toString config.filer.port}/healthz")
+          ++ lib.optional config.filer.enable (
+            check "http://${config.host}:${toString config.filer.port}/healthz"
+          )
           ++ lib.optional config.s3.enable (check "http://${config.host}:${toString config.s3.port}/healthz")
         );
       initial_delay_seconds = 2;

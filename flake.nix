@@ -5,7 +5,10 @@
 
     templates.default = {
       description = "Example flake using process-compose-flake";
-      path = builtins.path { path = ./example/simple; filter = path: _: baseNameOf path == "flake.nix"; };
+      path = builtins.path {
+        path = ./example/simple;
+        filter = path: _: baseNameOf path == "flake.nix";
+      };
     };
 
     lib = import ./nix/lib.nix;
