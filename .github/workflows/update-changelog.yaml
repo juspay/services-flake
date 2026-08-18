@@ -2,7 +2,7 @@ name: update-changelog
 on:
   workflow_dispatch: # allows manual triggering
   schedule:
-    - cron: '0 0 * * 0' # runs weekly on Sunday at 00:00
+    - cron: "0 0 * * 0" # runs weekly on Sunday at 00:00
 
 jobs:
   update-changelog:
@@ -17,13 +17,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # this fetches all history so `git describe` can see tags
+          fetch-depth: 0 # this fetches all history so `git describe` can see tags
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
       - uses: cachix/cachix-action@v14
         with:
           name: services-flake
-          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
       - run: "nix develop ./dev -c just changelog"
       - name: Create PR
         id: create-pr
@@ -48,4 +48,3 @@ jobs:
         run: "gh pr merge --auto --rebase --delete-branch ${{ steps.create-pr.outputs.pull-request-number }}"
         env:
           GH_TOKEN: ${{ github.token }}
-

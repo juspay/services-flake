@@ -1,8 +1,9 @@
-{ pkgs
-, lib
-, name
-, config
-, ...
+{
+  pkgs,
+  lib,
+  name,
+  config,
+  ...
 }:
 let
   inherit (lib) types;
@@ -45,31 +46,29 @@ in
       settings = {
         processes."${name}" =
           let
-            pyroscopeConfig = lib.recursiveUpdate
-              {
-                server = {
-                  http_listen_address = config.httpAddress;
-                  http_listen_port = config.httpPort;
+            pyroscopeConfig = lib.recursiveUpdate {
+              server = {
+                http_listen_address = config.httpAddress;
+                http_listen_port = config.httpPort;
+              };
+              pyroscopedb = {
+                data_path = "${config.dataDir}/data";
+              };
+              storage = {
+                backend = "filesystem";
+                filesystem = {
+                  dir = "${config.dataDir}/blocks";
                 };
-                pyroscopedb = {
-                  data_path = "${config.dataDir}/data";
-                };
-                storage = {
-                  backend = "filesystem";
-                  filesystem = {
-                    dir = "${config.dataDir}/blocks";
-                  };
-                };
-                ingester.lifecycler.address = config.httpAddress;
-                distributor.ring.instance_addr = config.httpAddress;
-                compactor.sharding_ring.instance_addr = config.httpAddress;
-                overrides_exporter.ring.instance_addr = config.httpAddress;
-                query_scheduler.ring.instance_addr = config.httpAddress;
-                frontend.instance_addr = config.httpAddress;
-                store_gateway.sharding_ring.instance_addr = config.httpAddress;
-                memberlist.bind_addr = [ config.httpAddress ];
-              }
-              config.extraConfig;
+              };
+              ingester.lifecycler.address = config.httpAddress;
+              distributor.ring.instance_addr = config.httpAddress;
+              compactor.sharding_ring.instance_addr = config.httpAddress;
+              overrides_exporter.ring.instance_addr = config.httpAddress;
+              query_scheduler.ring.instance_addr = config.httpAddress;
+              frontend.instance_addr = config.httpAddress;
+              store_gateway.sharding_ring.instance_addr = config.httpAddress;
+              memberlist.bind_addr = [ config.httpAddress ];
+            } config.extraConfig;
             pyroscopeConfigYaml = yamlFormat.generate "pyroscope.yaml" pyroscopeConfig;
             startScript = pkgs.writeShellApplication {
               name = "start-pyroscope";

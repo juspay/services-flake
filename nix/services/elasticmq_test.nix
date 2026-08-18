@@ -1,7 +1,9 @@
-{ pkgs
-, config
-, ...
-}: {
+{
+  pkgs,
+  config,
+  ...
+}:
+{
   services.elasticmq."elasticmq1" = {
     enable = true;
   };
@@ -13,7 +15,10 @@
     {
       command = pkgs.writeShellApplication {
         name = "elasticmq-test";
-        runtimeInputs = with pkgs; [ awscli2 jq ];
+        runtimeInputs = with pkgs; [
+          awscli2
+          jq
+        ];
         runtimeEnv = {
           AWS_ACCESS_KEY_ID = "fake";
           AWS_SECRET_ACCESS_KEY = "fake";

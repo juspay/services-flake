@@ -1,8 +1,9 @@
-{ pkgs
-, lib
-, name
-, config
-, ...
+{
+  pkgs,
+  lib,
+  name,
+  config,
+  ...
 }:
 {
   options = {
@@ -36,8 +37,7 @@
         v:
         lib.throwIf (config.dbPath != null && v) ''
           You can't specify both dbPath and set inMemory to true at once.
-        ''
-          v;
+        '' v;
     };
 
     extraArgs = lib.mkOption {

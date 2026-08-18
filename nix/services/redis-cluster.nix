@@ -1,4 +1,10 @@
-{ pkgs, lib, name, config, ... }:
+{
+  pkgs,
+  lib,
+  name,
+  config,
+  ...
+}:
 let
   inherit (lib) types;
 in
@@ -7,26 +13,40 @@ in
     package = lib.mkPackageOption pkgs "redis" { };
 
     nodes = lib.mkOption {
-      type = types.attrsOf (types.submodule {
-        options = {
-          port = lib.mkOption {
-            type = types.int;
-            description = "The TCP port to accept connections. If port is set to `0`, redis will not listen on a TCP socket.";
+      type = types.attrsOf (
+        types.submodule {
+          options = {
+            port = lib.mkOption {
+              type = types.int;
+              description = "The TCP port to accept connections. If port is set to `0`, redis will not listen on a TCP socket.";
+            };
+            extraConfig = lib.mkOption {
+              type = types.lines;
+              description = "Extra configuration for this node. To be appended to `redis.conf`.";
+              default = "";
+            };
           };
-          extraConfig = lib.mkOption {
-            type = types.lines;
-            description = "Extra configuration for this node. To be appended to `redis.conf`.";
-            default = "";
-          };
-        };
-      });
+        }
+      );
       default = {
-        "n1" = { port = 30001; };
-        "n2" = { port = 30002; };
-        "n3" = { port = 30003; };
-        "n4" = { port = 30004; };
-        "n5" = { port = 30005; };
-        "n6" = { port = 30006; };
+        "n1" = {
+          port = 30001;
+        };
+        "n2" = {
+          port = 30002;
+        };
+        "n3" = {
+          port = 30003;
+        };
+        "n4" = {
+          port = 30004;
+        };
+        "n5" = {
+          port = 30005;
+        };
+        "n6" = {
+          port = 30006;
+        };
       };
     };
 
@@ -65,7 +85,8 @@ in
     outputs = {
       settings =
         let
-          mkNodeProcess = nodeName: cfg:
+          mkNodeProcess =
+            nodeName: cfg:
             let
               port = builtins.toString cfg.port;
               redisConfig = pkgs.writeText "redis.conf" ''
@@ -83,7 +104,10 @@ in
 
               startScript = pkgs.writeShellApplication {
                 name = "start-redis";
-                runtimeInputs = [ pkgs.coreutils config.package ];
+                runtimeInputs = [
+                  pkgs.coreutils
+                  config.package
+                ];
                 text = ''
                   set -euo pipefail
 
@@ -138,7 +162,9 @@ in
         {
           processes = (lib.mapAttrs' mkNodeProcess config.nodes) // {
             "${name}-cluster-create" = {
-              depends_on = lib.mapAttrs' (nodeName: cfg: lib.nameValuePair "${name}-${nodeName}" { condition = "process_healthy"; }) config.nodes;
+              depends_on = lib.mapAttrs' (
+                nodeName: cfg: lib.nameValuePair "${name}-${nodeName}" { condition = "process_healthy"; }
+              ) config.nodes;
               command = lib.getExe clusterCreateScript;
             };
           };

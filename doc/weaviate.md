@@ -1,6 +1,8 @@
 # Weaviate
 
-[Weaviate] is an open-source vector database that stores both objects and vectors, allowing for the combination of vector search with structured filtering with the fault tolerance and scalability of a cloud-native database.
+[Weaviate] is an open-source vector database that stores both objects and vectors, allowing for the
+combination of vector search with structured filtering with the fault tolerance and scalability of a
+cloud-native database.
 
 [Weaviate]: https://github.com/weaviate/weaviate
 
@@ -23,7 +25,8 @@
 
 ### Environment variables
 
-To see list of environment variables, see [this link](https://weaviate.io/developers/weaviate/config-refs/env-vars).
+To see list of environment variables, see
+[this link](https://weaviate.io/developers/weaviate/config-refs/env-vars).
 
 ```nix
 {

@@ -1,5 +1,11 @@
 # Based on https://github.com/cachix/devenv/blob/fa9a708e240c6174f9fc4c6eefbc6a89ce01c350/src/modules/services/cassandra.nix
-{ pkgs, lib, name, config, ... }:
+{
+  pkgs,
+  lib,
+  name,
+  config,
+  ...
+}:
 let
   inherit (lib) types;
   yamlFormat = pkgs.formats.yaml { };
@@ -50,10 +56,9 @@ in
     extraConfig = lib.mkOption {
       type = yamlFormat.type;
       default = { };
-      example =
-        {
-          commitlog_sync_batch_window_in_ms = 3;
-        };
+      example = {
+        commitlog_sync_batch_window_in_ms = 3;
+      };
       description = ''
         Extra options to be merged into `cassandra.yaml` as nix attribute set.
       '';
@@ -86,7 +91,7 @@ in
         seed_provider = [
           {
             class_name = "org.apache.cassandra.locator.SimpleSeedProvider";
-            parameters = [{ seeds = lib.concatStringsSep "," config.seedAddresses; }];
+            parameters = [ { seeds = lib.concatStringsSep "," config.seedAddresses; } ];
           }
         ];
       };
@@ -119,7 +124,10 @@ in
 
               startScript = pkgs.writeShellApplication {
                 name = "start-cassandra";
-                runtimeInputs = [ pkgs.coreutils config.package ];
+                runtimeInputs = [
+                  pkgs.coreutils
+                  config.package
+                ];
                 text = ''
                   set -euo pipefail
 

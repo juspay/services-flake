@@ -1,8 +1,9 @@
-{ config
-, lib
-, name
-, pkgs
-, ...
+{
+  config,
+  lib,
+  name,
+  pkgs,
+  ...
 }:
 let
   inherit (lib) types;
@@ -111,7 +112,8 @@ in
           mergedGlobalSettings = {
             "daemonize" = false;
             "error_log" = "/proc/self/fd/2";
-          } // config.globalSettings;
+          }
+          // config.globalSettings;
           cfgFile = pkgs.writeText "phpfpm-${name}.conf" ''
             [global]
             ${lib.concatStringsSep "\n" (lib.mapAttrsToList (n: v: "${n} = ${toStr v}") mergedGlobalSettings)}
@@ -148,7 +150,7 @@ in
             let
               # Transform `listen` by prefixing `config.dataDir` if a relative path is used
               transformedListen =
-                if (builtins.isString config.listen && (! lib.hasPrefix "/" config.listen)) then
+                if (builtins.isString config.listen && (!lib.hasPrefix "/" config.listen)) then
                   "${config.dataDir}/${config.listen}"
                 else
                   config.listen;

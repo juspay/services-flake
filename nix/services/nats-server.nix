@@ -1,8 +1,9 @@
-{ pkgs
-, lib
-, name
-, config
-, ...
+{
+  pkgs,
+  lib,
+  name,
+  config,
+  ...
 }:
 let
   settingsFormat = pkgs.formats.json { };

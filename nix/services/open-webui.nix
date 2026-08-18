@@ -1,5 +1,11 @@
 # Based on: https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/misc/open-webui.nix
-{ pkgs, lib, name, config, ... }:
+{
+  pkgs,
+  lib,
+  name,
+  config,
+  ...
+}:
 let
   inherit (lib) types;
 in
@@ -49,9 +55,9 @@ in
         processes = {
           "${name}" =
             let
-              setupStateDirs = lib.concatMapStrings
-                (stateDir:
-                  ''
+              setupStateDirs =
+                lib.concatMapStrings
+                  (stateDir: ''
                     if [ ! -d "''$${stateDir}" ]; then
                       mkdir -p "''$${stateDir}"
                     fi
@@ -59,7 +65,13 @@ in
                     ${stateDir}=$(readlink -f "''$${stateDir}")
 
                     export ${stateDir}
-                  '') [ "DATA_DIR" "STATIC_DIR" "HF_HOME" "SENTENCE_TRANSFORMERS_HOME" ];
+                  '')
+                  [
+                    "DATA_DIR"
+                    "STATIC_DIR"
+                    "HF_HOME"
+                    "SENTENCE_TRANSFORMERS_HOME"
+                  ];
             in
 
             {
@@ -68,7 +80,8 @@ in
                 STATIC_DIR = "${config.dataDir}/static";
                 HF_HOME = "${config.dataDir}/hf_home";
                 SENTENCE_TRANSFORMERS_HOME = "${config.dataDir}/transformers_home";
-              } // config.environment;
+              }
+              // config.environment;
 
               command = pkgs.writeShellApplication {
                 name = "open-webui-wrapper";

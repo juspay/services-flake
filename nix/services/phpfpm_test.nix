@@ -32,7 +32,10 @@
     in
     {
       command = pkgs.writeShellApplication {
-        runtimeInputs = [ cfg.package pkgs.fcgi ];
+        runtimeInputs = [
+          cfg.package
+          pkgs.fcgi
+        ];
         text = ''
           echo "Test connection to phpfpm1 listening on Unix socket"
           cgi-fcgi -bind -connect ./data/phpfpm1/phpfpm.sock

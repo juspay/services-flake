@@ -1,4 +1,10 @@
-{ pkgs, config, name, ... }: {
+{
+  pkgs,
+  config,
+  name,
+  ...
+}:
+{
   services.postgres."pg1" = {
     enable = true;
     initialScript.before = "CREATE USER bar;";
@@ -50,7 +56,12 @@
     in
     {
       command = pkgs.writeShellApplication {
-        runtimeInputs = [ cfg.package pkgs.gnugrep pkgs.curl pkgs.jq ];
+        runtimeInputs = [
+          cfg.package
+          pkgs.gnugrep
+          pkgs.curl
+          pkgs.jq
+        ];
         text = ''
           echo 'SELECT version();' | psql -h 127.0.0.1
           echo 'SHOW hba_file;' | psql -h 127.0.0.1 | ${pkgs.gawk}/bin/awk 'NR==3' | grep '^ /nix/store'
@@ -63,14 +74,14 @@
 
           # schemas test
           echo "SELECT * from users where user_name = 'test_user';" | psql -h 127.0.0.1 -p 5433 -d sample-db | grep -q test_user
- 
+
           # listen_addresses test
           echo "SELECT 1 FROM pg_database where datname = 'test-db';" | psql -h "$(readlink -f ${config.services.postgres.pg3.socketDir})" -d postgres | grep -q 1
 
           # Test if `pg4-init` fails due to `bad_test.sql`
           #
           # The curl to process-compose server is documented in the swagger URL, http://localhost:8080, but since we are listening on unix socket here, you can use `socat` to temporarily pipe the port `8080` to the `pc-${name}.sock` (`socat TCP-LISTEN:8080,fork UNIX-CONNECT:/path/to/your/socket.sock
- 
+
           # OpenAPI documentation from the swagger URL:
           # /process/logs/{name}/{endOffset}/{limit}
           curl --unix-socket pc-${name}.sock http://localhost/process/logs/pg4-init/0/30 | jq '.logs | contains(["ERROR:  syntax error at or near \"STABLE\""])' | grep "true"

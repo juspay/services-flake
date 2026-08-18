@@ -1,6 +1,7 @@
 # MySQL
 
-[MySQL](https://github.com/mysql/mysql-server) is a popular open-source relational database management system (RDBMS).
+[MySQL](https://github.com/mysql/mysql-server) is a popular open-source relational database
+management system (RDBMS).
 
 {#start}
 

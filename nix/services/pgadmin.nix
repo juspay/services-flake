@@ -1,27 +1,67 @@
 # Based on https://github.com/NixOS/nixpkgs/blob/d53c2037394da6fe98decca417fc8fda64bf2443/nixos/modules/services/admin/pgadmin.nix
-{ pkgs, lib, name, config, ... }:
+{
+  pkgs,
+  lib,
+  name,
+  config,
+  ...
+}:
 let
   inherit (lib) types;
 
-  _base = with types; [ int bool str ];
-  base = with types; oneOf ([ (listOf (oneOf _base)) (attrsOf (oneOf _base)) ] ++ _base);
+  _base = with types; [
+    int
+    bool
+    str
+  ];
+  base =
+    with types;
+    oneOf (
+      [
+        (listOf (oneOf _base))
+        (attrsOf (oneOf _base))
+      ]
+      ++ _base
+    );
 
-  formatAttrset = attr:
-    "{${lib.concatStringsSep "\n" (lib.mapAttrsToList (key: value: "${builtins.toJSON key}: ${formatPyValue value},") attr)}}";
+  formatAttrset =
+    attr:
+    "{${
+      lib.concatStringsSep "\n" (
+        lib.mapAttrsToList (key: value: "${builtins.toJSON key}: ${formatPyValue value},") attr
+      )
+    }}";
 
-  formatPyValue = value:
-    if builtins.isString value then builtins.toJSON value
-    else if value ? _expr then value._expr
-    else if builtins.isInt value then toString value
-    else if builtins.isBool value then (if value then "True" else "False")
-    else if builtins.isAttrs value then (formatAttrset value)
-    else if builtins.isList value then "[${lib.concatStringsSep "\n" (map (v: "${formatPyValue v},") value)}]"
-    else throw "Unrecognized type";
+  formatPyValue =
+    value:
+    if builtins.isString value then
+      builtins.toJSON value
+    else if value ? _expr then
+      value._expr
+    else if builtins.isInt value then
+      toString value
+    else if builtins.isBool value then
+      (if value then "True" else "False")
+    else if builtins.isAttrs value then
+      (formatAttrset value)
+    else if builtins.isList value then
+      "[${lib.concatStringsSep "\n" (map (v: "${formatPyValue v},") value)}]"
+    else
+      throw "Unrecognized type";
 
-  formatPy = attrs:
-    lib.concatStringsSep "\n" (lib.mapAttrsToList (key: value: "${key} = ${formatPyValue value}") attrs);
+  formatPy =
+    attrs:
+    lib.concatStringsSep "\n" (
+      lib.mapAttrsToList (key: value: "${key} = ${formatPyValue value}") attrs
+    );
 
-  pyType = with types; attrsOf (oneOf [ (attrsOf base) (listOf base) base ]);
+  pyType =
+    with types;
+    attrsOf (oneOf [
+      (attrsOf base)
+      (listOf base)
+      base
+    ]);
 in
 {
   options = {
@@ -38,7 +78,6 @@ in
       type = types.port;
       default = 5050;
     };
-
 
     initialEmail = lib.mkOption {
       description = "Initial email for the pgAdmin account";
@@ -85,8 +124,7 @@ in
         processes =
           let
             pgadminConfig = pkgs.writeTextDir "config_local.py" (
-              "import os\n" + (formatPy
-                (lib.recursiveUpdate config.extraDefaultConfig config.extraConfig))
+              "import os\n" + (formatPy (lib.recursiveUpdate config.extraDefaultConfig config.extraConfig))
             );
           in
           {
@@ -94,11 +132,12 @@ in
               let
                 setupScript = pkgs.writeShellApplication {
                   name = "setup-pgadmin";
-                  runtimeInputs =
-                    [ config.package ] ++
-                    (lib.lists.optionals pkgs.stdenv.isDarwin [
-                      pkgs.coreutils
-                    ]);
+                  runtimeInputs = [
+                    config.package
+                  ]
+                  ++ (lib.lists.optionals pkgs.stdenv.isDarwin [
+                    pkgs.coreutils
+                  ]);
                   text = ''
                     export PYTHONPATH="${pgadminConfig}"
                     PGADMIN_DATADIR="$(readlink -m ${config.dataDir})"
@@ -126,11 +165,12 @@ in
               let
                 startScript = pkgs.writeShellApplication {
                   name = "start-pgadmin";
-                  runtimeInputs =
-                    [ config.package ] ++
-                    (lib.lists.optionals pkgs.stdenv.isDarwin [
-                      pkgs.coreutils
-                    ]);
+                  runtimeInputs = [
+                    config.package
+                  ]
+                  ++ (lib.lists.optionals pkgs.stdenv.isDarwin [
+                    pkgs.coreutils
+                  ]);
                   text = ''
                     export PYTHONPATH="${pgadminConfig}"
                     PGADMIN_DATADIR="$(readlink -m ${config.dataDir})"
