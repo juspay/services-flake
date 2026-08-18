@@ -45,25 +45,24 @@ let
   '';
 in
 {
-  services.grafana."gf1" =
-    {
-      enable = true;
-      http_port = 3000;
-      extraConf = {
-        security.admin_user = "patato";
-        security.admin_password = "potato";
-      };
-      providers = [
-        {
-          name = "Test dashboard provider";
-          type = "file";
-          options = {
-            path = "${dashboards}/dashboards";
-          };
-        }
-      ];
-      declarativePlugins = with pkgs.grafanaPlugins; [ grafana-clickhouse-datasource ];
+  services.grafana."gf1" = {
+    enable = true;
+    http_port = 3000;
+    extraConf = {
+      security.admin_user = "patato";
+      security.admin_password = "potato";
     };
+    providers = [
+      {
+        name = "Test dashboard provider";
+        type = "file";
+        options = {
+          path = "${dashboards}/dashboards";
+        };
+      }
+    ];
+    declarativePlugins = with pkgs.grafanaPlugins; [ grafana-clickhouse-datasource ];
+  };
 
   settings.processes.test =
     let
@@ -72,21 +71,26 @@ in
     {
       # Tests based on: https://github.com/NixOS/nixpkgs/blob/master/nixos/tests/grafana/basic.nix
       command = pkgs.writeShellApplication {
-        runtimeInputs = [ cfg.package pkgs.gnugrep pkgs.curl pkgs.uutils-coreutils-noprefix pkgs.jq ];
-        text =
-          ''
-            ADMIN=${cfg.extraConf.security.admin_user}
-            PASSWORD=${cfg.extraConf.security.admin_password}
-            ROOT_URL="${cfg.protocol}://${cfg.domain}:${builtins.toString cfg.http_port}";
-            # The admin user can authenticate against the running service.
-            curl -sSfN -u $ADMIN:$PASSWORD $ROOT_URL/api/org/users -i
-            curl -sSfN -u $ADMIN:$PASSWORD $ROOT_URL/api/org/users | grep admin\@localhost
-            # The dashboard provisioner was used to create a dashboard.
-            curl -sSfN -u $ADMIN:$PASSWORD $ROOT_URL/api/dashboards/uid/${dashboardUid} -i
-            curl -sSfN -u $ADMIN:$PASSWORD $ROOT_URL/api/dashboards/uid/${dashboardUid} | grep '"title":"${dashboardTitle}"'
-            # Test for extra plugins added to grafana.
-            curl -sSfN -u $ADMIN:$PASSWORD $ROOT_URL/api/plugins | jq '.[] | select(.id == "grafana-clickhouse-datasource") | .enabled' | grep "true"
-          '';
+        runtimeInputs = [
+          cfg.package
+          pkgs.gnugrep
+          pkgs.curl
+          pkgs.uutils-coreutils-noprefix
+          pkgs.jq
+        ];
+        text = ''
+          ADMIN=${cfg.extraConf.security.admin_user}
+          PASSWORD=${cfg.extraConf.security.admin_password}
+          ROOT_URL="${cfg.protocol}://${cfg.domain}:${builtins.toString cfg.http_port}";
+          # The admin user can authenticate against the running service.
+          curl -sSfN -u $ADMIN:$PASSWORD $ROOT_URL/api/org/users -i
+          curl -sSfN -u $ADMIN:$PASSWORD $ROOT_URL/api/org/users | grep admin\@localhost
+          # The dashboard provisioner was used to create a dashboard.
+          curl -sSfN -u $ADMIN:$PASSWORD $ROOT_URL/api/dashboards/uid/${dashboardUid} -i
+          curl -sSfN -u $ADMIN:$PASSWORD $ROOT_URL/api/dashboards/uid/${dashboardUid} | grep '"title":"${dashboardTitle}"'
+          # Test for extra plugins added to grafana.
+          curl -sSfN -u $ADMIN:$PASSWORD $ROOT_URL/api/plugins | jq '.[] | select(.id == "grafana-clickhouse-datasource") | .enabled' | grep "true"
+        '';
         name = "grafana-test";
       };
       depends_on."gf1".condition = "process_healthy";

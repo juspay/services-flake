@@ -1,4 +1,10 @@
-{ pkgs, lib, name, config, ... }:
+{
+  pkgs,
+  lib,
+  name,
+  config,
+  ...
+}:
 let
   inherit (lib) types;
   yamlFormat = pkgs.formats.yaml { };
@@ -62,11 +68,14 @@ in
               prometheusConfig = yamlFormat.generate "prometheus.yaml" (
                 lib.recursiveUpdate config.defaultExtraConfig config.extraConfig
               );
-              execFlags = builtins.concatStringsSep " \\\n" ([
-                "--config.file=${prometheusConfig}"
-                "--storage.tsdb.path=${config.dataDir}"
-                "--web.listen-address=${config.listenAddress}:${builtins.toString config.port}"
-              ] ++ config.extraFlags);
+              execFlags = builtins.concatStringsSep " \\\n" (
+                [
+                  "--config.file=${prometheusConfig}"
+                  "--storage.tsdb.path=${config.dataDir}"
+                  "--web.listen-address=${config.listenAddress}:${builtins.toString config.port}"
+                ]
+                ++ config.extraFlags
+              );
 
               startScript = pkgs.writeShellApplication {
                 name = "start-prometheus";

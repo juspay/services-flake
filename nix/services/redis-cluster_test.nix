@@ -7,7 +7,10 @@
     in
     {
       command = pkgs.writeShellApplication {
-        runtimeInputs = [ cfg.package pkgs.gnugrep ];
+        runtimeInputs = [
+          cfg.package
+          pkgs.gnugrep
+        ];
         text = ''
           redis-cli -p 30001 ping | grep -q "PONG"
           redis-cli -p 30002 ping | grep -q "PONG"

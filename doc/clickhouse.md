@@ -1,6 +1,8 @@
 # Clickhouse
 
-ClickHouse is an open-source column-oriented DBMS (columnar database management system) for online analytical processing (OLAP) that allows users to generate analytical reports using SQL queries in real-time.
+ClickHouse is an open-source column-oriented DBMS (columnar database management system) for online
+analytical processing (OLAP) that allows users to generate analytical reports using SQL queries in
+real-time.
 
 ## Getting Started
 
@@ -12,12 +14,15 @@ ClickHouse is an open-source column-oriented DBMS (columnar database management 
 ```
 
 {#tips}
+
 ## Tips & Tricks
 
 {#change-port}
+
 ### Change the HTTP default port
 
-Clickhouse has [HTTP Interface](https://clickhouse.com/docs/en/interfaces/http) that is enabled by default on port 8123. To change the default port, use the `extraConfig` option:
+Clickhouse has [HTTP Interface](https://clickhouse.com/docs/en/interfaces/http) that is enabled by
+default on port 8123. To change the default port, use the `extraConfig` option:
 
 ```nix
 {
@@ -31,6 +36,7 @@ Clickhouse has [HTTP Interface](https://clickhouse.com/docs/en/interfaces/http) 
 ```
 
 {#initial-database}
+
 ### Initial database schema
 
 To load a database schema, you can use the `initialDatabases` option:

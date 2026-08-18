@@ -1,6 +1,7 @@
 # Searxng
 
-[Searxng](https://github.com/searxng/searxng) is a free internet metasearch engine which aggregates results from various search services and databases. Users are neither tracked nor profiled.
+[Searxng](https://github.com/searxng/searxng) is a free internet metasearch engine which aggregates
+results from various search services and databases. Users are neither tracked nor profiled.
 
 ## Getting Started
 
