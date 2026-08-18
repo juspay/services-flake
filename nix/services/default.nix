@@ -16,6 +16,7 @@ in
       ./ollama.nix
       ./postgres
       ./open-webui.nix
+      ./openobserve.nix
       ./plantuml.nix
       ./redis-cluster.nix
       ./redis.nix
