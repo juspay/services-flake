@@ -55,30 +55,32 @@ in
       settings = {
         processes."${name}" =
           let
-            tempoConfig = lib.recursiveUpdate {
-              server = {
-                http_listen_address = config.httpAddress;
-                http_listen_port = config.httpPort;
-              };
-              storage = {
-                trace = {
-                  backend = "local";
-                  wal = {
-                    path = "${config.dataDir}/wal";
-                  };
-                  local = {
-                    path = "${config.dataDir}/blocks";
-                  };
-                }
-                # The live_store block is only supported by Tempo 3.x and later.
-                // lib.optionalAttrs (lib.versionAtLeast config.package.version "3") {
-                  live_store = {
-                    shutdown_marker_dir = "${config.dataDir}/live-store/shutdown-marker";
-                    wal.path = "${config.dataDir}/live-store/traces";
+            tempoConfig = lib.recursiveUpdate (
+              {
+                server = {
+                  http_listen_address = config.httpAddress;
+                  http_listen_port = config.httpPort;
+                };
+                storage = {
+                  trace = {
+                    backend = "local";
+                    wal = {
+                      path = "${config.dataDir}/wal";
+                    };
+                    local = {
+                      path = "${config.dataDir}/blocks";
+                    };
                   };
                 };
-              };
-            } config.extraConfig;
+              }
+              # `live_store` is a top-level config field only supported by Tempo 3.x and later.
+              // lib.optionalAttrs (lib.versionAtLeast config.package.version "3") {
+                live_store = {
+                  shutdown_marker_dir = "${config.dataDir}/live-store/shutdown-marker";
+                  wal.path = "${config.dataDir}/live-store/traces";
+                };
+              }
+            ) config.extraConfig;
             tempoConfigYaml = yamlFormat.generate "tempo.yaml" tempoConfig;
             startScript = pkgs.writeShellApplication {
               name = "start-tempo";
