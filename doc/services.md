@@ -17,6 +17,7 @@ short-title: Services
   - [[tempo]]
   - [[loki]]
   - [[pyroscope]]
+  - [[mimir]]
 - [[mailhog]]#
 - [[memcached]]#
 - [[minio]]#
