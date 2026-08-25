@@ -163,11 +163,14 @@ let
                "$dataDir/prometheus"
 
       # Set temp. dir.
-      if [ ! -L "$dataDir/temp" ]; then
+      if [ -L "$dataDir/temp" ]; then
+        tmpDir=$(readlink "$dataDir/temp")
+      else
         tmpDir=$(mktemp -d)
-        mkdir -p "$tmpDir"
-        ln -s "$tmpDir" "$dataDir/temp"
+        ln -fs "$tmpDir" "$dataDir/temp"
       fi
+      mkdir -p "$tmpDir"
+
       export TMPDIR="$tmpDir"
       export TEMPDIR="$TMPDIR"
 
@@ -178,7 +181,7 @@ let
       # Bring in Authentik's working-directory dependencies
       # (authentik/, templates/, static assets, ...).
       if [ ! -d "$staticDir" ]; then
-        ln -s "${staticWorkdirDeps}" "$staticDir"
+        ln -sf "${staticWorkdirDeps}" "$staticDir"
       fi
       ls -al "$staticDir"
 
@@ -222,11 +225,11 @@ let
         ${setup}
         cd "$staticDir"
         echo "Starting authentik server ..."
-        exec ${gopkgs}/bin/authentik-server
+        exec ${gopkgs}/bin/server
       '';
 
   authentik-blueprint-export =
-    pkgs.writeShellScriptBin "authentik-worker"
+    pkgs.writeShellScriptBin "authentik-blueprint-export"
       # Bash
       ''
         ${setup}
@@ -287,21 +290,24 @@ in
       "${name}-migrate" = {
         description = "Authentik database migrations: a prerequisite that creates the schema.";
         environment = connEnv;
-        command = authentik-migrate;
-        depends_on."${name}-pg-db".condition = "process_healthy";
+        command = "${lib.getExe authentik-migrate}";
+
+        depends_on = {
+          "${name}-pg-db".condition = "process_healthy";
+        };
       };
 
       "${name}-worker" = {
         description = "Authentik background worker: processes tasks and applies blueprints.";
         environment = connEnv // listenEnv "worker";
-        command = authentik-worker;
+        command = "${lib.getExe authentik-worker}";
         depends_on."${name}-migrate".condition = "process_completed_successfully";
       };
 
       "${name}" = {
         description = "Authentik HTTP/API server.";
         environment = connEnv // listenEnv "server";
-        command = authentik-server;
+        command = "${lib.getExe authentik-server}";
 
         depends_on = {
           "${name}-migrate".condition = "process_completed_successfully";
