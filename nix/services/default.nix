@@ -41,6 +41,7 @@ in
       ./chromadb.nix
       ./neo4j.nix
       ./mailhog.nix
+      ./rustfs.nix
     ])
     ++ [
       ./devshell.nix
