@@ -1,8 +1,9 @@
-{ config
-, lib
-, pkgs
-, name
-, ...
+{
+  config,
+  lib,
+  pkgs,
+  name,
+  ...
 }:
 let
   cfg = config;
@@ -68,16 +69,16 @@ let
 
   finalComponents = cfg.components.overrideScope (
     final: prev:
-      let
-        prevComps = prev.authentikComponents;
-      in
-      {
-        authentikComponents = prevComps // {
-          manage = makeSandboxSafe prevComps.manage "manage" prevComps.pythonEnv;
-          migrate = makeSandboxSafe prevComps.migrate "migrate" prevComps.pythonEnv;
-          staticWorkdirDeps = modStaticWorkdirDeps prevComps.staticWorkdirDeps prev.authentik-src;
-        };
-      }
+    let
+      prevComps = prev.authentikComponents;
+    in
+    {
+      authentikComponents = prevComps // {
+        manage = makeSandboxSafe prevComps.manage "manage" prevComps.pythonEnv;
+        migrate = makeSandboxSafe prevComps.migrate "migrate" prevComps.pythonEnv;
+        staticWorkdirDeps = modStaticWorkdirDeps prevComps.staticWorkdirDeps prev.authentik-src;
+      };
+    }
   );
 
   # The authentik components.
@@ -125,19 +126,16 @@ let
   # Copy the enabled blueprints into the Authentik blueprints dir.
   # Copied (not symlinked) for the same reason as the built-in
   # blueprints: authentik rejects blueprints whose resolved path escapes `blueprints_dir`.
-  blueprintImport = lib.map
-    (
-      p:
-      # Bash
-      ''
-        filename="${lib.baseNameOf p}"
-        f="${p}"
-        echo "Copying blueprint '${p}' from '$f' into './additional/$filename'."
-        mkdir -p ./additional
-        cp -L "$f" "./additional/$filename"
-      ''
-    )
-    cfg.blueprints.imports;
+  blueprintImport = lib.map (
+    p:
+    # Bash
+    ''
+      filename="${lib.baseNameOf p}"
+      f="${p}"
+      echo "Copying blueprint '${p}' from '$f' into './additional/$filename'."
+      mkdir -p ./additional
+      cp -L "$f" "./additional/$filename"
+    '') cfg.blueprints.imports;
 
   loadEnvFile =
     lib.optionalString (cfg.environmentFile != null)
