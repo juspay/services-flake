@@ -75,7 +75,8 @@ writeShellApplication {
         fi
 
         if [ ! -f "${realmDstDir}/test.json" ]; then
-          echo "!! Realm '${realmDstDir}/test.json'  did not get exported".
+          echo "!! Realm '${realmDstDir}/test.json' did not get exported."
+          return 1
         fi
       }
 

@@ -10,7 +10,7 @@
 let
   cfg = config;
 
-  hasRealmExports = lib.any (lib.mapAttrsToList (realmName: opts: opts.export.enable) cfg.realms);
+  hasRealmExports = cfg.exportRealms && lib.any (r: r.export.enable) (lib.attrValues cfg.realms);
 
   inherit (lib)
     mkOption
@@ -25,14 +25,14 @@ in
       type = types.nullOr (
         lib.types.pathWith {
           inStore = false;
-          absolute = false;
         }
       );
       default = null;
-      example = "/run/keys/ssl_cert";
+      example = "./keycloak/keys/ssl_cert";
       description = ''
         The path to a PEM formatted certificate to use for TLS/SSL
         connections.
+        Relative paths are relative to process-composes's working dir.
       '';
     };
 
@@ -40,14 +40,14 @@ in
       type = types.nullOr (
         types.pathWith {
           inStore = false;
-          absolute = false;
         }
       );
       default = null;
-      example = "/run/keys/ssl_key";
+      example = "./keycloak/keys/ssl_key";
       description = ''
         The path to a PEM formatted private key to use for TLS/SSL
         connections.
+        Relative paths are relative to process-composes's working dir.
       '';
     };
 
@@ -74,7 +74,7 @@ in
           assert lib.assertMsg (val == "dev-mem" -> !hasRealmExports) ''
             You cannot export realms with `realms.«name».export == true` when
             using `database.type == 'dev-mem'`, import however works.
-            You can disable realms export with `exportRealms = true` globally.
+            You can disable realms export with `exportRealms = false` globally.
           '';
           val;
         description = ''
@@ -86,6 +86,14 @@ in
     };
 
     package = mkPackageOption pkgs "keycloak" { };
+
+    initialAdminUsername = mkOption {
+      type = types.str;
+      default = "admin";
+      description = ''
+        Initial username set for the temporary admin user.
+      '';
+    };
 
     initialAdminPassword = mkOption {
       type = types.str;
@@ -129,11 +137,11 @@ in
               description = ''
                 The path (relative to the `process-compose` working dir or an Nix store path)
                 where you want to import (or export) this realm «name» to.
-                - If not set and `import` is `true` this realm is not imported.
+                - If not set this realm is not imported.
                 - If
                   - set to an Nix store path
-                  - or not it is not set
-                  and `export` is `true` then
+                  - or it is not set
+                  and `export.enable` is `true` then
                   it is exported to `''${config.dataDir}/realm-export/«name».json`.
               '';
             };
@@ -155,7 +163,7 @@ in
                 description = ''
                   The path (relative to the `process-compose` working dir or an Nix store path)
                   where you want to export this realm «name» to.
-                  - If not set and `import.path` is relative it is used as default.
+                  - If not set and `import` is relative it is used as default.
                   - If not set otherwise its defaulted to a value in the data folder.
                 '';
               };
@@ -166,10 +174,19 @@ in
 
       example = lib.literalExpression ''
         {
-          myrealm = {
-            path = "./myfolder/export.json";
-            import = true; # default
-            export = true;
+          realms = {
+            master = {
+              export = {
+                enable = true;
+              };
+            };
+
+            test = {
+              import = ./realm.json;
+              export = {
+                enable = true;
+              };
+            };
           };
         }
       '';
@@ -239,17 +256,6 @@ in
             description = ''
               The path relative to `/` for serving
               resources.
-
-              ::: {.note}
-              In versions of Keycloak using Wildfly (&lt;17),
-              this defaulted to `/auth`. If
-              upgrading from the Wildfly version of Keycloak,
-              i.e. a NixOS version before 22.05, you'll likely
-              want to set this to `/auth` to
-              keep compatibility with your clients.
-
-              See <https://www.keycloak.org/migration/migrating-to-quarkus>
-              for more information on migrating from Wildfly to Quarkus.
               :::
             '';
           };
@@ -272,8 +278,6 @@ in
       example = lib.literalExpression ''
         {
           hostname = "localhost";
-          https-key-store-file = "/path/to/file";
-          https-key-store-password = { _secret = "/run/keys/store_password"; };
         }
       '';
 
@@ -282,16 +286,6 @@ in
         {file}`conf/keycloak.conf`.
 
         Most available options are documented at <https://www.keycloak.org/server/all-config>.
-
-        Options containing secret data should be set to an attribute
-        set containing the attribute `_secret` - a
-        string pointing to a file containing the value the option
-        should be set to. See the example to get a better picture of
-        this: in the resulting
-        {file}`conf/keycloak.conf` file, the
-        `https-key-store-password` key will be set
-        to the contents of the
-        {file}`/run/keys/store_password` file.
       '';
     };
   };
