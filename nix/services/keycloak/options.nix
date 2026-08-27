@@ -10,7 +10,7 @@
 let
   cfg = config;
 
-  hasRealmExports = lib.any (lib.mapAttrsToList (realmName: opts: opts.export.enable) cfg.realms);
+  hasRealmExports = cfg.exportRealms && lib.any (r: r.export.enable) (lib.attrValues cfg.realms);
 
   inherit (lib)
     mkOption
@@ -25,14 +25,14 @@ in
       type = types.nullOr (
         lib.types.pathWith {
           inStore = false;
-          absolute = false;
         }
       );
       default = null;
-      example = "/run/keys/ssl_cert";
+      example = "./keycloak/keys/ssl_cert";
       description = ''
         The path to a PEM formatted certificate to use for TLS/SSL
         connections.
+        Relative paths are relative to process-composes's working dir.
       '';
     };
 
@@ -40,14 +40,14 @@ in
       type = types.nullOr (
         types.pathWith {
           inStore = false;
-          absolute = false;
         }
       );
       default = null;
-      example = "/run/keys/ssl_key";
+      example = "./keycloak/keys/ssl_key";
       description = ''
         The path to a PEM formatted private key to use for TLS/SSL
         connections.
+        Relative paths are relative to process-composes's working dir.
       '';
     };
 
@@ -74,7 +74,7 @@ in
           assert lib.assertMsg (val == "dev-mem" -> !hasRealmExports) ''
             You cannot export realms with `realms.«name».export == true` when
             using `database.type == 'dev-mem'`, import however works.
-            You can disable realms export with `exportRealms = true` globally.
+            You can disable realms export with `exportRealms = false` globally.
           '';
           val;
         description = ''
@@ -86,6 +86,14 @@ in
     };
 
     package = mkPackageOption pkgs "keycloak" { };
+
+    initialAdminUsername = mkOption {
+      type = types.str;
+      default = "admin";
+      description = ''
+        Initial username set for the temporary admin user.
+      '';
+    };
 
     initialAdminPassword = mkOption {
       type = types.str;
@@ -129,11 +137,11 @@ in
               description = ''
                 The path (relative to the `process-compose` working dir or an Nix store path)
                 where you want to import (or export) this realm «name» to.
-                - If not set and `import` is `true` this realm is not imported.
+                - If not set this realm is not imported.
                 - If
                   - set to an Nix store path
-                  - or not it is not set
-                  and `export` is `true` then
+                  - or it is not set
+                  and `export.enable` is `true` then
                   it is exported to `''${config.dataDir}/realm-export/«name».json`.
               '';
             };
@@ -155,7 +163,7 @@ in
                 description = ''
                   The path (relative to the `process-compose` working dir or an Nix store path)
                   where you want to export this realm «name» to.
-                  - If not set and `import.path` is relative it is used as default.
+                  - If not set and `import` is relative it is used as default.
                   - If not set otherwise its defaulted to a value in the data folder.
                 '';
               };
@@ -166,10 +174,19 @@ in
 
       example = lib.literalExpression ''
         {
-          myrealm = {
-            path = "./myfolder/export.json";
-            import = true; # default
-            export = true;
+          realms = {
+            master = {
+              export = {
+                enable = true;
+              };
+            };
+
+            test = {
+              import = ./realm.json;
+              export = {
+                enable = true;
+              };
+            };
           };
         }
       '';

@@ -8,8 +8,6 @@
 let
   cfg = config;
 
-  isSecret = v: lib.isAttrs v && v ? _secret && lib.isString v._secret;
-
   # Generate the keycloak config file to build it.
   keycloakConfig = lib.generators.toKeyValue {
     mkKeyValue = lib.flip lib.generators.mkKeyValueDefault "=" {
@@ -23,8 +21,6 @@ let
           "true"
         else if false == v then
           "false"
-        else if isSecret v then
-          builtins.hashString "sha256" v._secret
         else
           throw "unsupported type ${builtins.typeOf v}: ${(lib.generators.toPretty { }) v}";
     };
@@ -69,7 +65,11 @@ let
     installPhase = "true";
   };
 
-  providedSSLCerts = cfg.sslCertificate != null && cfg.sslCertificateKey != null;
+  providedSSLCerts =
+    assert lib.assertMsg (
+      (cfg.sslCertificate == null) == (cfg.sslCertificateKey == null)
+    ) "Both `sslCertificate` and `sslCertificateKey` must be set together, or neither. Got only one.";
+    cfg.sslCertificate != null && cfg.sslCertificateKey != null;
 
   # Generate the command to import realms.
   realmImport = lib.mapAttrsToList (
@@ -164,8 +164,8 @@ let
     KC_CONF_DIR = cfg.dataDir + "/conf";
     KC_TMP_DIR = cfg.dataDir + "/tmp";
 
-    KC_BOOTSTRAP_ADMIN_USERNAME = "admin";
-    KC_BOOTSTRAP_ADMIN_PASSWORD = "${lib.escapeShellArg cfg.initialAdminPassword}";
+    KC_BOOTSTRAP_ADMIN_USERNAME = cfg.initialAdminUsername;
+    KC_BOOTSTRAP_ADMIN_PASSWORD = cfg.initialAdminPassword;
   };
 
   keycloak-start =
