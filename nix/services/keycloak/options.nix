@@ -256,17 +256,6 @@ in
             description = ''
               The path relative to `/` for serving
               resources.
-
-              ::: {.note}
-              In versions of Keycloak using Wildfly (&lt;17),
-              this defaulted to `/auth`. If
-              upgrading from the Wildfly version of Keycloak,
-              i.e. a NixOS version before 22.05, you'll likely
-              want to set this to `/auth` to
-              keep compatibility with your clients.
-
-              See <https://www.keycloak.org/migration/migrating-to-quarkus>
-              for more information on migrating from Wildfly to Quarkus.
               :::
             '';
           };
@@ -289,8 +278,6 @@ in
       example = lib.literalExpression ''
         {
           hostname = "localhost";
-          https-key-store-file = "/path/to/file";
-          https-key-store-password = { _secret = "/run/keys/store_password"; };
         }
       '';
 
@@ -299,16 +286,6 @@ in
         {file}`conf/keycloak.conf`.
 
         Most available options are documented at <https://www.keycloak.org/server/all-config>.
-
-        Options containing secret data should be set to an attribute
-        set containing the attribute `_secret` - a
-        string pointing to a file containing the value the option
-        should be set to. See the example to get a better picture of
-        this: in the resulting
-        {file}`conf/keycloak.conf` file, the
-        `https-key-store-password` key will be set
-        to the contents of the
-        {file}`/run/keys/store_password` file.
       '';
     };
   };
