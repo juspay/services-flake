@@ -20,15 +20,17 @@
         overlays = [
           (
             self: super:
-            lib.optionalAttrs super.stdenv.isDarwin {
-
+            {
+              # Add authentik packages cause its not in nixpkgs.
+              authentikComponents = inputs'.authentik-nix.legacyPackages.authentikComponents;
+            }
+            // (lib.optionalAttrs super.stdenv.isDarwin {
               # Disable tests, because they are failing on darwin:
               # https://github.com/NixOS/nixpkgs/issues/281214
               pgadmin4 = super.pgadmin4.overrideAttrs (_: {
                 doInstallCheck = false;
               });
-
-            }
+            })
           )
         ];
       };
