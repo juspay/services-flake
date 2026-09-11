@@ -36,6 +36,7 @@ short-title: Services
 - [[qdrant]]#
 - [[redis]]#
   - [[redis-cluster]]
+- [[rustfs]]#
 - [[seaweedfs]]#
 - [[searxng]]#
 - [[tika]]#
