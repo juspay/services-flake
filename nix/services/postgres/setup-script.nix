@@ -49,7 +49,7 @@ let
   runInitialScript =
     let
       scriptCmd = sqlScript: ''
-        echo "${sqlScript}" | psql_with_args -d postgres
+        psql_with_args -d postgres -f ${sqlScript}
       '';
     in
     {

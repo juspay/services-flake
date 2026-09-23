@@ -32,7 +32,8 @@ Assuming your initial schema is defined in `./scripts/db.sql`:
 {
   services.postgres."pg1" = {
     enable = true;
-    initialScript.before = ''
+    # you can also directly reference file also
+    initialScript.before = pkgs.writeText "init.sql" ''
       CREATE USER myuser WITH password 'mypasswd';
     '';
     initialDatabases = [
