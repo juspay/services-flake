@@ -1,4 +1,3 @@
-
 # services-flake
 
 `services-flake` provides declarative, composable and reproducible services for Nix development
