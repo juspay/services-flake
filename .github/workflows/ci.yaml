@@ -1,20 +1,77 @@
-name: CI
+# CI, ported from omnix (`nix/omnix.nix`).
+#
+# Same coverage as before: the seven flakes from `ci.default` are devoured
+# (srid/devour-flake — the same builder omnix uses), with the same input
+# overrides, built for x86_64-linux and aarch64-darwin (via the matrix). The
+# omnix `om ci run` check is replaced by this workflow's own check runs
+# across the matrix (one `devour-flake (os, subflake)` per combination), and
+# the build cache by `cache-nix-action` (store cache persisted across runs).
+name: ci
+
 on:
   push:
     branches:
       - main
   pull_request:
+
 jobs:
-  checks:
-    runs-on: ${{ matrix.system }}
+  devour-flake:
+    name: "devour-flake (${{ matrix.os }}, ${{ matrix.flake.name }})"
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          # matrix.system in the old omnix GitHub workflow
+          - ubuntu-latest # x86_64-linux
+          - macos-latest # aarch64-darwin (Intel mac excluded; see #231)
+        flake:
+          # ci.default in nix/omnix.nix (with overrideInputs). nix input path
+          # suffix is relative to the repo root ($PWD); the subflake path is
+          # relative to the root too.
+          - name: simple
+            path: example/simple
+          - name: llm
+            path: example/llm
+          - name: share-services
+            path: example/share-services/pgweb
+            extraOverride: --override-input flake/northwind "path:$PWD/example/share-services/northwind"
+          - name: without-flake-parts
+            path: example/without-flake-parts
+          - name: test
+            path: test
+          - name: dev
+            path: dev
+          - name: doc
+            path: doc
+    runs-on: ${{ matrix.os }}
     permissions:
       contents: read
-    strategy:
-      matrix:
-        # Intel mac excluded; See https://github.com/juspay/services-flake/issues/231
-        system: [x86_64-linux, aarch64-darwin]
+      actions: write # cache-nix-action's purge: true requires it
     steps:
       - uses: actions/checkout@v4
+      - uses: nixbuild/nix-quick-install-action@v34
+        with:
+          # Same as `om ci run --extra-access-tokens` in the old workflow.
+          nix_conf: extra-access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+      - uses: nix-community/cache-nix-action@v6
+        with:
+          primary-key: nix-${{ runner.os }}-${{ hashFiles('**/flake.lock') }}
+          restore-prefixes-first-match: nix-${{ runner.os }}-
+          gc-max-store-size-linux: 5G
+          gc-max-store-size-macos: 5G
+          purge: true
+          purge-prefixes: nix-${{ runner.os }}-
+          purge-last-accessed: 604800
+          purge-primary-key: never
 
-      - name: Build all flake outputs
-        run: om ci run --extra-access-tokens "github.com=${{ secrets.GITHUB_TOKEN }}" --systems "${{ matrix.system }}"
+      # Devour the subflake the same way omnix/Vira builds it: every package,
+      # check, devShell, app, ... of the flake for the current system.
+      # overrideInputs services-flake=. from omnix.nix (a no-op warning on
+      # ./doc, which has no such input).
+      - name: "devour ${{ matrix.flake.name }}"
+        run: >
+          nix build github:srid/devour-flake#default -L --print-out-paths
+          --no-write-lock-file --no-link
+          --override-input flake "path:$PWD/${{ matrix.flake.path }}"
+          --override-input flake/services-flake "path:$PWD"
+          ${{ matrix.flake.extraOverride }}

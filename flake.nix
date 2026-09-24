@@ -12,7 +12,5 @@
     };
 
     lib = import ./nix/lib.nix;
-
-    om = import ./nix/omnix.nix;
   };
 }
