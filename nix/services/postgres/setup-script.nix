@@ -98,7 +98,7 @@ in
     function psql_with_args() {
       psql ${
         lib.optionalString (config.superuser != null) "-U ${config.superuser}"
-      } -v "ON_ERROR_STOP=1" "$@"
+      } -v "ON_ERROR_STOP=1" --no-psqlrc "$@"
     }
     # Setup postgres ENVs
     export PGDATA="${config.dataDir}"
