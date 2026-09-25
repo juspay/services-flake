@@ -84,6 +84,8 @@
                   "${inputs.services-flake}/nix/services/tika_test.nix"
                   "${inputs.services-flake}/nix/services/weaviate_test.nix"
                   "${inputs.services-flake}/nix/services/zookeeper_test.nix"
+                  "${inputs.services-flake}/nix/services/keycloak_test.nix"
+                  "${inputs.services-flake}/nix/services/keycloak-certs_test.nix"
                 ]
                 ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
                   # `phpfpm` test fails on aarch64-darwin:
