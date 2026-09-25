@@ -330,29 +330,20 @@ in
         { config, ... }: {
           options = {
             before = lib.mkOption {
-              type = types.nullOr types.str;
+              type = types.nullOr types.path;
               default = null;
               description = ''
-                SQL commands to run before the database initialization.
+                SQL script to run before the database initialization.
               '';
-              example = lib.literalExpression ''
-                CREATE USER postgres SUPERUSER;
-                CREATE USER bar;
-              '';
+              example = ./path/my_init_script.sql;
             };
             after = lib.mkOption {
-              type = types.nullOr types.str;
+              type = types.nullOr types.path;
               default = null;
               description = ''
-                SQL commands to run after the database initialization.
+                SQL script to run after the database initialization.
               '';
-              example = lib.literalExpression ''
-                CREATE TABLE users (
-                  id SERIAL PRIMARY KEY,
-                  name VARCHAR(50) NOT NULL,
-                  email VARCHAR(50) NOT NULL UNIQUE
-                );
-              '';
+              example = ./path/my_init_script.sql;
             };
           };
         }

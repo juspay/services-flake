@@ -33,7 +33,7 @@ To change the database to `postgres`, we can use the following config:
   services.postgres.pg1 = {
     enable = true;
     listen_addresses = "127.0.0.1";
-    initialScript.after = "CREATE USER root SUPERUSER;";
+    initialScript.after = pkgs.writeText "init_script.sql" "CREATE USER root SUPERUSER;";
   };
   services.grafana.gf1 = {
     enable = true;

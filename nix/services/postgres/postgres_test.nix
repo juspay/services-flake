@@ -7,8 +7,8 @@
 {
   services.postgres."pg1" = {
     enable = true;
-    initialScript.before = "CREATE USER bar;";
-    initialScript.after = "CREATE DATABASE foo OWNER bar;";
+    initialScript.before = pkgs.writeText "init_before.sql" "CREATE USER bar;";
+    initialScript.after = pkgs.writeText "init_after.sql" "CREATE DATABASE foo OWNER bar;";
   };
   services.postgres."pg2" = {
     enable = true;
