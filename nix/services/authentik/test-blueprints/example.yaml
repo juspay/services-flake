@@ -1,0 +1,11 @@
+# Minimal Authentik blueprint used by authentik_test.nix (analogous to keycloak's
+# test-realms/*.json). Creates a single group so the import can be observed.
+version: 1
+metadata:
+  name: services-flake example blueprint
+entries:
+  - model: authentik_core.group
+    identifiers:
+      name: services-flake-example
+    attrs:
+      name: services-flake-example

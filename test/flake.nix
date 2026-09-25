@@ -5,6 +5,7 @@
     systems.url = "github:nix-systems/default";
     process-compose-flake.url = "github:Platonic-Systems/process-compose-flake";
     services-flake.url = "github:juspay/services-flake";
+    authentik-nix.url = "github:nix-community/authentik-nix";
   };
   outputs =
     inputs:
@@ -84,6 +85,7 @@
                   "${inputs.services-flake}/nix/services/tika_test.nix"
                   "${inputs.services-flake}/nix/services/weaviate_test.nix"
                   "${inputs.services-flake}/nix/services/zookeeper_test.nix"
+                  "${inputs.services-flake}/nix/services/authentik_test.nix"
                 ]
                 ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
                   # `phpfpm` test fails on aarch64-darwin:

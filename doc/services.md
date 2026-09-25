@@ -5,6 +5,7 @@ short-title: Services
 # Supported services
 
 - [[apache-kafka]]#
+- [[authentik]]#
 - [[azurite]]#
 - [[cassandra]]#
 - [[chromadb]]#
