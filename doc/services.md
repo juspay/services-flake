@@ -27,6 +27,7 @@ short-title: Services
 - [[nginx]]#
 - [[ollama]]#
 - [[open-webui]]#
+- [[openobserve]]#
 - [[phpfpm]]#
 - [[plantuml]]#
 - [[postgresql]]#
