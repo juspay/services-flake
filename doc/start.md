@@ -61,6 +61,14 @@ Time to run the service:
 nix run .#myservices
 ```
 
+## Debugging
+
+Some services like postgres use init scripts. To debug those scripts, it can be useful to disable the process compose tui to have the execution logs:
+
+```sh
+PC_DISABLE_TUI=true nix run .#myservice
+```
+
 ## Under the hood
 
 - The `services-flake` module configures
