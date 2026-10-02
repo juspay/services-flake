@@ -49,15 +49,35 @@ in
     };
 
     initialScript = lib.mkOption {
-      type = types.nullOr types.str;
-      default = null;
+      type = types.submodule (
+        { config, ... }: {
+          options = {
+            before = lib.mkOption {
+              type = types.nullOr types.path;
+              default = null;
+              description = ''
+                SQL commands to run before the database initialization.
+              '';
+              example = ./path/my_init_script.sql;
+            };
+            after = lib.mkOption {
+              type = types.nullOr types.path;
+              default = null;
+              description = ''
+                SQL commands to run after the database initialization.
+              '';
+              example = ./path/my_after_init_script.sql;
+            };
+          };
+        }
+      );
+      default = {
+        before = null;
+        after = null;
+      };
       description = ''
-        Initial SQL commands to run after `initialDatabases` and `ensureUsers`. This can be multiple
-        SQL expressions separated by a semi-colon.
-      '';
-      example = ''
-        CREATE USER foo IDENTIFIED BY 'password@123';
-        CREATE USER bar;
+        Initial SQL commands to run during database initialization. Use
+        pkgs.writeText if you want it inlined.
       '';
     };
 
@@ -242,9 +262,15 @@ in
 
             mysqlCommand = "mysql ${mysqlOptions} -u root";
 
-            runInitialScript = lib.optionalString (config.initialScript != null) ''
-              echo ${lib.escapeShellArg config.initialScript} | MYSQL_PWD="" ${mysqlCommand} -N
-            '';
+            runInitialScript = 
+              let 
+                scriptCmd = sqlScript: ''
+                  MYSQL_PWD="" ${mysqlCommand} -N < ${sqlScript}
+                '';
+              in {
+                before = with config.initialScript; lib.optionalString (before != null) (scriptCmd before);
+                after = with config.initialScript; lib.optionalString (after != null) (scriptCmd after);
+              };
 
             configureScript = pkgs.writeShellApplication {
               name = "configure-mysql";
@@ -256,6 +282,7 @@ in
               text = ''
                 set -euo pipefail
                 ${envs}
+                ${runInitialScript.before}
                 ${lib.concatMapStrings (database: ''
                   # Create initial databases
                   exists="$(
@@ -297,8 +324,7 @@ in
                     )}
                   ) | MYSQL_PWD="" ${mysqlCommand} -N
                 '') config.ensureUsers}
-
-                ${runInitialScript}
+                ${runInitialScript.after}
               '';
             };
           in
