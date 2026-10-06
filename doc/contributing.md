@@ -73,7 +73,7 @@ file `./doc/<service-name>.md` (see [[clickhouse]] for example) and add the serv
 
 > [!note] It is recommended to add documentation for non-trivial tasks. For example, grafana
 > documentation mentions
-> [how to change the default database backend](https://community.flake.parts/services-flake/grafana#change-database).
+> [how to change the default database backend](https://services.nixos.asia/grafana#change-database).
 
 {#docs}
 

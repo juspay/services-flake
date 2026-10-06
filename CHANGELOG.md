@@ -13,11 +13,11 @@
 
 - **devShell**: Export packages of enabled services (by @shivaraj-bh in
   https://github.com/juspay/services-flake/pull/355). See
-  [documentation](https://community.flake.parts/services-flake/devshell) for usage.
+  [documentation](https://services.nixos.asia/devshell) for usage.
 - **redis**: Support using Unix socket (by @shivaraj-bh in
   https://github.com/juspay/services-flake/pull/353 and
   https://github.com/juspay/services-flake/issues/365). See
-  [documentation](https://community.flake.parts/services-flake/redis#unix-socket).
+  [documentation](https://services.nixos.asia/redis#unix-socket).
 - Add `max_restarts` to all services to avoid restarting indefinitely (by @shivaraj-bh in
   https://github.com/juspay/services-flake/pull/311)
 - **grafana**: Add `declarativePlugins` option (by @conscious-puppet in
@@ -34,9 +34,9 @@
 ## 0.3.0 (Jul 29, 2024)
 
 This release introduces new services, primarily focused on
-[running AI chatbots locally](https://community.flake.parts/services-flake/llm) 🤖. It also includes
-a few non-breaking fixes and refactors 🔄 to promote DRY (Don’t Repeat Yourself) principles when
-adding new services.
+[running AI chatbots locally](https://services.nixos.asia/llm) 🤖. It also includes a few
+non-breaking fixes and refactors 🔄 to promote DRY (Don’t Repeat Yourself) principles when adding
+new services.
 
 ### 🚀 New Services
 
