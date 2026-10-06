@@ -9,5 +9,5 @@ template:
   editBaseUrl: https://github.com/juspay/services-flake/edit/main/doc
   sidebar:
     collapsed: true
-  # URLs without the `.html` suffix, as on community.flake.parts.
+  # URLs without the `.html` suffix.
   urlStrategy: pretty

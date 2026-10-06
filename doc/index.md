@@ -14,8 +14,9 @@ environment, as a [process-compose-flake](https://github.com/Platonic-Systems/pr
 module (based on [flake-parts](https://flake.parts)). It enables users to have NixOS-like services
 on MacOS and Linux.
 
-It builds on top of the [process-compose-flake](https://community.flake.parts/process-compose-flake)
-module which allows running arbitrary processes declared in Nix.
+It builds on top of the
+[process-compose-flake](https://github.com/Platonic-Systems/process-compose-flake) module which
+allows running arbitrary processes declared in Nix.
 
 See:
 
