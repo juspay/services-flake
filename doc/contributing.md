@@ -8,7 +8,9 @@ order: -9
 
 ## Development Shell
 
-A Nix dev shell is available, providing `nixpkgs-fmt` and `just`. To enter the dev shell, run:
+A Nix dev shell is available, providing `just`, `nixd`, and the tooling wired up as pre-commit hooks
+([treefmt](https://treefmt.com/) with `nixfmt` and `prettier`, plus `commitizen`). To enter the dev
+shell, run:
 
 ```sh
 nix develop ./dev
@@ -71,6 +73,10 @@ It is important to add documentation along with any new services you are contrib
 file `./doc/<service-name>.md` (see [[clickhouse]] for example) and add the service to the list in
 [[services]].
 
+> [!tip] A service that belongs under another one (e.g. a Grafana component) declares its parent
+> with a reverse folgezettel link — `#[[grafana]]` — in its own page, and is nested under
+> `[[grafana]]` in [[services]]. Without it, the page shows up at the top level of the sidebar.
+
 > [!note] It is recommended to add documentation for non-trivial tasks. For example, grafana
 > documentation mentions
 > [how to change the default database backend](https://services.nixos.asia/grafana#change-database).
@@ -79,12 +85,20 @@ file `./doc/<service-name>.md` (see [[clickhouse]] for example) and add the serv
 
 ## Documentation
 
-For contributing to docs, see
-<https://github.com/flake-parts/community.flake.parts#guidelines-for-writing-docs>
+The docs are Markdown files in `./doc`, rendered with [emanote](https://emanote.srid.ca/) by
+`doc/flake.nix` (based on [emanote-template](https://github.com/srid/emanote-template)), and
+published to <https://services.nixos.asia> by `.github/workflows/pages.yaml`. Emanote's
+[authoring guide](https://github.com/srid/emanote/tree/master/docs/authoring) documents the note
+syntax — frontmatter, wikilinks, and folgezettel parents.
 
-We use [emanote](https://emanote.srid.ca/) to render our documentation. The source files are in the
-`doc` directory. To run the docs, use:
+To preview the docs with live reloading:
 
 ```sh
 just doc # Or, `cd doc && nix run`
+```
+
+To build the static site (this is what gets deployed):
+
+```sh
+just doc-static # Or, `nix build ./doc`
 ```
