@@ -77,7 +77,7 @@
                       # If `RAG_EMBEDDING_ENGINE != "ollama"` Open WebUI will use
                       # [sentence-transformers](https://pypi.org/project/sentence-transformers/) to fetch the embedding models,
                       # which would require `DEVICE_TYPE` to choose the device that performs the embedding.
-                      # If we rely on ollama instead, we can make use of [already documented configuration to use GPU acceleration](https://community.flake.parts/services-flake/ollama#acceleration).
+                      # If we rely on ollama instead, we can make use of [already documented configuration to use GPU acceleration](https://services.nixos.asia/ollama#acceleration).
                       RAG_EMBEDDING_ENGINE = "ollama";
                       RAG_EMBEDDING_MODEL = "mxbai-embed-large:latest";
                       # RAG_EMBEDDING_MODEL_AUTO_UPDATE = "True";

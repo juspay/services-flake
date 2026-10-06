@@ -3,11 +3,11 @@
 
 page:
   siteTitle: services-flake
-  siteUrl: https://community.flake.parts/services-flake
-  headHtml: |
-    <snippet var="js.highlightjs" />
+  siteUrl: https://services.nixos.asia
 
 template:
   editBaseUrl: https://github.com/juspay/services-flake/edit/main/doc
   sidebar:
-    collapsed: false
+    collapsed: true
+  # URLs without the `.html` suffix.
+  urlStrategy: pretty
