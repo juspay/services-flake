@@ -2,6 +2,8 @@
 
 [Grafana Alloy](https://grafana.com/docs/alloy/) is an OpenTelemetry Collector distribution with
 programmable pipelines, used to collect, process, and forward logs, metrics, traces, and profiles.
+It is part of the Grafana observability stack: it ships telemetry to [[loki]] (logs), [[tempo]]
+(traces), [[pyroscope]] (profiles) or [[prometheus]] (metrics), which you then view in #[[grafana]].
 
 ## Getting Started
 

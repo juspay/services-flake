@@ -1,6 +1,3 @@
-[![project chat](https://img.shields.io/badge/zulip-join_chat-brightgreen.svg)](https://nixos.zulipchat.com/#narrow/stream/414011-services-flake)
-[![Naiveté Compass of Mood](https://img.shields.io/badge/naïve-FF10F0)](https://compass.naivete.me/ "This project follows the 'Naiveté Compass of Mood'")
-
 # services-flake
 
 `services-flake` provides declarative, composable and reproducible services for Nix development
@@ -29,11 +26,11 @@ configuration.
 
 ## Getting Started
 
-See <https://community.flake.parts/services-flake/start>
+See <https://services.nixos.asia/start>
 
 ## Services available
 
-List of supported services is available at https://community.flake.parts/services-flake/services
+List of supported services is available at https://services.nixos.asia/services
 
 ## Comparison with other tools
 
@@ -78,17 +75,16 @@ Want to compare with other tools? [Let us know](https://github.com/juspay/servic
 
 ## Service data directory
 
-See <https://community.flake.parts/services-flake/datadir>
+See <https://services.nixos.asia/datadir>
 
 ## Discussions
 
-To discuss the project, please
-[join our Zulip](https://nixos.zulipchat.com/#narrow/stream/414011-services-flake) or post in
+To discuss the project, post in
 [Github Discussions](https://github.com/juspay/services-flake/discussions).
 
 ## Contributing & Development
 
-See <https://community.flake.parts/services-flake/contributing>
+See <https://services.nixos.asia/contributing>
 
 ## Credits
 

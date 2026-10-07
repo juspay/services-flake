@@ -18,9 +18,10 @@ nix run
 
 ## Existing project
 
-services-flake uses [process-compose-flake](https://community.flake.parts/process-compose-flake) to
-manage the services. Let's first import the `flake-parts` modules provided by
-`process-compose-flake` and `services-flake` in your flake:
+services-flake uses
+[process-compose-flake](https://github.com/Platonic-Systems/process-compose-flake) to manage the
+services. Let's first import the `flake-parts` modules provided by `process-compose-flake` and
+`services-flake` in your flake:
 
 ```nix
 {
@@ -64,7 +65,7 @@ nix run .#myservices
 ## Under the hood
 
 - The `services-flake` module configures
-  [process settings](https://community.flake.parts/process-compose-flake#usage) for a service. In
+  [process settings](https://github.com/Platonic-Systems/process-compose-flake) for a service. In
   simple terms, it handles stuff like health checks, restart policies, setup scripts, etc. by using
   the easy to configure APIs provided by `process-compose-flake`.
 - The `process-compose-flake` module uses these settings to generate

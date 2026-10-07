@@ -1,1 +1,1 @@
-See https://community.flake.parts/services-flake/llm
+See https://services.nixos.asia/llm

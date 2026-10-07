@@ -17,6 +17,7 @@ short-title: Services
   - [[tempo]]
   - [[loki]]
   - [[pyroscope]]
+  - [[mimir]]
 - [[mailhog]]#
 - [[memcached]]#
 - [[minio]]#
@@ -27,6 +28,7 @@ short-title: Services
 - [[nginx]]#
 - [[ollama]]#
 - [[open-webui]]#
+- [[openobserve]]#
 - [[phpfpm]]#
 - [[plantuml]]#
 - [[postgresql]]#
