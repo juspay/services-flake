@@ -43,6 +43,7 @@ in
       ./chromadb.nix
       ./neo4j.nix
       ./mailhog.nix
+      ./authentik.nix
     ])
     ++ [
       ./devshell.nix
