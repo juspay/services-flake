@@ -8,11 +8,15 @@ let
   cfg = config.services.rustfs.rsfs;
   name = "rsfs";
   exportPath = config.services.rustfs.${name}.iam.export.path;
+
+  defaultCredentials = pkgs.writeText "rustfs-credentials" ''
+    RUSTFS_ACCESS_KEY=rustfsadmin
+    RUSTFS_SECRET_KEY=rustfsadmin
+  '';
 in
 {
   services.rustfs."rsfs" = {
     enable = true;
-    package = pkgs.rustfs;
 
     buckets = [
       "test-a"
@@ -21,6 +25,8 @@ in
 
     iam.import.path = ./rustfs/test/iam-export;
     iam.export.enable = true;
+
+    credentialsFile = defaultCredentials;
   };
 
   settings.processes.${name}.environment = {
@@ -41,17 +47,15 @@ in
 
       text = ''
         set -eu
-        echo "Checking if rustfs is up."
-        curl -fsS "http://${cfg.server.host}:${lib.toString cfg.server.port}/health" >/dev/null
-        echo "Rustfs is up."
-
         echo "Checking if rustfs console is up."
         curl -fsS "http://${cfg.server.host}:${lib.toString cfg.console.port}/rustfs/console" >/dev/null
         echo "Rustfs console is up."
 
         echo "Check buckets."
-        export AWS_ACCESS_KEY_ID="${cfg.accessKey}"
-        export AWS_SECRET_ACCESS_KEY="${cfg.secretKey}"
+        # shellcheck disable=SC1091
+        source "${cfg.credentialsFile}"
+        export AWS_ACCESS_KEY_ID="$RUSTFS_ACCESS_KEY"
+        export AWS_SECRET_ACCESS_KEY="$RUSTFS_SECRET_KEY"
         export AWS_DEFAULT_REGION="${cfg.region}"
 
         endpoint="${cfg.server.host}:${lib.toString cfg.server.port}"
@@ -64,12 +68,7 @@ in
         done
         echo "All buckets created."
 
-
         export PC_SOCKET_PATH="${config.cli.options.unix-socket}"
-        # Silence process-compose not finding a config home.
-        mkdir -p "$(pwd)/.config/process-compose"
-        # shellcheck disable=SC2155
-        export XDG_CONFIG_HOME="$(pwd)/.config"
 
         echo "Check export."
         process-compose process start "${name}-iam-export"

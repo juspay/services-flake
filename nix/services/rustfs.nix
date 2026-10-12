@@ -7,20 +7,19 @@
 }:
 
 let
-  inherit (lib) types mkOption mkEnableOption;
+  inherit (lib)
+    types
+    mkOption
+    mkPackageOption
+    mkEnableOption
+    ;
 
   provisionEnable =
     config.buckets != [ ] || config.iam.import.path != null || config.provisionScript != null;
 in
 {
   options = {
-    package = mkOption {
-      type = types.package;
-      description = ''
-        Which package of RustFS to use,
-        e.g. 'inputs.rustfs-flake.packages.''${pkgs.stdenv.hostPlatform.system}.default'.
-      '';
-    };
+    package = mkPackageOption pkgs "rustfs" { };
 
     server = {
       host = mkOption {
@@ -53,10 +52,14 @@ in
       };
     };
 
-    accessKey = mkOption {
-      type = types.str;
-      default = "rustfsadmin";
-      description = "Access key for authentication (5 to 20 characters).";
+    credentialsFile = mkOption {
+      type = types.nullOr (types.pathWith { });
+      description = ''
+        The credentials environment file with env. variables:
+        - `RUSTFS_ACCESS_KEY`
+        - `RUSTFS_SECRET_KEY`
+        in the format of an `EnvironmentFile=`, as described by {manpage}`systemd.exec(5)`.
+      '';
     };
 
     secretKey = mkOption {
@@ -90,15 +93,7 @@ in
     iam = {
       import = {
         path = mkOption {
-          type = types.nullOr (
-            types.either
-              (types.pathWith {
-                inStore = false;
-                absolute = false;
-              })
-              # A nix store path.
-              (types.pathWith { inStore = true; })
-          );
+          type = types.nullOr (types.pathWith { });
           default = null;
           description = ''
             Path to the folder from RustFS IAM export (unzipped) to restore via the admin `import-iam` endpoint on startup.
@@ -149,26 +144,27 @@ in
 
   config.outputs.settings.processes = {
     ${name} = {
-      environment = {
-        RUST_LOG = config.logLevel;
-        RUSTFS_ADDRESS = "${config.server.host}:${lib.toString config.server.port}";
-        RUSTFS_CONSOLE_ENABLE = lib.boolToString config.console.enable;
-        RUSTFS_CONSOLE_ADDRESS = "${config.server.host}:${lib.toString config.console.port}";
+      environment = lib.mkMerge [
+        config.extraEnvironment
+        {
+          RUST_LOG = config.logLevel;
+          RUSTFS_ADDRESS = "${config.server.host}:${lib.toString config.server.port}";
+          RUSTFS_CONSOLE_ENABLE = lib.boolToString config.console.enable;
+          RUSTFS_CONSOLE_ADDRESS = "${config.server.host}:${lib.toString config.console.port}";
 
-        RUSTFS_ACCESS_KEY = config.accessKey;
-        RUSTFS_SECRET_KEY = config.secretKey;
+          RUSTFS_DATA_DIR = "${config.dataDir}/data";
 
-        RUSTFS_DATA_DIR = "${config.dataDir}/data";
-
-        RUSTFS_REGION = config.region;
-      }
-      // config.extraEnvironment;
+          RUSTFS_REGION = config.region;
+        }
+      ];
 
       command = pkgs.writeShellApplication {
         name = "rustfs";
         text =
           # Bash
           ''
+            # shellcheck disable=SC1091
+            source "${config.credentialsFile}"
             mkdir -p "$RUSTFS_DATA_DIR"
             exec ${config.package}/bin/rustfs server "$RUSTFS_DATA_DIR"
           '';
@@ -207,8 +203,11 @@ in
             tmp="$(mktemp -d)"
             trap 'rm -rf "$tmp"' EXIT
 
-            export AWS_ACCESS_KEY_ID="${config.accessKey}"
-            export AWS_SECRET_ACCESS_KEY="${config.secretKey}"
+            # shellcheck disable=SC1091
+            source "${config.credentialsFile}"
+
+            export AWS_ACCESS_KEY_ID="$RUSTFS_ACCESS_KEY"
+            export AWS_SECRET_ACCESS_KEY="$RUSTFS_SECRET_KEY"
             export AWS_DEFAULT_REGION="${config.region}"
           ''
           + lib.concatStringsSep "\n" (
@@ -221,24 +220,30 @@ in
                 echo "Provision: Bucket '${b}' created."
               '') config.buckets
           )
-          + (lib.optionalString (config.iam.import.path != null) ''
-            if [ -d "${config.iam.import.path}" ]; then
-              src="${config.iam.import.path}"
-              echo "Provision: Importing IAM from zipping '$src'"
-              (cd "${config.iam.import.path}" && zip -rq "$tmp/iam.zip" .)
+          + (lib.optionalString (config.iam.import.path != null)
+            # Bash
+            ''
+              if [ -d "${config.iam.import.path}" ]; then
+                src="${config.iam.import.path}"
+                echo "Provision: Importing IAM from zipping '$src'"
+                (cd "${config.iam.import.path}" && zip -rq "$tmp/iam.zip" .)
 
-              curl -fsS -X PUT \
-                --aws-sigv4 "aws:amz:${config.region}:s3" \
-                -u "${config.accessKey}:${config.secretKey}" \
-                --data-binary "@$tmp/iam.zip" \
-                -H "Content-Type: application/zip" \
-                "http://$endpoint/rustfs/admin/v3/import-iam"
+                # shellcheck disable=SC1091
+                source "${config.credentialsFile}"
 
-              echo "Provision: IAM import done."
-            else
-              echo "Provision: IAM import: path '$src' does not exist."
-            fi
-          '')
+                curl -fsS -X PUT \
+                  --aws-sigv4 "aws:amz:${config.region}:s3" \
+                  -u "$RUSTFS_ACCESS_KEY:$RUSTFS_SECRET_KEY" \
+                  --data-binary "@$tmp/iam.zip" \
+                  -H "Content-Type: application/zip" \
+                  "http://$endpoint/rustfs/admin/v3/import-iam"
+
+                echo "Provision: IAM import done."
+              else
+                echo "Provision: IAM import: path '$src' does not exist."
+              fi
+            ''
+          )
           + (lib.optionalString (config.provisionScript != null) "${lib.getExe config.provisionScript}")
           + ''
             echo "Provision: Done."
@@ -265,11 +270,14 @@ in
             tmp="$(mktemp -d)"
             trap 'rm -rf "$tmp"' EXIT
 
+            # shellcheck disable=SC1091
+            source "${config.credentialsFile}"
+
             # IAM export — SigV4-signed GET from the admin export endpoint.
             echo "Export: Downloading IAM settings into '${config.iam.export.path}'."
             curl -fsS -X GET \
               --aws-sigv4 "aws:amz:${config.region}:s3" \
-              -u "${config.accessKey}:${config.secretKey}" \
+              -u "$RUSTFS_ACCESS_KEY:$RUSTFS_SECRET_KEY" \
               -H "Accept: application/zip" \
               -o "$tmp/iam.zip" \
               "http://$endpoint/rustfs/admin/v3/export-iam"

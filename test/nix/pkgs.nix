@@ -20,10 +20,7 @@
         overlays = [
           (
             self: super:
-            {
-              rustfs = inputs'.rustfs-flake.packages.default;
-            }
-            // (lib.optionalAttrs super.stdenv.isDarwin {
+            (lib.optionalAttrs super.stdenv.isDarwin {
               # Disable tests, because they are failing on darwin:
               # https://github.com/NixOS/nixpkgs/issues/281214
               pgadmin4 = super.pgadmin4.overrideAttrs (_: {
