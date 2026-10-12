@@ -70,6 +70,12 @@ in
 
         export PC_SOCKET_PATH="${config.cli.options.unix-socket}"
 
+        if ! process-compose process logs "${name}-provision" |
+          grep -q "Provision: Importing IAM from zipping"; then
+          echo "Import did not run"
+          exit 1
+        fi
+
         echo "Check export."
         process-compose process start "${name}-iam-export"
 
