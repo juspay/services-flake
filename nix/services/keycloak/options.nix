@@ -122,16 +122,7 @@ in
         types.submodule {
           options = {
             import = mkOption {
-              type = types.nullOr (
-                # A relative, user-provided path.
-                lib.types.either
-                  (lib.types.pathWith {
-                    inStore = false;
-                    absolute = false;
-                  })
-                  # A nix store path.
-                  (lib.types.pathWith { inStore = true; })
-              );
+              type = types.nullOr (lib.types.pathWith { });
               default = null;
               example = "./realms/a.json";
               description = ''
@@ -155,7 +146,6 @@ in
                 type = types.nullOr (
                   lib.types.pathWith {
                     inStore = false;
-                    absolute = false;
                   }
                 );
                 default = null;
