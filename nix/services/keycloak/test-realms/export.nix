@@ -22,11 +22,6 @@ writeShellApplication {
     ''
       export PC_SOCKET_PATH="${pcSocketPath}"
 
-      # Silence process-compose not finding a config home.
-      mkdir -p "$(pwd)/.config/process-compose"
-      # shellcheck disable=SC2155
-      export XDG_CONFIG_HOME="$(pwd)/.config"
-
       test_export() {
         echo "Stop keycloak..."
         process-compose process stop "${keycloak-name}" -u "$PC_SOCKET_PATH"
