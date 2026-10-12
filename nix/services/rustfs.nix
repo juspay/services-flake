@@ -62,12 +62,6 @@ in
       '';
     };
 
-    secretKey = mkOption {
-      type = types.str;
-      default = "rustfsadmin";
-      description = "Secret key for authentication (8 to 40 characters).";
-    };
-
     logLevel = mkOption {
       type = types.str;
       default = "info";
