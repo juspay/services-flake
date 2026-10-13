@@ -41,7 +41,9 @@ The `schema` can be a path to a single `.sql` file or a directory containing mul
 {
   services.mysql."mysql1" = {
     enable = true;
+    initialScript.before = ./init_before.sql;
     initialDatabases = [{ name = "test_database"; schema = ./test_schemas; }];
+    initialScript.after = ./init_after.sql;
   };
 }
 ```
