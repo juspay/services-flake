@@ -108,7 +108,7 @@ in
             type = "host";
             database = "all";
             user = "all";
-            address = "0.0.0.0/0";
+            address = "127.0.0.1/0";
             method = "md5";
           }
         ];
