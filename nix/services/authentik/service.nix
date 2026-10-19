@@ -95,6 +95,10 @@ let
       AUTHENTIK_SECRET_KEY = cfg.secretKey;
       AUTHENTIK_BOOTSTRAP_PASSWORD = cfg.initialAdminPassword;
       AUTHENTIK_BOOTSTRAP_EMAIL = cfg.initialAdminEmail;
+
+      # Authentik's `default.yml` defaults this to `env://POSTGRES_PASSWORD`,
+      # so without this the connection is made with an empty password.
+      AUTHENTIK_POSTGRESQL__PASSWORD = cfg.postgres.password;
     };
 
   allPortsUnique =

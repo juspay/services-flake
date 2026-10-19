@@ -134,8 +134,10 @@ in
         type = types.str;
         default = "authentik";
         description = ''
-          PostgreSQL password (`postgresql.password`). Written to the config
-          file in the Nix store; for non-dev use, override it via
+          PostgreSQL password, exported as `AUTHENTIK_POSTGRESQL__PASSWORD`
+          and used to create the database user.
+
+          This ends up in the Nix store; for non-dev use, override it via
           {option}`environmentFile` (`AUTHENTIK_POSTGRESQL__PASSWORD`).
         '';
       };
