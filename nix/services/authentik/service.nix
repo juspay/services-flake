@@ -78,9 +78,19 @@ let
       AUTHENTIK_BOOTSTRAP_PASSWORD = cfg.initialAdminPassword;
       AUTHENTIK_BOOTSTRAP_EMAIL = cfg.initialAdminEmail;
 
-      # Authentik's `default.yml` defaults this to `env://POSTGRES_PASSWORD`,
-      # so without this the connection is made with an empty password.
+      # The Rust components compile `authentik/lib/default.yml` into the binary
+      # (`include_str!`) and only read `/etc/authentik/config.yml`,
+      # `/etc/authentik/config.d/*.yml` and `<cwd>/local.yml` from disk -- never
+      # the copy patched in `modStaticWorkdirDeps`. Only Python picks that one
+      # up, so the connection settings have to be passed as environment
+      # variables or the worker talks to upstream's `localhost:5432` default.
+      AUTHENTIK_POSTGRESQL__HOST = cfg.postgres.host;
+      AUTHENTIK_POSTGRESQL__PORT = toString cfg.postgres.port;
+      AUTHENTIK_POSTGRESQL__USER = cfg.postgres.user;
+      AUTHENTIK_POSTGRESQL__NAME = cfg.postgres.name;
       AUTHENTIK_POSTGRESQL__PASSWORD = cfg.postgres.password;
+
+      AUTHENTIK_LOG_LEVEL = cfg.logLevel;
     };
 
   allPortsUnique =
@@ -231,6 +241,16 @@ let
       ''
         ${pkgs.curl}/bin/curl -fsS "http://${cfg.server.http.host}:${toString cfg.server.http.port}/-/health/ready/"
       '';
+
+  # The worker has no health endpoint; its metrics server answers on every
+  # path, and it is only started once the config parsed and the database pool
+  # came up, which is what we want to gate on.
+  authentik-worker-health =
+    pkgs.writeShellScriptBin "authentik-worker-health"
+      # Bash
+      ''
+        ${pkgs.curl}/bin/curl -fsS -o /dev/null "http://${cfg.worker.metrics.host}:${toString cfg.worker.metrics.port}/"
+      '';
 in
 {
   services = {
@@ -251,11 +271,18 @@ in
 
     cert_discovery_dir = lib.mkDefault "${dataDir}/certs";
 
+    # Both of these make outbound HTTP calls on startup. In an offline or
+    # sandboxed stack they fail and `update_latest_version` is then retried by
+    # dramatiq with backoff, logging a full traceback each time.
+    disable_update_check = lib.mkDefault true;
+    disable_startup_analytics = lib.mkDefault true;
+
     postgresql = {
-      user = lib.mkDefault cfg.postgres.user;
-      name = lib.mkDefault cfg.postgres.name;
       host = lib.mkDefault cfg.postgres.host;
       port = lib.mkDefault cfg.postgres.port;
+      user = lib.mkDefault cfg.postgres.user;
+      password = lib.mkDefault cfg.postgres.password;
+      name = lib.mkDefault cfg.postgres.name;
     };
 
     storage = {
@@ -289,6 +316,14 @@ in
         environment = connEnv // listenEnv "worker";
         command = "${lib.getExe authentik-worker}";
         depends_on."${name}-migrate".condition = "process_completed_successfully";
+
+        readiness_probe = {
+          exec.command = "${lib.getExe authentik-worker-health}";
+          initial_delay_seconds = 10;
+          period_seconds = 5;
+          timeout_seconds = 4;
+          failure_threshold = 30;
+        };
       };
 
       "${name}" = {
@@ -298,7 +333,7 @@ in
 
         depends_on = {
           "${name}-migrate".condition = "process_completed_successfully";
-          "${name}-worker".condition = "process_started";
+          "${name}-worker".condition = "process_healthy";
         };
 
         readiness_probe = {
