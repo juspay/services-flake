@@ -9,7 +9,7 @@ let
   httpPort = 9001;
   ak = config.services.authentik.${name};
 
-  exportPath = config.services.authentik.${name}.blueprints.export.path;
+  exportPath = ak.blueprints.export.path;
 in
 {
   services.postgres = ak.services.postgres;
@@ -28,7 +28,7 @@ in
       password = "authentik";
     };
 
-    server.http.port = 9001;
+    server.http.port = httpPort;
     worker.http.port = 9002;
 
     blueprints = {
@@ -38,9 +38,7 @@ in
       ];
     };
 
-    settings = {
-      logLevel = "info";
-    };
+    logLevel = "info";
   };
 
   settings.processes.test = {

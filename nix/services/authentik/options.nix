@@ -15,16 +15,16 @@ let
 
   settingsFormat = pkgs.formats.yaml { };
 
-  hostAndPort = name: port: {
+  hostAndPort = what: defaultPort: {
     host = mkOption {
       type = types.str;
-      default = "0.0.0.0";
-      description = "Host of the ${name}.";
+      default = "127.0.0.1";
+      description = "Host of the ${what}.";
     };
     port = mkOption {
       type = types.port;
-      default = port;
-      description = "Port of the ${name}.";
+      default = defaultPort;
+      description = "Port of the ${what}.";
     };
   };
 in
@@ -40,7 +40,7 @@ in
     };
 
     secretKey = mkOption {
-      type = types.nullOr types.str;
+      type = types.str;
       example = "insecure-dev-secret";
       description = ''
         The Authentik secret key, exported as `AUTHENTIK_SECRET_KEY`.
@@ -73,7 +73,6 @@ in
       type = types.nullOr (
         types.pathWith {
           inStore = false;
-          absolute = false;
         }
       );
       default = null;
@@ -91,7 +90,9 @@ in
         type = types.attrsOf types.raw;
         readOnly = true;
         description = ''
-          The config to easily define the needed postgres process.
+          The configuration for the PostgreSQL process Authentik needs.
+          Assign it to `services.postgres` of the enclosing `process-compose`
+          configuration.
         '';
       };
     };
@@ -104,19 +105,19 @@ in
     };
 
     server = {
-      http = hostAndPort "server endpoint" 9000;
-      https = hostAndPort "server endpoint" 9443;
-      metrics = hostAndPort "server metrics endpoint." 9300;
+      http = hostAndPort "server HTTP endpoint" 9000;
+      https = hostAndPort "server HTTPS endpoint" 9443;
+      metrics = hostAndPort "server metrics endpoint" 9300;
     };
 
     worker = {
-      http = hostAndPort "worker endpoint" 9001;
-      metrics = hostAndPort "worker metrics endpoint." 9302;
+      http = hostAndPort "worker HTTP endpoint" 9001;
+      metrics = hostAndPort "worker metrics endpoint" 9302;
     };
 
-    email = hostAndPort "${name}'s email connection" 25;
+    email = hostAndPort "email (SMTP) server used by ${name}" 25;
 
-    postgres = (hostAndPort "${name}'s postgres DB" 5432) // {
+    postgres = (hostAndPort "PostgreSQL database used by ${name}" 5432) // {
       name = mkOption {
         type = types.str;
         default = "authentik";
@@ -147,7 +148,6 @@ in
           description = "The path to the export file.";
           type = types.pathWith {
             inStore = false;
-            absolute = false;
           };
           default = "${config.dataDir}/export/blueprint.yaml";
         };
@@ -155,9 +155,10 @@ in
 
       imports = mkOption {
         description = ''
-          Blueprints to import on start up.
-          Enabled blueprints are copied into the blueprints directoryr and
-          auto-applied by the Authentik worker.
+          Blueprints to import.
+          They are copied into Authentik's blueprints directory when the
+          package is built and are auto-applied by the Authentik worker on
+          startup.
         '';
         type = types.listOf (
           types.pathWith {
@@ -169,7 +170,10 @@ in
     };
 
     settings = mkOption {
-      description = "YAML option for authentic which are merged with '<dataDir>/authentic/lib/default.yml'.";
+      description = ''
+        YAML settings for Authentik which are merged into Authentik's
+        `authentik/lib/default.yml`.
+      '';
       type = types.submodule {
         freeformType = settingsFormat.type;
         options = { };

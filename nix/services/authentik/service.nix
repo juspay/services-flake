@@ -17,19 +17,19 @@ let
   # `nix build .#checks…` (`just test`) runs the process-compose stack in,
   # so the migration crashes with "bad interpreter".
   makeSandboxSafe =
-    prev: name: pythonEnv:
-    pkgs.runCommand "authentik-migrate-sandbox-safe" { }
+    prev: binName: pythonEnv:
+    pkgs.runCommand "authentik-${binName}-sandbox-safe" { }
       # Bash
       ''
         cp -R --no-preserve=mode,ownership ${prev} $out
-        wrapped="$out/bin/.${name}.py-wrapped"
-        normal="$out/bin/${name}.py"
+        wrapped="$out/bin/.${binName}.py-wrapped"
+        normal="$out/bin/${binName}.py"
 
         substituteInPlace "$wrapped" \
           --replace-fail '#!/usr/bin/env python' '#!${pythonEnv}/bin/python'
-        substituteInPlace  "$normal" \
-          --replace-fail '${prev}/bin/.${name}.py-wrapped' "$wrapped"
-        chmod +x "$out/bin/.${name}.py-wrapped" "$out/bin/${name}.py"
+        substituteInPlace "$normal" \
+          --replace-fail '${prev}/bin/.${binName}.py-wrapped' "$wrapped"
+        chmod +x "$wrapped" "$normal"
       '';
 
   settingsFile = settingsFormat.generate "authentik.yml" cfg.settings;
@@ -53,10 +53,10 @@ let
           ${lib.getExe pkgs.yq-go} -i ".blueprints_dir = \"$out/blueprints\"" "$out/$src"
           ${lib.getExe pkgs.yq-go} -i ".templates_dir = \"$out/templates\"" "$out/$src"
 
-          cat "$src" | grep -v "/blueprints" || {
-            echo "Blueprints directory must not anymore point to /blueprints."
+          if grep -q '^ *blueprints_dir: */blueprints' "$out/$src"; then
+            echo "Blueprints directory must no longer point to '/blueprints'."
             exit 1
-          }
+          fi
           chmod -R -w $out/authentik
 
           echo "Placing blueprints."
@@ -141,7 +141,7 @@ let
     lib.optionalString (cfg.environmentFile != null)
       # Bash
       ''
-        echo "Load extra authentic environment file '${cfg.environmentFile}'."
+        echo "Loading extra Authentik environment file '${cfg.environmentFile}'."
         set -a
         # shellcheck disable=SC1091
         . "${cfg.environmentFile}"
@@ -162,7 +162,7 @@ let
                "$dataDir/certs" \
                "$dataDir/prometheus"
 
-      # Set temp. dir.
+      # Set up the temporary directory.
       if [ -L "$dataDir/temp" ]; then
         tmpDir=$(readlink "$dataDir/temp")
       else
@@ -252,8 +252,8 @@ in
         enable = cfg.enable;
         port = cfg.postgres.port;
         initialScript.before = pkgs.writeText "before" ''
-          CREATE USER \"${cfg.postgres.user}\" WITH PASSWORD '${cfg.postgres.password}' CREATEDB;
-          CREATE DATABASE \"${cfg.postgres.name}\" OWNER \"${cfg.postgres.user}\"
+          CREATE USER "${cfg.postgres.user}" WITH PASSWORD '${cfg.postgres.password}' CREATEDB;
+          CREATE DATABASE "${cfg.postgres.name}" OWNER "${cfg.postgres.user}";
         '';
       };
     };
@@ -323,7 +323,7 @@ in
         };
       };
     }
-    // lib.optionalAttrs (cfg.blueprints.export.enable) {
+    // lib.optionalAttrs cfg.blueprints.export.enable {
       "${name}-blueprint-export" = {
         disabled = true;
         description = "Authentik blueprint export.";
