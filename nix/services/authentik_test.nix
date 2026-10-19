@@ -23,9 +23,9 @@ in
 
     postgres = {
       port = 5433;
-      user = "authentik";
-      name = "authentik";
-      password = "authentik";
+      user = "authentikbanana";
+      name = "authentikbannan";
+      password = "authentik-banana-pass";
     };
 
     server.http.port = httpPort;

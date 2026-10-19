@@ -11,27 +11,6 @@ let
 
   settingsFormat = pkgs.formats.yaml { };
 
-  # NOTE: Workaround -> authentik-nix's `migrate` ships `bin/migrate.py`, a shell wrapper that execs an inner
-  # `bin/.migrate.py-wrapped` whose shebang is `#!/usr/bin/env python`.
-  # `/usr/bin/env` does not exist in the Nix build sandbox that
-  # `nix build .#checks…` (`just test`) runs the process-compose stack in,
-  # so the migration crashes with "bad interpreter".
-  makeSandboxSafe =
-    prev: binName: pythonEnv:
-    pkgs.runCommand "authentik-${binName}-sandbox-safe" { }
-      # Bash
-      ''
-        cp -R --no-preserve=mode,ownership ${prev} $out
-        wrapped="$out/bin/.${binName}.py-wrapped"
-        normal="$out/bin/${binName}.py"
-
-        substituteInPlace "$wrapped" \
-          --replace-fail '#!/usr/bin/env python' '#!${pythonEnv}/bin/python'
-        substituteInPlace "$normal" \
-          --replace-fail '${prev}/bin/.${binName}.py-wrapped' "$wrapped"
-        chmod +x "$wrapped" "$normal"
-      '';
-
   settingsFile = settingsFormat.generate "authentik.yml" cfg.settings;
 
   modStaticWorkdirDeps =
@@ -51,7 +30,7 @@ let
 
           # Set blueprints_dir, template_dir.
           ${lib.getExe pkgs.yq-go} -i ".blueprints_dir = \"$out/blueprints\"" "$out/$src"
-          ${lib.getExe pkgs.yq-go} -i ".templates_dir = \"$out/templates\"" "$out/$src"
+          ${lib.getExe pkgs.yq-go} -i ".email.templates_dir = \"$out/templates\"" "$out/$src"
 
           if grep -q '^ *blueprints_dir: */blueprints' "$out/$src"; then
             echo "Blueprints directory must no longer point to '/blueprints'."
@@ -74,8 +53,8 @@ let
     in
     {
       authentikComponents = prevComps // {
-        manage = makeSandboxSafe prevComps.manage "manage" prevComps.pythonEnv;
-        migrate = makeSandboxSafe prevComps.migrate "migrate" prevComps.pythonEnv;
+        manage = prevComps.manage;
+        migrate = prevComps.migrate;
         staticWorkdirDeps = modStaticWorkdirDeps prevComps.staticWorkdirDeps prev.authentik-src;
       };
     }
@@ -92,6 +71,9 @@ let
   connEnv =
     assert allPortsUnique;
     {
+      # Note: All AUTHENTIK_ prefixed variables are
+      # override values in the default.yaml.
+
       AUTHENTIK_SECRET_KEY = cfg.secretKey;
       AUTHENTIK_BOOTSTRAP_PASSWORD = cfg.initialAdminPassword;
       AUTHENTIK_BOOTSTRAP_EMAIL = cfg.initialAdminEmail;
@@ -107,6 +89,7 @@ let
         cfg.server.http.port
         cfg.server.https.port
         cfg.server.metrics.port
+        cfg.postgres.port
 
         cfg.worker.http.port
         cfg.worker.metrics.port
@@ -183,7 +166,7 @@ let
       export PATH="${pythonEnv}/bin:$PATH"
 
       # Bring in Authentik's working-directory dependencies
-      # (authentik/, templates/, static assets, ...).
+      # (authentik/, static assets, ...).
       if [ ! -d "$staticDir" ]; then
         ln -sf "${staticWorkdirDeps}" "$staticDir"
       fi
