@@ -62,7 +62,6 @@ let
 
   # The authentik components.
   inherit (finalComponents.authentikComponents) manage;
-  inherit (finalComponents.authentikComponents) gopkgs;
   inherit (finalComponents.authentikComponents) rust;
   inherit (finalComponents.authentikComponents) migrate;
   inherit (finalComponents.authentikComponents) pythonEnv;
@@ -145,7 +144,15 @@ let
         set +a
       '';
 
+  # `component` is used to give every process its own temporary directory:
+  # the server and the worker both bind `$TMPDIR/authentik.sock` and
+  # `$TMPDIR/authentik-metrics.sock`, so a shared `TMPDIR` makes them fight
+  # over the same socket paths (the server adds `authentik-gunicorn.sock` and
+  # `authentik_gunicorn_tmp/` on top of that). Upstream gets
+  # away with one name because each component runs in its own container (and
+  # the NixOS module runs them as `DynamicUser`, hence `PrivateTmp`).
   runtimeEnv =
+    component:
     # Bash
     ''
       dataDir="$(realpath ${dataDir})"
@@ -159,12 +166,13 @@ let
                "$dataDir/certs" \
                "$dataDir/prometheus"
 
-      # Set up the temporary directory.
-      if [ -L "$dataDir/temp" ]; then
-        tmpDir=$(readlink "$dataDir/temp")
+      # Set up the temporary directory, one per component.
+      mkdir -p "$dataDir/temp"
+      if [ -L "$dataDir/temp/${component}" ]; then
+        tmpDir=$(readlink "$dataDir/temp/${component}")
       else
         tmpDir=$(mktemp -d)
-        ln -fs "$tmpDir" "$dataDir/temp"
+        ln -fs "$tmpDir" "$dataDir/temp/${component}"
       fi
       mkdir -p "$tmpDir"
 
@@ -189,9 +197,10 @@ let
     '';
 
   setup =
+    component:
     # Bash
     ''
-      ${runtimeEnv}
+      ${runtimeEnv component}
       ${loadEnvFile}
     '';
 
@@ -199,7 +208,7 @@ let
     pkgs.writeShellScriptBin "authentik-migrate"
       # Bash
       ''
-        ${setup}
+        ${setup "migrate"}
         cd "$staticDir"
         echo "Starting authentik migrate ..."
         exec ${migrate}/bin/migrate.py
@@ -209,7 +218,7 @@ let
     pkgs.writeShellScriptBin "authentik-worker"
       # Bash
       ''
-        ${setup}
+        ${setup "worker"}
         cd "$staticDir"
         echo "Starting authentik worker ..."
         exec ${rust}/bin/authentik worker
@@ -219,17 +228,17 @@ let
     pkgs.writeShellScriptBin "authentik-server"
       # Bash
       ''
-        ${setup}
+        ${setup "server"}
         cd "$staticDir"
         echo "Starting authentik server ..."
-        exec ${gopkgs}/bin/server
+        exec ${rust}/bin/authentik server
       '';
 
   authentik-blueprint-export =
     pkgs.writeShellScriptBin "authentik-blueprint-export"
       # Bash
       ''
-        ${setup}
+        ${setup "blueprint-export"}
         echo "Starting authentik blueprint export to '${cfg.blueprints.export.path}'..."
         mkdir -p "$(dirname "${cfg.blueprints.export.path}")"
         exec ${manage}/bin/manage.py export_blueprint > "${cfg.blueprints.export.path}"

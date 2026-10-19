@@ -23,8 +23,8 @@ in
 
     postgres = {
       port = 5433;
-      user = "authentikbanana";
-      name = "authentikbannan";
+      user = "authentik-monkey-system";
+      name = "authentik-banana-garbage";
       password = "authentik-banana-pass";
     };
 
@@ -40,6 +40,12 @@ in
 
     logLevel = "info";
   };
+
+  # The server's embedded outpost builds its HTTP client through
+  # `rustls-platform-verifier`, which aborts the whole process when it cannot
+  # read a system CA bundle. Nix build sandboxes point `SSL_CERT_FILE` at the
+  # non-existent `/no-cert-file.crt`.
+  settings.environment.SSL_CERT_FILE = "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt";
 
   settings.processes.test = {
     command = pkgs.writeShellApplication {
