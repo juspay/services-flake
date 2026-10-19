@@ -8,7 +8,7 @@
 let
   cfg = config;
 
-  # Generate the keycloak config file to build it.
+  # Renders the Keycloak configuration file (`keycloak.conf`).
   keycloakConfig = lib.generators.toKeyValue {
     mkKeyValue = lib.flip lib.generators.mkKeyValueDefault "=" {
       mkValueString =
@@ -26,7 +26,7 @@ let
     };
   };
 
-  # Filters empty values out.
+  # Filter out empty values.
   filteredConfig = lib.converge (lib.filterAttrsRecursive (
     _: v:
     !builtins.elem v [
@@ -35,10 +35,10 @@ let
     ]
   )) cfg.settings;
 
-  # Write the keycloak config file.
+  # Write the Keycloak config file.
   confFile = pkgs.writeText "keycloak.conf" (keycloakConfig filteredConfig);
 
-  # Build keycloak derivation.
+  # Build the Keycloak derivation with the rendered config and the plugins.
   keycloakBuild = (
     cfg.package.override {
       inherit confFile;
@@ -47,7 +47,7 @@ let
     }
   );
 
-  # Create dummy certificate derivation.
+  # Self-signed certificate used when the user does not provide one.
   dummyCertificates = pkgs.stdenv.mkDerivation {
     pname = "dev-ssl-cert";
     version = "1.0";
@@ -94,7 +94,7 @@ let
   assertKeycloakStopped = [
     ''
       if ${keycloak-health}/bin/keycloak-health &>/dev/null; then
-        echo "You must first stop keycloak and then run this command again." >&2
+        echo "Keycloak is still running: stop it first, then run this command again." >&2
         exit 1
       fi
 
@@ -158,8 +158,8 @@ let
   '';
 
   keycloakEnv = {
-    # Note: we add "./" cause keycloak's database url
-    # does not allow implicitly relative paths.
+    # Note: we prefix with "./" because Keycloak's database URL
+    # does not accept implicitly relative paths.
     KC_HOME_DIR = "./" + cfg.dataDir;
     KC_CONF_DIR = cfg.dataDir + "/conf";
     KC_TMP_DIR = cfg.dataDir + "/tmp";
@@ -188,18 +188,19 @@ let
         echo "Keycloak config:"
         ${keycloakBuild}/bin/kc.sh show-config || true
 
-        echo "Import realms (if any)..."
+        echo "Importing realms (if any)..."
         ${builtins.concatStringsSep "\n" realmImport}
         echo "========================"
 
-        echo "Start keycloak:"
+        echo "Starting Keycloak:"
         exec ${keycloakBuild}/bin/kc.sh start --optimized --import-realm
       '';
 in
 {
   # Merge some default values into the freeform options.
   settings = lib.mapAttrs (n: v: lib.mkOptionDefault v) {
-    # We always enable http since we also use it to check the health.
+    # HTTP stays enabled so that the service is reachable without TLS;
+    # the health check itself goes through the HTTPS management interface.
     http-enabled = true;
     db = cfg.database.type;
 
@@ -238,7 +239,8 @@ in
         command = keycloak-realm-export-all;
         disabled = true;
         description = ''
-          Save the configured realms from keycloak, to back them up. You can run it manually.
+          Export the configured realms from Keycloak, e.g. to back them up.
+          Run it manually once Keycloak has been stopped.
         '';
       };
     });

@@ -5,8 +5,8 @@ providing single sign-on (SSO), user federation, and support for OpenID Connect,
 
 > [!NOTE]
 >
-> This module runs Keycloak in development mode (`start --optimized` with an embedded database). It
-> is intended for local development and testing, not production.
+> This module runs Keycloak against an embedded development database (`db = "dev-file"` or
+> `"dev-mem"`). It is intended for local development and testing, not for production.
 
 {#start}
 
@@ -28,8 +28,8 @@ providing single sign-on (SSO), user federation, and support for OpenID Connect,
         };
       };
       test = {
-        # Set that once exported.
-        # import = "./test.json"
+        # Uncomment this once the realm has been exported.
+        # import = "./test.json";
 
         export = {
            enable = true;
@@ -42,8 +42,8 @@ providing single sign-on (SSO), user federation, and support for OpenID Connect,
 ```
 
 Keycloak becomes available at [http://localhost:8091](http://localhost:8091). The temporary admin
-user is `admin` with the password set by [`initialAdminPassword`](#admin-password) (`admin` by
-default).
+user is the one set by `initialAdminUsername` (`admin` by default), with the password set by
+`initialAdminPassword` (also `admin` by default).
 
 {#tips}
 
@@ -53,9 +53,9 @@ default).
 
 ### Import Realms
 
-A realm listed under `realms` with `import` set is imported on start up, provided the realm does not
-already exist. The `import` path may be relative to the `process-compose` working directory or a Nix
-store path.
+A realm listed under `realms` with `import` set is imported on startup, provided the realm does not
+already exist. The `import` path may either be relative to the `process-compose` working directory
+or be a Nix store path.
 
 ```nix
 {
@@ -73,7 +73,7 @@ store path.
 
 ### Export Settings
 
-To export realms when you made changes in the UI, make sure to have set `export` on the realms you
+To export realms after you have made changes in the admin console, enable `export` on the realms you
 care about:
 
 ```nix
@@ -91,21 +91,20 @@ care about:
 }
 ```
 
-This creates two process-compose processes, both **disabled by default** (they are not run
-automatically, since exporting requires Keycloak to be stopped):
-
-- `«name»-realm-export-all` — exports every realm with `export.enable = true`.
+This creates an additional process `«name»-realm-export-all`, which exports every realm with
+`export.enable = true`. It is **disabled by default**, because exporting requires Keycloak to be
+stopped.
 
 Run it manually once Keycloak has stopped, e.g. from the process-compose TUI, or:
 
 ```bash
-# Stop keycloak first then run the export:
+# Stop Keycloak first, then run the export:
 process-compose process stop «name»
 process-compose process start «name»-realm-export-all
 ```
 
 Each realm is exported to its `path` when that path is a relative (non-store) location, otherwise to
-`${config.services.keycloak.«name».dataDir}/realm-export/<realm>.json`. Exports are pretty-printed
-with `jq` for easy diffing.
+`«dataDir»/realm-export/«realm».json`. Exports are pretty-printed with `jq` for easy diffing.
 
-You can disable the export processes/scripts globally with `exportRealms = false;`.
+The export process can be disabled globally with `exportRealms = false;`. Note that it is also
+unavailable with `database.type = "dev-mem"`, since that database does not survive a shutdown.

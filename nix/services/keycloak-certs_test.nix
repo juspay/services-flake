@@ -36,8 +36,8 @@ in
   # Copy certificates from the Nix store to correct location (only for tests).
   settings.processes.copy-certs =
     let
-      cert = ./. + sslCertificate;
-      certKey = ./. + sslCertificateKey;
+      cert = ./. + "/${sslCertificate}";
+      certKey = ./. + "/${sslCertificateKey}";
     in
     {
       command = pkgs.writeShellApplication {

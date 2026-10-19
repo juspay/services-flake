@@ -23,16 +23,16 @@ in
   options = {
     sslCertificate = mkOption {
       type = types.nullOr (
-        lib.types.pathWith {
+        types.pathWith {
           inStore = false;
         }
       );
       default = null;
       example = "./keycloak/keys/ssl_cert";
       description = ''
-        The path to a PEM formatted certificate to use for TLS/SSL
-        connections.
-        Relative paths are relative to process-composes's working dir.
+        Path to a PEM-formatted certificate used for TLS/SSL connections.
+        Relative paths are resolved against `process-compose`'s working
+        directory.
       '';
     };
 
@@ -45,9 +45,9 @@ in
       default = null;
       example = "./keycloak/keys/ssl_key";
       description = ''
-        The path to a PEM formatted private key to use for TLS/SSL
-        connections.
-        Relative paths are relative to process-composes's working dir.
+        Path to a PEM-formatted private key used for TLS/SSL connections.
+        Relative paths are resolved against `process-compose`'s working
+        directory.
       '';
     };
 
@@ -55,8 +55,8 @@ in
       type = types.listOf types.path;
       default = [ ];
       description = ''
-        Keycloak plugin jar, ear files or derivations containing
-        them. Packaged plugins are available through
+        Keycloak plugins: `.jar` or `.ear` files, or derivations containing
+        them. Pre-packaged plugins are available through
         `pkgs.keycloak.plugins`.
       '';
     };
@@ -72,15 +72,15 @@ in
         apply =
           val:
           assert lib.assertMsg (val == "dev-mem" -> !hasRealmExports) ''
-            You cannot export realms with `realms.«name».export == true` when
-            using `database.type == 'dev-mem'`, import however works.
-            You can disable realms export with `exportRealms = false` globally.
+            Realms cannot be exported with `realms.«name».export.enable = true`
+            when `database.type = "dev-mem"` is used; importing, however, does work.
+            Set `exportRealms = false` to disable realm export globally.
           '';
           val;
         description = ''
           The type of database Keycloak should connect to.
-          If you use `dev-mem`, the realm export over script
-          `keycloak-realm-export-*` does not work.
+          With `dev-mem` the database is discarded on shutdown, so the
+          `«name»-realm-export-all` process cannot export any realm.
         '';
       };
     };
@@ -100,8 +100,8 @@ in
       default = "admin";
       description = ''
         Initial password set for the temporary `admin` user.
-        The password is not stored safely and should be changed
-        immediately in the admin panel.
+        This password is not stored securely and should be changed
+        immediately in the admin console.
 
         See [Admin bootstrap and recovery](https://www.keycloak.org/server/bootstrap-admin-recovery) for details.
       '';
@@ -111,8 +111,9 @@ in
       type = types.bool;
       default = true;
       description = ''
-        Global toggle to enable/disable the realms export process `keycloak-realm-export-all`
-        if any realms have `realms.«name».export == true`.
+        Global toggle for the realm export process `«name»-realm-export-all`,
+        which is created when at least one realm has
+        `realms.«name».export.enable = true`.
       '';
     };
 
@@ -122,39 +123,38 @@ in
         types.submodule {
           options = {
             import = mkOption {
-              type = types.nullOr (lib.types.pathWith { });
+              type = types.nullOr (types.pathWith { });
               default = null;
               example = "./realms/a.json";
               description = ''
-                The path (relative to the `process-compose` working dir or an Nix store path)
-                where you want to import (or export) this realm «name» to.
-                - If not set this realm is not imported.
-                - If
-                  - set to an Nix store path
-                  - or it is not set
-                  and `export.enable` is `true` then
-                  it is exported to `''${config.dataDir}/realm-export/«name».json`.
+                The path to import the realm «name» from, either relative to the
+                `process-compose` working directory or a Nix store path.
+                - If it is not set, this realm is not imported.
+                - If it is a relative path and `export.enable` is `true` while
+                  `export.path` is unset, it doubles as the export destination.
+                  Nix store paths are read-only, so in that case the realm is
+                  exported to `''${config.dataDir}/realm-export/«name».json`.
               '';
             };
 
             export = {
-              enable = mkEnableOption ''
-                export the realm on process launch `<name>-export-realms`.
-              '';
+              enable = mkEnableOption "exporting this realm when the `«name»-realm-export-all` process is run";
 
               path = mkOption {
                 type = types.nullOr (
-                  lib.types.pathWith {
+                  types.pathWith {
                     inStore = false;
                   }
                 );
                 default = null;
                 example = "./realms/a.json";
                 description = ''
-                  The path (relative to the `process-compose` working dir or an Nix store path)
-                  where you want to export this realm «name» to.
-                  - If not set and `import` is relative it is used as default.
-                  - If not set otherwise its defaulted to a value in the data folder.
+                  The path to export the realm «name» to, relative to the
+                  `process-compose` working directory.
+                  - If it is not set and `import` is a relative path, `import` is
+                    used instead.
+                  - Otherwise it defaults to
+                    `''${config.dataDir}/realm-export/«name».json`.
                 '';
               };
             };
@@ -164,31 +164,29 @@ in
 
       example = lib.literalExpression ''
         {
-          realms = {
-            master = {
-              export = {
-                enable = true;
-              };
+          master = {
+            export = {
+              enable = true;
             };
+          };
 
-            test = {
-              import = ./realm.json;
-              export = {
-                enable = true;
-              };
+          test = {
+            import = ./realm.json;
+            export = {
+              enable = true;
             };
           };
         }
       '';
 
       description = ''
-        Specify the realms you want to import on start up and
-        export on a manual start of process/script 'keycloak-realm-export-all'.
+        The realms to import on startup and to export when the
+        `«name»-realm-export-all` process is started manually.
       '';
     };
 
     settings = mkOption {
-      type = lib.types.submodule {
+      type = types.submodule {
         freeformType = types.attrsOf (
           types.nullOr (
             types.oneOf [
@@ -234,7 +232,6 @@ in
             example = 34429;
             description = ''
               On which port Keycloak should listen for new HTTPS connections.
-              If its not set, its disabled.
             '';
           };
 
@@ -242,11 +239,10 @@ in
             type = types.str;
             default = "/";
             example = "/auth";
-            apply = x: if !(lib.hasPrefix "/") x then "/" + x else x;
+            apply = x: if lib.hasPrefix "/" x then x else "/" + x;
             description = ''
-              The path relative to `/` for serving
-              resources.
-              :::
+              The path relative to `/` under which resources are served.
+              A missing leading `/` is added automatically.
             '';
           };
 
