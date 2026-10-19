@@ -1,5 +1,4 @@
 {
-  lib,
   config,
   pkgs,
   ...
@@ -10,6 +9,8 @@ let
   ak = config.services.authentik.${name};
 
   exportPath = ak.blueprints.export.path;
+
+  pg = config.services.postgres."${name}-pg-db";
 in
 {
   services.postgres = ak.services.postgres;
@@ -54,49 +55,96 @@ in
         pkgs.curl
         pkgs.jq
         config.package
+        # For `psql`.
+        pg.package
       ];
       text = ''
-        export PC_SOCKET_PATH="${config.cli.options.unix-socket}"
-        # Silence process-compose not finding a config home.
-        mkdir -p "$(pwd)/.config/process-compose"
-        # shellcheck disable=SC2155
-        export XDG_CONFIG_HOME="$(pwd)/.config"
+        # `${name}-pg-db` is set up by the authentik service itself, so check
+        # that the role and database it created are the ones configured here.
+        function check_db() {
+          psql_q() {
+            psql -h "${ak.postgres.host}" -p "${toString ak.postgres.port}" \
+              -d "$1" -tAqX -c "$2"
+          }
 
-        echo "Checking authentik health endpoints..."
-        curl -fsS "http://localhost:${toString httpPort}/-/health/live/"
-        curl -fsS "http://localhost:${toString httpPort}/-/health/ready/"
-        echo "authentik is up."
+          assert_eq() {
+            if [ "$2" != "$3" ]; then
+              echo "!! $1: expected '$3', got '$2'."
+              exit 1
+            fi
+            echo "ok: $1 is '$2'"
+          }
 
-        echo "Check blueprint export."
-        process-compose process start "${name}-blueprint-export"
+          echo "Databases:"
+          psql_q postgres \
+            "SELECT '  - ' || datname FROM pg_database
+              WHERE NOT datistemplate ORDER BY 1"
+          echo "Login roles:"
+          psql_q postgres \
+            "SELECT '  - ' || rolname FROM pg_roles WHERE rolcanlogin ORDER BY 1"
 
-        completed="false"
-        for _ in $(seq 1 30); do
-          if
-            [ "$(
-              process-compose process get "${name}-blueprint-export"  \
-                -o json |
-                jq -r ".[0].status"
-            )" = "Completed" ]
-          then
-            completed="true"
-            break
+          assert_eq "database" \
+            "$(psql_q postgres \
+              "SELECT datname FROM pg_database
+                WHERE datname = '${ak.postgres.name}'")" \
+            "${ak.postgres.name}"
+
+          assert_eq "role" \
+            "$(psql_q postgres \
+              "SELECT rolname FROM pg_roles
+                WHERE rolname = '${ak.postgres.user}'")" \
+            "${ak.postgres.user}"
+
+          assert_eq "database owner" \
+            "$(psql_q postgres \
+              "SELECT pg_get_userbyid(datdba) FROM pg_database
+                WHERE datname = '${ak.postgres.name}'")" \
+            "${ak.postgres.user}"
+        }
+
+        function check_blueprint() {
+          export PC_SOCKET_PATH="${config.cli.options.unix-socket}"
+
+          if [ -f "${exportPath}" ]; then
+            echo "!! Blueprint file '${exportPath}' should not exist."
+            exit 1
           fi
 
-          sleep 2
-        done
+          echo "Check blueprint export."
+          process-compose process start "${name}-blueprint-export"
 
-        if [ "$completed" != "true" ]; then
-          echo "!! Blueprint export did not complete in time."
-          exit 1
-        fi
+          completed="false"
+          for _ in $(seq 1 30); do
+            if
+              [ "$(
+                process-compose process get "${name}-blueprint-export"  \
+                  -o json |
+                  jq -r ".[0].status"
+              )" = "Completed" ]
+            then
+              completed="true"
+              break
+            fi
 
-        if [ ! -f "${exportPath}" ]; then
-          echo "!! Blueprint file '${exportPath}' did not get exported."
-          exit 1
-        fi
+            sleep 2
+          done
+
+          if [ "$completed" != "true" ]; then
+            echo "!! Blueprint export did not complete in time."
+            exit 1
+          fi
+
+          if [ ! -f "${exportPath}" ]; then
+            echo "!! Blueprint file '${exportPath}' did not get exported."
+            exit 1
+          fi
+        }
+
+        check_db
+        check_blueprint
       '';
     };
+
     depends_on.${name}.condition = "process_healthy";
   };
 }
