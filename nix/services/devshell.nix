@@ -6,6 +6,25 @@
 }:
 let
   inherit (lib) types;
+
+  # `outputs` is a reserved attribute set and is not the name of a service.
+  services = lib.filterAttrs (n: _: n != "outputs") config.services;
+
+  # A single-instance service defines its options (including `enable`) directly under
+  # `services.<service>`, whereas a multi-instance service nests them under
+  # `services.<service>.<instance>`.
+  # See https://community.flake.parts/services-flake/custom-service#single-instance
+  isSingleInstance = cfg: lib.isBool (cfg.enable or null);
+
+  singleInstanceServices = lib.filterAttrs (_: isSingleInstance) services;
+  multiInstanceServices = lib.filterAttrs (_: cfg: !isSingleInstance cfg) services;
+
+  singleInstancePackages = lib.pipe singleInstanceServices [
+    (lib.filterAttrs (_: cfg: cfg.enable))
+    (lib.mapAttrsToList (
+      service: cfg: cfg.package or (builtins.throw "${service} doesn't define a `package` option")
+    ))
+  ];
 in
 {
   options.services.outputs = {
@@ -13,7 +32,7 @@ in
       type = types.attrsOf (types.listOf types.str);
       readOnly = true;
       description = ''
-        Names of all the enabled service instances, grouped by the service name.
+        Names of all the enabled instances of multi-instance services, grouped by the service name.
       '';
       example = lib.literalExpression ''
         {
@@ -32,10 +51,7 @@ in
   };
 
   config = {
-    services.outputs.enabledServices = lib.pipe config.services [
-      # `outputs` is a reserved attribute set and is not the name of a service.
-      (lib.filterAttrs (n: _: n != "outputs"))
-
+    services.outputs.enabledServices = lib.pipe multiInstanceServices [
       (lib.mapAttrs (_service: instances: lib.attrNames (lib.filterAttrs (_: v: v.enable) instances)))
     ];
 
@@ -54,6 +70,8 @@ in
         ))
 
         lib.flatten
+
+        (packages: packages ++ singleInstancePackages)
       ];
     };
   };
