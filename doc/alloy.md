@@ -45,7 +45,7 @@ You can change the HTTP bind address/port and pass extra `alloy run` flags:
         enabled = true
       }
     '';
-    listenAddress = "0.0.0.0";
+    listenAddress = "127.0.0.1";
     port = 12345;
     extraFlags = [ "--stability.level=experimental" ];
   };
