@@ -20,7 +20,7 @@
         overlays = [
           (
             self: super:
-            lib.optionalAttrs super.stdenv.isDarwin {
+            lib.optionalAttrs super.stdenv.hostPlatform.isDarwin {
 
               # Disable tests, because they are failing on darwin:
               # https://github.com/NixOS/nixpkgs/issues/281214

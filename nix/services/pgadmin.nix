@@ -135,7 +135,7 @@ in
                   runtimeInputs = [
                     config.package
                   ]
-                  ++ (lib.lists.optionals pkgs.stdenv.isDarwin [
+                  ++ (lib.lists.optionals pkgs.stdenv.hostPlatform.isDarwin [
                     pkgs.coreutils
                   ]);
                   text = ''
@@ -168,7 +168,7 @@ in
                   runtimeInputs = [
                     config.package
                   ]
-                  ++ (lib.lists.optionals pkgs.stdenv.isDarwin [
+                  ++ (lib.lists.optionals pkgs.stdenv.hostPlatform.isDarwin [
                     pkgs.coreutils
                   ]);
                   text = ''

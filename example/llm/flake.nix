@@ -96,7 +96,8 @@
               command =
                 let
                   inherit (pc.config.services.open-webui.open-webui1) host port;
-                  opener = if pkgs.stdenv.isDarwin then "open" else lib.getExe' pkgs.xdg-utils "xdg-open";
+                  opener =
+                    if pkgs.stdenv.hostPlatform.isDarwin then "open" else lib.getExe' pkgs.xdg-utils "xdg-open";
                   url = "http://${host}:${toString port}";
                 in
                 "${opener} ${url}";
