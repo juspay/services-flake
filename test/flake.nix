@@ -58,6 +58,7 @@
                   "${inputs.services-flake}/nix/services/azurite_test.nix"
                   "${inputs.services-flake}/nix/services/chromadb_test.nix"
                   "${inputs.services-flake}/nix/services/clickhouse/clickhouse_test.nix"
+                  "${inputs.services-flake}/nix/services/devshell_test.nix"
                   "${inputs.services-flake}/nix/services/dynamodb-local_test.nix"
                   "${inputs.services-flake}/nix/services/elasticmq_test.nix"
                   "${inputs.services-flake}/nix/services/grafana_test.nix"
