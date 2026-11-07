@@ -21,7 +21,7 @@ in
 
     listenAddress = lib.mkOption {
       type = types.str;
-      default = "0.0.0.0";
+      default = "127.0.0.1";
       description = lib.mdDoc "Address to listen on for the web interface, API, and telemetry";
     };
 
