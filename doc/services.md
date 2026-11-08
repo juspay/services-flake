@@ -18,6 +18,7 @@ short-title: Services
   - [[loki]]
   - [[pyroscope]]
   - [[mimir]]
+- [[keycloak]]#
 - [[mailhog]]#
 - [[memcached]]#
 - [[minio]]#
