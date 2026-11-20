@@ -7,9 +7,13 @@
         schema = ./test_schemas;
       }
     ];
-    initialScript = ''
+    initialScript.before = pkgs.writeText "init_before.sql" ''
       CREATE USER foo IDENTIFIED BY 'password@123';
       CREATE USER bar;
+    '';
+    initialScript.after = pkgs.writeText "init_after.sql" ''
+      USE test_database;
+      INSERT INTO bar(id) values (1);
     '';
     ensureUsers = [
       {
@@ -100,6 +104,15 @@
           echo "success! baz table not found"
         else
           echo "baz table shoudn't exist"
+          exit 1
+        fi
+
+        echo "Checking if initialScript.after has been executed"
+        isBarFilled=$(echo "SELECT EXISTS(SELECT 1 from bar)" | MYSQL_PWD="" mysql -h 127.0.0.1 -u root -D test_database | tail -n 1)
+        if echo "$isBarFilled" | grep 1; then
+          echo "success! bar table filled"
+        else
+          echo "bar table has not been filled"
           exit 1
         fi
 
