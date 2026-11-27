@@ -2,7 +2,7 @@
   services.phpfpm."phpfpm1" = {
     enable = true;
     listen = "phpfpm.sock";
-    extraConfig = {
+    settings = {
       "pm" = "ondemand";
       "pm.max_children" = 1;
     };

@@ -26,6 +26,8 @@ let
     ]);
 in
 {
+  imports = [ (lib.mkRenamedOptionModule [ "extraConfig" ] [ "settings" ]) ];
+
   options = {
     package = lib.mkPackageOption pkgs "php" { };
 
@@ -64,7 +66,7 @@ in
       '';
     };
 
-    extraConfig = lib.mkOption {
+    settings = lib.mkOption {
       type = configType;
       default = { };
       description = ''
@@ -104,7 +106,7 @@ in
     };
   };
   config = {
-    extraConfig.listen = lib.mkDefault config.listen;
+    settings.listen = lib.mkDefault config.listen;
 
     outputs.settings = {
       processes.${name} =
@@ -119,7 +121,7 @@ in
             ${lib.concatStringsSep "\n" (lib.mapAttrsToList (n: v: "${n} = ${toStr v}") mergedGlobalSettings)}
 
             [${name}]
-            ${lib.concatStringsSep "\n" (lib.mapAttrsToList (n: v: "${n} = ${toStr v}") config.extraConfig)}
+            ${lib.concatStringsSep "\n" (lib.mapAttrsToList (n: v: "${n} = ${toStr v}") config.settings)}
             ${lib.concatStringsSep "\n" (lib.mapAttrsToList (n: v: "env[${n}] = ${toStr v}") config.phpEnv)}
           '';
           iniFile =
