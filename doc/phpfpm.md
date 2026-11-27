@@ -13,7 +13,7 @@ listen to connections. By default, the socket `phpfpm.sock` will be used.
 {
   services.phpfpm."php1" = {
     enable = true;
-    extraConfig = {
+    settings = {
       "pm" = "ondemand";
       "pm.max_children" = 1;
     };
@@ -29,7 +29,7 @@ listen to connections. By default, the socket `phpfpm.sock` will be used.
   services.phpfpm."php1" = {
     enable = true;
     listen = 9000;
-    extraConfig = {
+    settings = {
       "pm" = "ondemand";
       "pm.max_children" = 1;
     };
