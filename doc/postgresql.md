@@ -46,6 +46,36 @@ Assuming your initial schema is defined in `./scripts/db.sql`:
 }
 ```
 
+### Enable the system_stats extension
+
+Add `system_stats` to the PostgreSQL package with `extensions`, then use
+`CREATE EXTENSION` in each database where you need the functions. This example
+enables the extension in a newly initialized `mydb` database.
+
+```nix
+# In `perSystem.process-compose.<name>`
+{
+  services.postgres."pg1" = {
+    enable = true;
+    extensions = exts: [ exts.system_stats ];
+    initialDatabases = [
+      {
+        name = "mydb";
+        schemas = [
+          (pkgs.writeText "system-stats.sql" ''
+            CREATE EXTENSION system_stats;
+          '')
+        ];
+      }
+    ];
+  };
+}
+```
+
+For an existing database, run `CREATE EXTENSION IF NOT EXISTS system_stats;`
+while connected to that database as a user with the required privileges.
+See the [pgAdmin example](pgadmin.md#visualize-system-statistics) to view the metrics.
+
 ## Gotchas
 
 {#socket-path}

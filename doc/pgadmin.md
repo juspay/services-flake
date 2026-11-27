@@ -34,7 +34,7 @@ this in your config:
       exts.system_stats
     ];
     # This creates the extensions for the `postgres` database, if you need it for a custom database,
-    # ensure to add the below script in `schemas` of the database of your choice under `initialDatabses`.
+    # ensure to add the below script in `schemas` of the database of your choice under `initialDatabases`.
     initialScript.before = pkgs.writeText "init.sql" ''
       CREATE EXTENSION system_stats;
     '';
